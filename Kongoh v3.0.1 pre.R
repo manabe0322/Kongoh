@@ -2557,5 +2557,4 @@ Kongoh <- function(){
   tab3Make()
   frameTab4 <- tkframe(tab4)
   tab4Make()
-  
 }
