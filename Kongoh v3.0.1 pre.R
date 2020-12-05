@@ -1395,7 +1395,6 @@ Kongoh <- function(){
             gtOne <- gtCombOne[c(2 * i - 1, 2 * i)]
             if((!any(is.element(gtOne, gtCombOne[- c(2 * i - 1, 2 * i)]))) && (gtOne[1] != gtOne[2])){
               heights <- c(heightOneL[peakOneL == gtOne[1]], heightOneL[peakOneL == gtOne[2]])
-              tallHeightPos <- which(heights == max(heights))[1]
               #Memo: judge of Hb for one contributor
               if(all(heights >= st)){
                 if((heights[1] / heights[2] < hbFltr) || (heights[1] / heights[2] > 1 / hbFltr)){
