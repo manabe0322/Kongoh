@@ -80,7 +80,7 @@ Kongoh <- function(){
   ####################
   
   #software version
-  softVer <- "Kongoh v3.0.0"
+  softVer <- "Kongoh v3.0.1"
   
   #STR repeat length
   #	repLengthInfo <- c(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5)
