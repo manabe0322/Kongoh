@@ -95,7 +95,7 @@ Kongoh <- function(){
   srM2Max <- 0.12
   
   #Default of mixture ratio (MRn) of one contributor (1 to n-1)
-  mrDefault <- c(0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4)
+  mrDefault <- c(0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5)
   mrOne <<- mrDefault
   
   #Sex chromosomal marker
