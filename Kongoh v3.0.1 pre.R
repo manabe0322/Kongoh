@@ -1853,32 +1853,29 @@ Kongoh <- function(){
       gammaList <- gtCombList <- productsList <- log10LikeList <- gtProbList <- list()
       overallLike <- matrix(0, nH, nMD)
       impossible <- FALSE
-      idLoci <- rbind(1:nL, sapply(cspPeak, length))
-      idLoci <- idLoci[1, order(idLoci[2, ], decreasing = TRUE)]
       for(j in 1:nL){
-        idL <- idLoci[j]
-        peakOneL <- cspPeak[[idL]]
-        sizeOneL <- cspSize[[idL]]
-        heightOneL <- cspHeight[[idL]]
-        srConsiderOneL <- srConsider[idL, ]
-        refOneL <- refAllL[idL, ]
-        srB1PeakOneL <- srB1Peak[[idL]]
-        srF1PeakOneL <- srF1Peak[[idL]]
-        srB2PeakOneL <- srB2Peak[[idL]]
-        aeParamOneL <- aeParamVal[idL, ]
-        hbParamOneL <- hbParamVal[idL, ]
-        srB1ParamOneL <- srB1ParamVal[idL, ]
-        srF1ParamOneL <- srF1ParamVal[idL, ]
-        srB2ParamOneL <- srB2ParamVal[idL, ]
-        srM2ParamOneL <- srM2ParamVal[idL, ]
-        repLength <- repLengthAll[names(repLengthAll) == lociName[idL]]
-        popAl <- popAlList[[idL]]
-        popFreq <- popFreqList[[idL]]
-        QFreq <- QFreqAll[idL]
-        at <- atAllL[idL]
+        peakOneL <- cspPeak[[j]]
+        sizeOneL <- cspSize[[j]]
+        heightOneL <- cspHeight[[j]]
+        srConsiderOneL <- srConsider[j, ]
+        refOneL <- refAllL[j, ]
+        srB1PeakOneL <- srB1Peak[[j]]
+        srF1PeakOneL <- srF1Peak[[j]]
+        srB2PeakOneL <- srB2Peak[[j]]
+        aeParamOneL <- aeParamVal[j, ]
+        hbParamOneL <- hbParamVal[j, ]
+        srB1ParamOneL <- srB1ParamVal[j, ]
+        srF1ParamOneL <- srF1ParamVal[j, ]
+        srB2ParamOneL <- srB2ParamVal[j, ]
+        srM2ParamOneL <- srM2ParamVal[j, ]
+        repLength <- repLengthAll[names(repLengthAll) == lociName[j]]
+        popAl <- popAlList[[j]]
+        popFreq <- popFreqList[[j]]
+        QFreq <- QFreqAll[j]
+        at <- atAllL[j]
         
         gtComb <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
-        gtCombList[[idL]] <- gtComb
+        gtCombList[[j]] <- gtComb
         if(length(gtComb) == 0){
           impossible <- TRUE
           break
@@ -1889,7 +1886,7 @@ Kongoh <- function(){
           gammaStF1 <- gammaEstimate(ephData[[3]])
           gammaStB2 <- gammaEstimate(ephData[[4]])
           gammaStM2 <- gammaEstimate(ephData[[5]])
-          gammaList[[idL]] <- list(gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2)
+          gammaList[[j]] <- list(gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2)
           
           nGC <- nrow(gtComb)
           products <- matrix(0, nGC, nMD)
@@ -1901,7 +1898,7 @@ Kongoh <- function(){
               products[k, mrDegID] <- gammaDens(gtComb[k, ], mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
             }
           }
-          productsList[[idL]] <- products
+          productsList[[j]] <- products
           log10Like <- mrDegAdopt <- matrix(0, nH, nMD)
           gtProb <- matrix(0, nH, nGC)
           countHyp <- 0
@@ -1926,9 +1923,9 @@ Kongoh <- function(){
             }
           }
           mrDegID <- which(apply(mrDegAdopt, 2, sum) != 0)
-          log10LikeList[[idL]] <- log10Like
+          log10LikeList[[j]] <- log10Like
           overallLike <- overallLike + log10Like
-          gtProbList[[idL]] <- gtProb
+          gtProbList[[j]] <- gtProb
           rect(0, nBerPos, 100 * j / nL, nBerPos + 1, col = "greenyellow")
         }
       }
