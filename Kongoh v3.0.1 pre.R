@@ -1023,10 +1023,10 @@ Kongoh <- function(){
       tkgrid(mrListFrame, mrSetFrame, pady = 10)
     }
     
-    #Make a window for setting other parameters
+    #Make a window for setting other conditions
     paramSetting <- function(){
       tfParamSet <- tktoplevel()
-      tkwm.title(tfParamSet, "parameter setting")
+      tkwm.title(tfParamSet, "Setting other conditions")
       frameParamSet <- tkframe(tfParamSet)
       
       mcLabel <- tklabel(frameParamSet, text = "Number of Monte Carlo simulations")
@@ -1083,8 +1083,8 @@ Kongoh <- function(){
       tkgrid(frameParamSet, pady = 10)
     }
     
-    #Reset parameter
-    resetParam <- function(){
+    #Reset calculational conditions
+    resetCondition <- function(){
       imputOk <- tclvalue(tkmessageBox(message = "Calculation result for current crime stain profile will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
       if(imputOk == "ok"){
         tclvalue(calcFin) <- 0
@@ -1241,7 +1241,7 @@ Kongoh <- function(){
         tkgrid(frameTab2_hypotheses, padx = 20, pady = 10)
         
         frameTab2_param <- tkframe(frameTab2, relief = "groove", borderwidth = 2)
-        tkgrid(tklabel(frameTab2_param, text = "Parameters", font = "Helvetica 10 bold"), sticky = "w")
+        tkgrid(tklabel(frameTab2_param, text = "Calculational conditions", font = "Helvetica 10 bold"), sticky = "w")
         frameTab2_param1 <- tkframe(frameTab2_param)
         hncFromSpin <- tkspinbox(frameTab2_param1, from = 1, to = 4, increment = 1, textvariable = hncFromVar, width = 6, highlightthickness = 1, justify = "center", background = "white", state = tclvalue(hncFromSpinVar))
         hncToSpin <- tkspinbox(frameTab2_param1, from = 1, to = 4, increment = 1, textvariable = hncToVar, width = 6, highlightthickness = 1, justify = "center", background = "white", state = tclvalue(hncToSpinVar))
@@ -1260,7 +1260,7 @@ Kongoh <- function(){
         tkgrid(frameTab2_param1, frameTab2_param2, padx = 20, pady = 10, sticky = "nw")
         
         otherButt <- tkbutton(frameTab2_param, text = "    Others    ", cursor = tclvalue(otherArrowVar), state = tclvalue(otherButtVar), command = function() paramSetting())
-        resetButt <- tkbutton(frameTab2_param, text = "    Reset    ", cursor = tclvalue(resetArrowVar), state = tclvalue(resetButtVar), command = function() resetParam())
+        resetButt <- tkbutton(frameTab2_param, text = "    Reset    ", cursor = tclvalue(resetArrowVar), state = tclvalue(resetButtVar), command = function() resetCondition())
         tkgrid(otherButt, resetButt, padx = 20, pady = 10, sticky = "w")
         tkgrid(frameTab2_param, padx = 20, pady = 10)
         tkgrid(tkbutton(frameTab2, text = "    Calculate    ", cursor = "hand2", command = function() calcFunc()), padx = 20, pady = 10)
@@ -2282,7 +2282,7 @@ Kongoh <- function(){
       write.table(paste("Allele repeat correction : ", tclvalue(alCorName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       
-      write.table("======== Parameters ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+      write.table("======== Calculational conditions ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(paste("Number of contributors : from ", calcCond[names(calcCond) == "hncFrom"], " to ", calcCond[names(calcCond) == "hncTo"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table("Analytical Threshold", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       for(i in 1:length(dyeNames)){
