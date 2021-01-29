@@ -98,6 +98,9 @@ Kongoh <- function(){
   mrDefault <- c(0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5)
   mrOne <<- mrDefault
   
+  #Threshold of likelihoods for selecting MR and d
+  mrDegCutVar <- tclVar("0.01")
+  
   #Sex chromosomal marker
   sexChrMar <- c("AMEL", "Amelogenin", "Yindel", "YIndel", "YInDel", "DYS391")
   
@@ -225,7 +228,6 @@ Kongoh <- function(){
   numMcVar <- tclVar("1000")
   
   degWVar <- tclVar("0.0025")
-  mrDegCutVar <- tclVar("0.01")
   stVar <- tclVar("500")
   hbFltrVar <- tclVar("0.25")
   stB1FltrVar <- tclVar("0.7")
@@ -1049,9 +1051,6 @@ Kongoh <- function(){
       degWLabel <- tklabel(frameParamSet, text = "        - Width")
       degWEntry <- tkentry(frameParamSet, textvariable = degWVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
       
-      mrDegCutLabel <- tklabel(frameParamSet, text = "Threshold of likelihoods for selecting MR and d")
-      mrDegEntry <- tkentry(frameParamSet, textvariable = mrDegCutVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
-      
       gtCombExcludeLab <- tklabel(frameParamSet, text = "Thresholds to exclude unrealistic genotype combinations")
       stLabel <- tklabel(frameParamSet, text = "        - Stochastic threshold")
       stEntry <- tkentry(frameParamSet, textvariable = stVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
@@ -1074,7 +1073,6 @@ Kongoh <- function(){
       tkgrid(mrLabel, mrCusButt, padx = 20, sticky = "w")
       tkgrid(degLabel, padx = 20, sticky = "w")
       tkgrid(degWLabel, degWEntry, padx = 20, sticky = "w")
-      tkgrid(mrDegCutLabel, mrDegEntry, padx = 20, sticky = "w")
       tkgrid(gtCombExcludeLab, padx = 20, sticky = "w")
       tkgrid(stLabel, stEntry, padx = 20, sticky = "w")
       tkgrid(hbFltrLabel, hbFltrEntry, padx = 20, sticky = "w")
