@@ -99,7 +99,7 @@ Kongoh <- function(){
   mrOne <<- mrDefault
   
   #Threshold of likelihoods for selecting MR and d
-  mrDegCutVar <- tclVar("0.01")
+  mrDegCutVar <- tclVar("0.0001")
   
   #Sex chromosomal marker
   sexChrMar <- c("AMEL", "Amelogenin", "Yindel", "YIndel", "YInDel", "DYS391")
