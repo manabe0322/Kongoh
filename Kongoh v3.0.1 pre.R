@@ -850,7 +850,7 @@ Kongoh <- function(){
           kitAl <- alleleGF[[posLGF]]
           kitSize <- sizeGF[[posLGF]]
         }else{
-          stop("ERROR: Sizes of drop-out alleles cannot be determined!")
+          stop("ERROR: Sizes of drop-out alleles cannot be determined because of locus drop-out in other than Identifler and GlobalFiler!")
         }
         sizeOneL <- sapply(dropAl, sizeDropEst2, kitAl, kitSize, repLength)
         peakOneL <- dropAl
