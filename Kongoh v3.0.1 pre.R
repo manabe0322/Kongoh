@@ -986,10 +986,10 @@ Kongoh <- function(){
       mrListVar <- tclVar("")
       mrAddVar <- tclVar("")
       mr.tf <- tktoplevel()
-      tkwm.title(mr.tf, "Customize mixture ratio of one contributor")
+      tkwm.title(mr.tf, "Customize mixture ratio")
       mrListFrame <- tkframe(mr.tf)
       mrListbox <- tk2listbox(mrListFrame, listvariable = mrListVar, height = 10, justify = "center", selectmode = "single")
-      tkgrid(tklabel(mrListFrame, text = "    mixture ratio"), padx = 20, sticky = "w")
+      tkgrid(tklabel(mrListFrame, text = "    mixture ratio per contributor"), padx = 20, sticky = "w")
       tkgrid(mrListbox, padx = 20, sticky = "w")
       nMrOne <- length(mrOne)
       for(i in 1:nMrOne){
