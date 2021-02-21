@@ -5492,7 +5492,7 @@ Kongoh <- function(){
   tab5Make <- function(){
     tkdestroy(frameTab5)
     frameTab5 <<- tkframe(tab5)
-    tkgrid(tkbutton(frameTab5, text = "    Estimation of parameters   ", cursor = "hand2", command = function() parEstWindow()), padx = 5, pady = 5)
+    tkgrid(tkbutton(frameTab5, text = "    Open a new window   ", cursor = "hand2", command = function() parEstWindow()), padx = 5, pady = 5)
     tkgrid(frameTab5)
   }
 
