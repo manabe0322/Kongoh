@@ -2549,7 +2549,6 @@ Kongoh <- function(){
   parEstWindow <- function(){
     #Imput required files
     openFile2 <- function(fp, var, top){
-      #    imputOk <- "ok"
       fileName <- tclvalue(tkgetOpenFile(parent = top, initialdir = tclvalue(fp), multiple = "true", filetypes = "{{CSV Files} {.csv}}"))
       if(!nchar(fileName)){
         tkmessageBox(message = "No file was selected!", icon = "error", type = "ok")
@@ -2594,7 +2593,7 @@ Kongoh <- function(){
     
     #Check imput files
     fileCk2 <- function(){
-      if(any(c(tclvalue(calibFp) == "", tclvalue(gtAnsFp) == ""))){
+      if(any(c(tclvalue(calibFp) == "", tclvalue(gtAnsFp) == "", tclvalue(seqFp) == ""))){
         tkmessageBox(message = "Load required file(s)!", icon = "error", type = "ok")
       }else{
         calData <- read.csv(tclvalue(calibFp), header = TRUE)
@@ -2610,14 +2609,12 @@ Kongoh <- function(){
         seqFileOk <- TRUE
         
         if(setequal(calDataLoci, gtAnsLoci)){
-          if(tclvalue(seqFp) != ""){
-            seqData <- read.csv(tclvalue(seqFp), header = TRUE)
-            seqData <- as.matrix(seqData)
-            seqDataLoci <- unique(seqData[, which(colnames(seqData) == "Locus")])
-            if(!all(is.element(calDataLoci, seqDataLoci))){
-              tkmessageBox(message = "Some loci of calibration data are not included in the file of sequence data!", icon = "error", type = "ok")
-              seqFileOk <- FALSE
-            }
+          seqData <- read.csv(tclvalue(seqFp), header = TRUE)
+          seqData <- as.matrix(seqData)
+          seqDataLoci <- unique(seqData[, which(colnames(seqData) == "Locus")])
+          if(!all(is.element(calDataLoci, seqDataLoci))){
+            tkmessageBox(message = "Some loci of calibration data are not included in the file of sequence data!", icon = "error", type = "ok")
+            seqFileOk <- FALSE
           }
           if(seqFileOk){
             calDataSampleName <- unique(calData[, intersect(grep("Sample", colnames(calData)), grep("Name", colnames(calData)))])
@@ -3014,7 +3011,11 @@ Kongoh <- function(){
         tkgrid(tklabel(fTab2Par, text = "        Load actual genotypes!        "), pady = 10, sticky = "w")
         tkgrid(fTab2Par)
       }
-      if(all(c(tclvalue(calibName), tclvalue(gtAnsName)) != "")){
+      if(tclvalue(seqName) == ""){
+        tkgrid(tklabel(fTab2Par, text = "        Load sequence data!        "), pady = 10, sticky = "w")
+        tkgrid(fTab2Par)
+      }
+      if(all(c(tclvalue(calibName), tclvalue(gtAnsName), tclvalue(seqName)) != "")){
         if(tclvalue(fileCk2Fin) == "0"){
           tkgrid(tklabel(fTab2Par, text = "        Push 'Next' button in the Files tab.        "), pady = 10, sticky = "w")
           tkgrid(fTab2Par)
@@ -3406,22 +3407,6 @@ Kongoh <- function(){
           srDeal <- c("Locus specific", "Multiple loci together", "Not consider")
           bsrDealVar <- fsrDealVar <- dsrDealVar <- m2srDealVar <- list()
           
-          if(tclvalue(seqFp) == ""){
-            bsrCand <- bsrCand_noSeq
-            fsrCand <- fsrCand_noSeq
-            dsrCand <- dsrCand_noSeq
-            bsrCandGen <- bsrCandGen_noSeq
-            fsrCandGen <- fsrCandGen_noSeq
-            dsrCandGen <- dsrCandGen_noSeq
-          }else{
-            bsrCand <- bsrCand_seq
-            fsrCand <- fsrCand_seq
-            dsrCand <- dsrCand_seq
-            bsrCandGen <- bsrCandGen_seq
-            fsrCandGen <- fsrCandGen_seq
-            dsrCandGen <- dsrCandGen_seq
-          }
-          
           aeCandFin <- hbCandFin <- bsrCandFin <- fsrCandFin <- dsrCandFin <- m2srCandFin <- list()
           for(i in 1:length(parLocus)){
             locusLabel <- tklabel(fTab2Par_scr, text = parLocus[i])
@@ -3704,8 +3689,6 @@ Kongoh <- function(){
       sampleOne <- calData[calData[, sampleFilePos] == sampleFiles[1], ]
       sampleL <- sampleOne[, markerPos]
       dyeAllL <- sampleOne[, dyePos]
-      ## ??
-      dyeAllL2 <- dyeAllL[sapply(parLocus, grep, sampleL)]
       
       calData2 <- gtAns2 <- list()
       for(i in 1:length(sampleFiles)){
@@ -3753,12 +3736,8 @@ Kongoh <- function(){
             sizeOneL2 <- as.numeric(sizeOneL[usePos])
             heightOneL2 <- as.numeric(heightOneL[usePos])
             calOne <- rbind(peakOneL2, sizeOneL2, heightOneL2)
-            
-            #function : 同じピーク番号で2つ以上シグナルがある場合は消す
             calOne <- removePeak(calOne)
-            #pull-up除去
             calData2SampleOne[[j]] <- removePU(calOne, dyeOneL, alSize, alDye)
-            
           }else{
             calData2SampleOne[[j]] <- 0
           }
@@ -3766,7 +3745,7 @@ Kongoh <- function(){
         calData2[[i]] <- calData2SampleOne
         gtAns2[[i]] <- gtOne2
       }
-      return(list(calData2, gtAns2, dyeAllL2))
+      return(list(calData2, gtAns2))
     }
     
     #Get data of locus-specific amplification efficiency
@@ -4139,7 +4118,7 @@ Kongoh <- function(){
     }
     
     #Make usable SR data when considering each locus separately
-    srUseMake <- function(sr, srAl, srHeight, lusOneL = NULL, srMax){
+    srUseMake <- function(sr, srAl, srHeight, lusOneL, srMax){
       nonZeroPos <- which(sr != 0)
       sr <- sr[nonZeroPos]
       srAl <- srAl[nonZeroPos]
@@ -4149,25 +4128,21 @@ Kongoh <- function(){
       srAl <- srAl[srAdoptPos]
       srHeight <- srHeight[srAdoptPos]
       
-      if(length(lusOneL) > 0){
-        alNames <- as.numeric(names(lusOneL))
-        srLus <- rep(-100, length(sr))
-        for(j in 1:length(lusOneL)){
-          lusPos <- which(srAl == alNames[j])
-          if(length(lusPos) != 0){
-            srLus[lusPos] <- lusOneL[j]
-          }
+      alNames <- as.numeric(names(lusOneL))
+      srLus <- rep(-100, length(sr))
+      for(j in 1:length(lusOneL)){
+        lusPos <- which(srAl == alNames[j])
+        if(length(lusPos) != 0){
+          srLus[lusPos] <- lusOneL[j]
         }
-        
-        noSeqPos <- which(srLus == -100)
-        if(length(noSeqPos) != 0){
-          sr <- sr[-noSeqPos]
-          srAl <- srAl[-noSeqPos]
-          srHeight <- srHeight[-noSeqPos]
-          srLus <- srLus[-noSeqPos]
-        }
-      }else{
-        srLus <- NULL
+      }
+      
+      noSeqPos <- which(srLus == -100)
+      if(length(noSeqPos) != 0){
+        sr <- sr[-noSeqPos]
+        srAl <- srAl[-noSeqPos]
+        srHeight <- srHeight[-noSeqPos]
+        srLus <- srLus[-noSeqPos]
       }
       srUseList <- list(sr, srHeight, srAl, srLus)
       names(srUseList) <- c("stutter ratio", "total allelic product", "parent allele", "LUS of parent allele")
@@ -4175,9 +4150,8 @@ Kongoh <- function(){
     }
     
     #Make SR data of general model
-    srGenMake <- function(srGenPos, srData, srAlData, srHeightData, lusData = NULL, motifLengthList = NULL, seqAlList = NULL, seqCountList = NULL, srMax){
+    srGenMake <- function(srGenPos, srData, srAlData, srHeightData, lusData, motifLengthList, seqAlList, seqCountList, srMax){
       srGen <- srAlGen <- srHeightGen <- srLusGen <- motifLengthGen <- seqAlGen <- seqCountGen <- list()
-      seqDataJudge <- all(!is.element(c(length(motifLengthList), length(seqAlList), length(seqCountList)), 0))
       for(i in 1:length(srGenPos)){
         srPos <- srGenPos[i]
         srUseData <- srUseMake(srData[, srPos], srAlData[, srPos], srHeightData[, srPos], lusData[[srPos]], srMax)
@@ -4185,12 +4159,9 @@ Kongoh <- function(){
         srHeightGen[[i]] <- srUseData[[2]]
         srAlGen[[i]] <- srUseData[[3]]
         srLusGen[[i]] <- srUseData[[4]]
-        
-        if(seqDataJudge){
-          motifLengthGen[[i]] <- motifLengthList[[srPos]]
-          seqAlGen[[i]] <- seqAlList[[srPos]]
-          seqCountGen[[i]] <- seqCountList[[srPos]]
-        }
+        motifLengthGen[[i]] <- motifLengthList[[srPos]]
+        seqAlGen[[i]] <- seqAlList[[srPos]]
+        seqCountGen[[i]] <- seqCountList[[srPos]]
       }
       srGenList <- list(srGen, srHeightGen, srAlGen, srLusGen, motifLengthGen, seqAlGen, seqCountGen)
       names(srGenList) <- c("stutter ratio", "total allelic product", "parent allele", "LUS of parent allele", "motif length", "alleles of sequence data", "counts of each sequence")
@@ -4454,22 +4425,13 @@ Kongoh <- function(){
       srAlleleData <- srDataResult[[5]]
       srHeightData <- srDataResult[[6]]
       
-      if(tclvalue(seqFp) != ""){
-        seqData <- read.csv(tclvalue(seqFp), header = TRUE)
-        seqData <- as.matrix(seqData)
-        seqAnalysisResult <- seqAnalysis(seqData, parLocus)
-        lusData <- seqAnalysisResult[[1]]
-        motifLengthList <- seqAnalysisResult[[2]]
-        seqAlList <- seqAnalysisResult[[3]]
-        seqCountList <- seqAnalysisResult[[4]]
-      }else{
-        #要チェック 
-        seqAnalysisResult <- numeric(0)
-        lusData <- numeric(0)
-        motifLengthList <- numeric(0)
-        seqAlList <- numeric(0)
-        seqCountList <- numeric(0)
-      }
+      seqData <- read.csv(tclvalue(seqFp), header = TRUE)
+      seqData <- as.matrix(seqData)
+      seqAnalysisResult <- seqAnalysis(seqData, parLocus)
+      lusData <- seqAnalysisResult[[1]]
+      motifLengthList <- seqAnalysisResult[[2]]
+      seqAlList <- seqAnalysisResult[[3]]
+      seqCountList <- seqAnalysisResult[[4]]
       rm(calData, calData2, gtAns, gtAns2, calGtAnsData2, aeDataResult, hbDataResult, srDataResult, seqAnalysisResult)
       gc()
       
@@ -4650,7 +4612,6 @@ Kongoh <- function(){
       names(m2srUseData) <- names(m2srModel) <- parLocus
       
       tclvalue(paramEstFin) <- "1"
-      delResult(parLocus, parDye)
       tab3ParMake(aeUseData, aeModel, hbUseData, hbModel, 
                   bsrGenData, bsrUseData, bsrModel, 
                   fsrGenData, fsrUseData, fsrModel, 
@@ -4658,7 +4619,7 @@ Kongoh <- function(){
                   m2srGenData, m2srUseData, m2srModel, 
                   aeMin, hbMin, bsrMax, fsrMax, dsrMax, m2srMax, 
                   aeMleCondFin, hbMleCondFin, bsrMleCondFin, fsrMleCondFin, dsrMleCondFin, m2srMleCondFin, 
-                  motifLengthList, seqAlList, seqCountList, 
+                  lusData, motifLengthList, seqAlList, seqCountList, 
                   srConsider, srLSp, parDye, repLength)
       tk2notetab.select(tabsPar, "Result")
     }
@@ -4770,15 +4731,86 @@ Kongoh <- function(){
       }
     }
     
+    #Output allele repeat correction
+    alCorOutput <- function(lusData, motifLengthList, seqAlList, seqCountList, bsrBestList, fsrBestList, dsrBestList){
+      wCACalc <- function(parX, motifLength, seqAl, seqCount){
+        uniqAl <- sort(unique(seqAl))
+        nU <- length(uniqAl)
+        wCA <- rep(0, nU)
+        for(i in 1:nU){
+          alPos <- which(seqAl == uniqAl[i])
+          seqCountOneA <- seqCount[alPos]
+          nCA <- length(alPos)
+          CAs <- rep(0, nCA)
+          for(j in 1:nCA){
+            caPre <- motifLength[[j]] - parX
+            caPre[which(caPre < 0)] <- 0
+            CAs[j] <- sum(caPre)
+          }
+          wCA[i] <- sum(seqCountOneA * CAs) / sum(seqCountOneA)
+        }
+        return(wCA)
+      }
+      
+      saveAs <- tkgetSaveFile(filetypes = "{{CSV Files} {.csv}}")
+      if(tclvalue(saveAs) != ""){
+        if(substr(tclvalue(saveAs), nchar(tclvalue(saveAs)) - 3, nchar(tclvalue(saveAs))) == ".csv"){
+          alCorName <- tclvalue(saveAs)
+        }else{
+          alCorName <- paste(tclvalue(saveAs), ".csv", sep = "")
+        }
+        parLocus <- names(bsrBestList)
+        nL <- length(parLocus)
+        nAl <- sapply(lusData, length)
+        alCorData <- matrix("", sum(nAl), 6)
+        colnames(alCorData) <- c("Marker", "Allele", "LUS", "CA_BSR", "CA_FSR", "CA_DSR")
+        count <- 0
+        for(i in 1:nL){
+          rowPos <- (count + 1):(count + nAl[i])
+          count <- count + nAl[i]
+          lusOneL <- lusData[[i]]
+          bsrBestOneL <- bsrBestList[[i]]
+          fsrBestOneL <- fsrBestList[[i]]
+          dsrBestOneL <- dsrBestList[[i]]
+          motifLength <- motifLengthList[[i]]
+          seqAl <- seqAlList[[i]] 
+          seqCount <- seqCountList[[i]]
+          
+          alCorData[rowPos, 1] <- parLocus[i]
+          alCorData[rowPos, 2] <- names(lusOneL)
+          alCorData[rowPos, 3] <- lusOneL
+          
+          if(bsrBestOneL[[3]] == "Multi-seq"){
+            parX <- bsrBestOneL[[2]][4]
+            nSeq <- length(motifLength)
+            caOneL <- rep(0, nSeq)
+            alCorData[rowPos, 4] <- wCACalc(parX, motifLength, seqAl, seqCount)
+          }
+          
+          if(fsrBestOneL[[3]] == "Multi-seq"){
+            parX <- fsrBestOneL[[2]][4]
+            nSeq <- length(motifLength)
+            caOneL <- rep(0, nSeq)
+            alCorData[rowPos, 5] <- wCACalc(parX, motifLength, seqAl, seqCount)
+          }
+          
+          if(dsrBestOneL[[3]] == "Multi-seq"){
+            parX <- dsrBestOneL[[2]][4]
+            nSeq <- length(motifLength)
+            caOneL <- rep(0, nSeq)
+            alCorData[rowPos, 6] <- wCACalc(parX, motifLength, seqAl, seqCount)
+          }
+        }
+        write.csv(alCorData, alCorName, row.names = FALSE, col.names = TRUE)
+      }
+    }
+    
     #Delete current results
     delResult <- function(parLocus, parDye){
-      imputOk <- tclvalue(tkmessageBox(message = "Current results of estimated parameters will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
-      if(imputOk == "ok"){
-        tkdestroy(fTab2Par)
-        fTab2Par <<- tkframe(tab2Par)
-        tkgrid(tkbutton(fTab2Par, text = "    Delete current results    ", cursor = "hand2", command = function() tab2ParMake(parLocus, parDye)), padx = 5, pady = 5)
-        tkgrid(fTab2Par)
-      }
+      tkdestroy(fTab2Par)
+      fTab2Par <<- tkframe(tab2Par)
+      tkgrid(tkbutton(fTab2Par, text = "    Delete current results    ", cursor = "hand2", command = function() tab2ParMake(parLocus, parDye)), padx = 5, pady = 5)
+      tkgrid(fTab2Par)
     }
     
     #Make 'Result' tab
@@ -4789,7 +4821,7 @@ Kongoh <- function(){
                             m2srGenData = NULL, m2srUseData = NULL, m2srModel = NULL, 
                             aeMin = NULL, hbMin = NULL, bsrMax = NULL, fsrMax = NULL, dsrMax = NULL, m2srMax = NULL, 
                             aeMleCondFin = NULL, hbMleCondFin = NULL, bsrMleCondFin = NULL, fsrMleCondFin = NULL, dsrMleCondFin = NULL, m2srMleCondFin = NULL, 
-                            motifLengthList = NULL, seqAlList = NULL, seqCountList = NULL, 
+                            lusData = NULL, motifLengthList = NULL, seqAlList = NULL, seqCountList = NULL, 
                             srConsider = NULL, srLSp = NULL, parDye = NULL, repLength = NULL
     ){
       tkdestroy(fTab3Par)
@@ -4802,7 +4834,11 @@ Kongoh <- function(){
         tkgrid(tklabel(fTab3Par, text = "        Load actual genotypes!        "), pady = 10, sticky = "w")
         tkgrid(fTab3Par)
       }
-      if(all(c(tclvalue(calibName), tclvalue(gtAnsName)) != "")){
+      if(tclvalue(seqName) == ""){
+        tkgrid(tklabel(fTab3Par, text = "        Load sequence data!        "), pady = 10, sticky = "w")
+        tkgrid(fTab3Par)
+      }
+      if(all(c(tclvalue(calibName), tclvalue(gtAnsName), tclvalue(seqName)) != "")){
         if(tclvalue(fileCk2Fin) == "0"){
           tkgrid(tklabel(fTab3Par, text = "        Push 'Next' button in the Files tab.        "), pady = 10, sticky = "w")
           tkgrid(fTab3Par)
@@ -5354,6 +5390,7 @@ Kongoh <- function(){
             tkgrid(tkbutton(fTab3Par_scr, text = "    Detail    ", cursor = "hand2", command = function() resultDetail(dsrModel, dsrUseData, "DSR", dsrMleCondFin, dsrMax)), row = i + 3, column = 10, padx = 5, pady = 10)
             tkgrid(tkbutton(fTab3Par_scr, text = "    Detail    ", cursor = "hand2", command = function() resultDetail(m2srModel, m2srUseData, "M2SR", m2srMleCondFin, m2srMax)), row = i + 3, column = 12, padx = 5, pady = 10)
             tkgrid(tkbutton(fTab3Par_scr, text = "    Output parameters    ", cursor = "hand2", command = function() parOutput(aeBestList, hbBestList, bsrBestList, fsrBestList, dsrBestList, m2srBestList, srConsider, srLSp, parDye, repLength)), row = i + 4, column = 2, columnspan = 2, padx = 5, pady = 10)
+            tkgrid(tkbutton(fTab3Par_scr, text = "    Output allele repeat correction    ", cursor = "hand2", command = function() alCorOutput(lusData, motifLengthList, seqAlList, seqCountList,bsrBestList, fsrBestList, dsrBestList)), row = i + 4, column = 4, columnspan = 4, padx = 5, pady = 10)
             if(daggerJudge){
               tkgrid(tklabel(fTab3Par_scr, text = paste("(", "\u2020", " selected by user)", sep = "")), row = i + 4, column = 12, padx = 5, pady = 10, sticky = "w")
             }
@@ -5367,7 +5404,7 @@ Kongoh <- function(){
     
     
     #######################################
-    # Information of generally used locus # 
+    # Information of generally used locus #
     #######################################
     
     #Autosomal STR marker
@@ -5437,24 +5474,18 @@ Kongoh <- function(){
     for(i in 1:nStr){
       aeCand[[i]] <- "Log-normal"
       hbCand[[i]] <- "Log-normal"
-      bsrCand_seq[[i]] <- c("Best", "Allele", "LUS", "Multi-seq")
-      fsrCand_seq[[i]] <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
-      dsrCand_seq[[i]] <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
+      bsrCand[[i]] <- c("Best", "Allele", "LUS", "Multi-seq")
+      fsrCand[[i]] <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
+      dsrCand[[i]] <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
       m2srCand[[i]] <- "Uniform"
-      bsrCand_noSeq[[i]] <- c("Best", "Allele")
-      fsrCand_noSeq[[i]] <- c("Best", "Allele", "Uniform")
-      dsrCand_noSeq[[i]] <- c("Best", "Allele", "Uniform")
     }
-    names(aeCand) <- names(hbCand) <- names(bsrCand_seq) <- names(fsrCand_seq) <- names(dsrCand_seq) <- names(m2srCand) <- names(bsrCand_noSeq) <- names(fsrCand_noSeq) <- names(dsrCand_noSeq) <- strMar
+    names(aeCand) <- names(hbCand) <- names(bsrCand) <- names(fsrCand) <- names(dsrCand) <- names(m2srCand) <- strMar
     
     #Candidate models of each factor (for new loci)
-    bsrCandGen_seq <- c("Best", "Allele", "LUS", "Multi-seq")
-    fsrCandGen_seq <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
-    dsrCandGen_seq <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
+    bsrCandGen <- c("Best", "Allele", "LUS", "Multi-seq")
+    fsrCandGen <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
+    dsrCandGen <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
     m2srCandGen <- "Uniform"
-    bsrCandGen_noSeq <- c("Best", "Allele")
-    fsrCandGen_noSeq <- c("Best", "Allele", "Uniform")
-    dsrCandGen_noSeq <- c("Best", "Allele", "Uniform")
     
     #Minimum or maximum values of each factor
     aeMinVar <- tclVar(0.058)
