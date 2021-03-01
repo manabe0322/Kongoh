@@ -5532,9 +5532,9 @@ Kongoh <- function(){
   }
 
   
-  ########################
-  # Make toplevel window #
-  ########################
+  ##########################
+  # Make a toplevel window #
+  ##########################
   
   tf <- tktoplevel()
   tkwm.title(tf, softVer)
