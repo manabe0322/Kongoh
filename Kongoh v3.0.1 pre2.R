@@ -95,10 +95,6 @@ Kongoh <- function(){
   #software version
   softVer <- "Kongoh v3.0.1"
   
-  #STR repeat length
-  #	repLengthInfo <- c(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5)
-  #	names(repLengthInfo) <- c("D3S1358", "vWA", "D16S539", "CSF1PO", "TPOX", "D8S1179", "D21S11", "D18S51", "D2S441", "D19S433", "TH01", "FGA", "D22S1045", "D5S818", "D13S317", "D7S820", "SE33", "D10S1248", "D1S1656", "D12S391", "D2S1338", "D6S1043", "Penta D", "Penta E")
-  
   #Minumum or maximum of each parameter
   aeMin <- 0.058
   hbMin <- 0.046
@@ -1983,6 +1979,7 @@ Kongoh <- function(){
       if(tclvalue(calcFin) == "0"){
         tkgrid(tklabel(frameTab3, text = "        Perform calculation!        "), pady = 10, sticky = "w")
       }else{
+        #Make it easy to see the result of probabilistic genotyping
         pgRefine <- function(pg){
           n1 <- ncol(pg)
           gt <- pg[, 1:(n1 - 3), drop = FALSE]
@@ -2546,6 +2543,7 @@ Kongoh <- function(){
   # Parameter estimation window #
   ###############################
   
+  #Open a new window for parameter estimation
   parEstWindow <- function(){
     #Imput required files
     openFile2 <- function(fp, var, top){
@@ -3844,7 +3842,7 @@ Kongoh <- function(){
                     }
                   }
                   
-                  #Memo: -2 base stutter
+                  #Memo: minus 2-nt stutter
                   if(srConsiderOneL[4]){
                     if(alOne %% 1 < 0.15){
                       stM2 <- round(alOne - 0.8, 1)
@@ -4060,6 +4058,7 @@ Kongoh <- function(){
     #Modeling locus-specific amplification efficiency
     aeModeling <- function(modelName, ae, aeHeight, aeMin, aeMleCondFinOneL){
       #likelihood function of Log-normal model
+        #par(mean, variance)
       aeLognormLike <- function(par){
         dens <- dtruncnorm(log(ae), a = log(aeMin), b = log(1 / aeMin), mean = par[1], sd = sqrt(par[2] / aeHeight))
         return(-sum(log(dens)))
@@ -4090,6 +4089,7 @@ Kongoh <- function(){
     #Modeling heterozygote balance
     hbModeling <- function(modelName, hb, hbHeight, hbMin, hbMleCondFinOneL){
       #likelihood function of Log-normal model
+        #par(mean, variance)
       hbLognormLike <- function(par){
         dens <- dtruncnorm(log(hb), a = log(hbMin), b = log(1 / hbMin), mean = par[1], sd = sqrt(par[2] / hbHeight))
         return(-sum(log(dens)))
@@ -4169,11 +4169,11 @@ Kongoh <- function(){
     }
     
     #Modeling stutter ratio
-    #複数ローカスまとめる場合は、各オブジェクトをリストにする
+      #When modeling multiple loci together, each object is the list of each locus data.
     srModeling <- function(modelName, sr, srHeight, srAl, srLus = NULL, motifLength = NULL, seqAl = NULL, seqCount = NULL, srMax, srMleCondFinOneL){
       
       #likelihood function of Allele model
-      #par(slope, intercept, variance)
+        #par(slope, intercept, variance)
       srAlLike <- function(par, srMax){
         meanVal <- par[1] * srAl + par[2]
         dens <- dtruncnorm(log(sr), b = log(srMax), mean = log(meanVal), sd = sqrt(par[3] / srHeight))
@@ -4181,7 +4181,7 @@ Kongoh <- function(){
       }
       
       #likelihood function of LUS model
-      #par(slope, intercept, variance)
+        #par(slope, intercept, variance)
       srLusLike <- function(par, srMax){
         meanVal <- par[1] * srLus + par[2]
         dens <- dtruncnorm(log(sr), b = log(srMax), mean = log(meanVal), sd = sqrt(par[3] / srHeight))
@@ -4189,7 +4189,7 @@ Kongoh <- function(){
       }
       
       #likelihood function of multi-sequence model (modeling multiple loci together)
-      #par(slope, intercept, variance, x)
+        #par(slope, intercept, variance, x)
       srMultiLikeGen <- function(par, srMax){
         lenCorMeanAll <- numeric(0)
         for(i in 1:length(motifLength)){
@@ -4222,7 +4222,7 @@ Kongoh <- function(){
       }
       
       #likelihood function of multi-sequence model (locus specific)
-      #par(slope, intercept, variance, x)
+        #par(slope, intercept, variance, x)
       srMultiLikeSp <- function(par, srMax){
         nML <- length(motifLength)
         lenCorSum <- rep(0, nML)
@@ -4246,6 +4246,7 @@ Kongoh <- function(){
       }
       
       #likelihood function of uniform model
+        #par(mean, variance)
       srUniformLike <- function(par, srMax){
         dens <- dtruncnorm(log(sr), b = log(srMax), mean = log(par[1]), sd = sqrt(par[2] / srHeight))
         return(-sum(log(dens)))
@@ -4733,6 +4734,7 @@ Kongoh <- function(){
     
     #Output allele repeat correction
     alCorOutput <- function(lusData, motifLengthList, seqAlList, seqCountList, bsrBestList, fsrBestList, dsrBestList){
+      #Calculate weighted average values of corrected allele numbers
       wCACalc <- function(parX, motifLength, seqAl, seqCount){
         uniqAl <- sort(unique(seqAl))
         nU <- length(uniqAl)
@@ -5414,8 +5416,8 @@ Kongoh <- function(){
     #Sex chromosomal marker
     sexChrMar <- c("AMEL", "Amelogenin", "Yindel", "YIndel", "YInDel", "DYS391")
     
-    #STR motif length
-    motifLengthInfo <- c(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5)
+    #STR repeat length
+    repLengthInfo <- c(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5)
     
     
     ###################
@@ -5439,7 +5441,7 @@ Kongoh <- function(){
     parDefault <- matrix("", nStr, 13)
     colnames(parDefault) <- c("Locus", "Motif length", "Min. threshold", "AE model", "Hb model", "BSR method", "BSR model", "FSR method", "FSR model", "DSR method", "DSR model", "M2SR method", "M2SR model")
     parDefault[, 1] <- strMar
-    parDefault[, 2] <- motifLengthInfo
+    parDefault[, 2] <- repLengthInfo
     parDefault[, 3] <- mtDefault
     parDefault[, 4] <- rep("Log-normal", nStr)
     parDefault[, 5] <- rep("Log-normal", nStr)
@@ -5499,6 +5501,7 @@ Kongoh <- function(){
     ####################
     # Make a top frame #
     ####################
+    
     tfPar <- tktoplevel()
     tkwm.title(tfPar, "parameter estimation")
     tabsPar <- tk2notebook(tfPar, tabs = c("Files", "Setting", "Result"))
@@ -5520,6 +5523,7 @@ Kongoh <- function(){
   # 'Estimation of parameter' tab #
   #################################
   
+  #Make 'Estimation of parameters' tab
   tab5Make <- function(){
     tkdestroy(frameTab5)
     frameTab5 <<- tkframe(tab5)
