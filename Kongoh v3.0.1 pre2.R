@@ -1927,6 +1927,10 @@ Kongoh <- function(){
             }
           }
           mrDegID <- which(apply(mrDegAdopt, 2, sum) != 0)
+          if(length(mrDegID) == 0){
+            impossible <- TRUE
+            break
+          }
           log10LikeList[[j]] <- log10Like
           overallLike <- overallLike + log10Like
           gtProbList[[j]] <- gtProb
