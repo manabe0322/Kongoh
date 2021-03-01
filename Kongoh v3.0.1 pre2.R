@@ -552,7 +552,7 @@ Kongoh <- function(){
       srB1Param <- mcParam[mcParam[, grep("Factor", colnames(mcParam))] == "BSR", , drop = FALSE]
       srF1Param <- mcParam[mcParam[, grep("Factor", colnames(mcParam))] == "FSR", , drop = FALSE]
       srB2Param <- mcParam[mcParam[, grep("Factor", colnames(mcParam))] == "DSR", , drop = FALSE]
-      srM2Param <- mcParam[mcParam[, grep("Factor", colnames(mcParam))] == "MSR", , drop = FALSE]
+      srM2Param <- mcParam[mcParam[, grep("Factor", colnames(mcParam))] == "M2SR", , drop = FALSE]
       
       aeLoci <- aeParam[, grep("Marker", colnames(aeParam))]
       aePos <- !is.element(aeLoci, sexChrMar)
@@ -1071,7 +1071,7 @@ Kongoh <- function(){
       stF1FltrEntry <- tkentry(frameParamSet, textvariable = stF1FltrVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
       stB2FltrLabel <- tklabel(frameParamSet, text = "        - Double-back stutter filter")
       stB2FltrEntry <- tkentry(frameParamSet, textvariable = stB2FltrVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
-      stM2FltrLabel <- tklabel(frameParamSet, text = "        - Minus 2 base stutter filter")
+      stM2FltrLabel <- tklabel(frameParamSet, text = "        - Minus 2-nt stutter filter")
       stM2FltrEntry <- tkentry(frameParamSet, textvariable = stM2FltrVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
       
       tkgrid(mcLabel, mcEntry, padx = 20, sticky = "w")
@@ -2211,10 +2211,10 @@ Kongoh <- function(){
           }
           exportPg.tf <- tktoplevel()
           tkwm.title(exportPg.tf, "Export results of probabilistic genotyping")
-          tkgrid(tklabel(exportPg.tf, text = "Enter the folder name for saving files."), padx = 10, pady = 10, sticky = "w")
+          tkgrid(tklabel(exportPg.tf, text = "Enter the folder name for saving files."), padx = 10, pady = 5, sticky = "w")
           pgFolderName <- tclVar("")
-          tkgrid(tkentry(exportPg.tf, textvariable = pgFolderName, width = 30, highlightthickness = 1, relief = "solid", justify = "center", background = "white"), padx = 20, pady = 10, sticky = "w")
-          tkgrid(tkbutton(exportPg.tf, text = "    Choose location of the folder    ", cursor = "hand2", command = function() savePg()), padx = 20, pady = 20, sticky = "w")
+          tkgrid(tkentry(exportPg.tf, textvariable = pgFolderName, width = 30, highlightthickness = 1, relief = "solid", justify = "center", background = "white"), padx = 20, pady = 5, sticky = "w")
+          tkgrid(tkbutton(exportPg.tf, text = "    Save    ", cursor = "hand2", command = function() savePg()), padx = 20, pady = 20, sticky = "w")
         }
         
         frameTab3_1 <- frameTab3_2 <- tkframe(frameTab3)
@@ -2321,7 +2321,7 @@ Kongoh <- function(){
       write.table(paste("  - Back stutter filter : ", calcCond[names(calcCond) == "stB1Fltr"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(paste("  - Forward stutter filter : ", calcCond[names(calcCond) == "stF1Fltr"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(paste("  - Double-back stutter filter : ", calcCond[names(calcCond) == "stB2Fltr"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
-      write.table(paste("  - Minus 2 base stutter filter : ", calcCond[names(calcCond) == "stM2Fltr"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+      write.table(paste("  - Minus 2-nt stutter filter : ", calcCond[names(calcCond) == "stM2Fltr"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       
       write.table("======== Hypothesis ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
