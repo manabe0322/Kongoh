@@ -5472,7 +5472,7 @@ Kongoh <- function(){
     parGeneral[13] <- ""
     
     #Candidate models of each factor
-    aeCand <- hbCand <- bsrCand_seq <- fsrCand_seq <- dsrCand_seq <- m2srCand <- bsrCand_noSeq <- fsrCand_noSeq <- dsrCand_noSeq <- list()
+    aeCand <- hbCand <- bsrCand <- fsrCand <- dsrCand <- m2srCand <- list()
     for(i in 1:nStr){
       aeCand[[i]] <- "Log-normal"
       hbCand[[i]] <- "Log-normal"
