@@ -1836,7 +1836,6 @@ Kongoh <- function(){
     calcTime <- matrix(0, nrow = 1, ncol = hncTo - hncFrom + 1)
     calcTimeName <- rep(0, hncTo - hncFrom + 1)
     
-    ##########
     resultAllHnc <- hypIdAllList <- gammaAllList <- mrOneCList <- list()
     countHnc <- 0
     cl <- makeCluster(4, type = "PSOCK")
@@ -1852,9 +1851,7 @@ Kongoh <- function(){
       nMD <- nrow(mrDegAll)
       mrDegID <- 1:nMD
       mrOneC <- sort(unique(as.vector(mrAll)))
-      ##########
       mrOneCList[[countHnc]] <- mrOneC
-      ##########
       hypIdAllList[[countHnc]] <- hypIdAll <- hypIdMake(ncol(refAllL) / 2, hnc)
       nH <- sum(sapply(hypIdAll, nrow))
       gammaList <- gtCombList <- productsList <- log10LikeList <- gtProbList <- list()
@@ -1942,7 +1939,6 @@ Kongoh <- function(){
       }else{
         resultAllHnc[[countHnc]] <- resultMake(hypIdAll, nameKnown, mrDegAll, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName)
       }
-      ##########
       gammaAllList[[countHnc]] <- gammaList
       timeOneHnc <- proc.time() - t
       calcTime[1, countHnc] <- timeOneHnc[3]
