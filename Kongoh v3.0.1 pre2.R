@@ -107,6 +107,10 @@ Kongoh <- function(){
   mrDefault <- c(0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5)
   mrOne <<- mrDefault
   
+  #Default of degradation parameter (d)
+  degDefault <- round(seq(-0.05, 0, 0.0025), 4)
+  degOne <<- degDefault
+  
   #Threshold of likelihoods for selecting MR and d
   mrDegCutVar <- tclVar("0.0001")
   
@@ -1032,6 +1036,89 @@ Kongoh <- function(){
       tkgrid(mrListFrame, mrSetFrame, pady = 10)
     }
     
+    #Customize degradation parameter
+    degCustomize <- function(){
+      degSort <- function(){
+        degList <- tclvalue(degListVar)
+        degList <- unlist(strsplit(degList, " "))
+        degList <- sort(as.numeric(degList))
+        ndegOne <- length(degList)
+        tkdelete(degListbox, 0, size(degListbox) - 1)
+        for(i in 1:ndegOne){
+          tkinsert(degListbox, "end", degList[i])
+        }
+      }
+      
+      degRestore <- function(){
+        tkdelete(degListbox, 0, size(degListbox) - 1)
+        ndegOne <- length(degDefault)
+        for(i in 1:ndegOne){
+          tkinsert(degListbox, "end", degDefault[i])
+        }
+      }
+      
+      degAdd <- function(){
+        degNew <- tclvalue(degAddVar)
+        if(degNew != ""){
+          tkinsert(degListbox, "end", tclvalue(degAddVar))
+        }
+      }
+      
+      degDelete <- function(){
+        selectPos <- tkcurselection(degListbox)
+        selectPos <- tclvalue(selectPos)
+        if(selectPos != ""){
+          tkdelete(degListbox, selectPos)
+        }
+      }
+      
+      degSave <- function(){
+        degList <- tclvalue(degListVar)
+        degList <- unlist(strsplit(degList, " "))
+        degOne <<- sort(as.numeric(degList))
+        tkdestroy(deg.tf)
+      }
+      
+      degListVar <- tclVar("")
+      degAddVar <- tclVar("")
+      deg.tf <- tktoplevel()
+      tkwm.title(deg.tf, "Customize degradation parameter")
+      degListFrame <- tkframe(deg.tf)
+      degListbox <- tk2listbox(degListFrame, listvariable = degListVar, height = 10, justify = "center", selectmode = "single")
+      tkgrid(tklabel(degListFrame, text = "    degradation parameter"), padx = 20, sticky = "w")
+      tkgrid(degListbox, padx = 20, sticky = "w")
+      ndegOne <- length(degOne)
+      for(i in 1:ndegOne){
+        tkinsert(degListbox, "end", degOne[i])
+      }
+      degButtFrame <- tkframe(degListFrame)
+      degSortButt <- tkbutton(degButtFrame, text = " Sort ", command = function() degSort())
+      degRestoreButt <- tkbutton(degButtFrame, text = " Restore Defaults ", command = function() degRestore())
+      tkgrid(degSortButt, degRestoreButt, padx = 10)
+      tkgrid(degButtFrame, pady = 10)
+      
+      degSetFrame <- tkframe(deg.tf)
+      degAddFrame <- tkframe(degSetFrame)
+      degAddEntry <- tkentry(degAddFrame, textvariable = degAddVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
+      degAddButt <- tkbutton(degAddFrame, text = " Add ", command = function() degAdd())
+      degDeleteFrame <- tkframe(degSetFrame)
+      degDeleteButt <- tkbutton(degDeleteFrame, text = " Delete ", command = function() degDelete())
+      degSaveFrame <- tkframe(degSetFrame)
+      degSaveButt <- tkbutton(degSaveFrame, text = "Save", command = function() degSave())
+      tkgrid(tklabel(degSetFrame, text = "Add an entered value to the list of degradation parameter"), padx = 20, sticky = "w")
+      tkgrid(degAddEntry, degAddButt, padx = 20)
+      tkgrid(degAddFrame, padx = 20, sticky = "w")
+      tkgrid(tklabel(degSetFrame, text = ""), padx = 20, sticky = "w")
+      tkgrid(tklabel(degSetFrame, text = "Delete a selected degradation parameter"), padx = 20, sticky = "w")
+      tkgrid(tklabel(degDeleteFrame, text = "                    "), degDeleteButt, padx = 20)
+      tkgrid(degDeleteFrame, padx = 20, sticky = "w")
+      tkgrid(tklabel(degSetFrame, text = ""), padx = 20, sticky = "w")
+      tkgrid(tklabel(degSetFrame, text = "Save the customized degradation parameter"), padx = 20, sticky = "w")
+      tkgrid(tklabel(degSaveFrame, text = "                    "), degSaveButt, padx = 20)
+      tkgrid(degSaveFrame, padx = 20, sticky = "w")
+      tkgrid(degListFrame, degSetFrame, pady = 10)
+    }
+    
     #Make a window for setting other conditions
     paramSetting <- function(){
       tfParamSet <- tktoplevel()
@@ -1057,8 +1144,7 @@ Kongoh <- function(){
       mrCusButt <- tkbutton(frameParamSet, text = "    Customize    ", cursor = "hand2", state = "normal", command = function() mrCustomize())
       
       degLabel <- tklabel(frameParamSet, text = "Degradation (d)")
-      degWLabel <- tklabel(frameParamSet, text = "        - Width")
-      degWEntry <- tkentry(frameParamSet, textvariable = degWVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
+      degCusButt <- tkbutton(frameParamSet, text = "    Customize    ", cursor = "hand2", state = "normal", command = function() degCustomize())
       
       gtCombExcludeLab <- tklabel(frameParamSet, text = "Thresholds to exclude unrealistic genotype combinations")
       stLabel <- tklabel(frameParamSet, text = "        - Stochastic threshold")
@@ -1080,8 +1166,7 @@ Kongoh <- function(){
       tkgrid(obsRadioButt, padx = 40, sticky = "w")
       tkgrid(mafLabel, mafEntry, padx = 20, sticky = "w")
       tkgrid(mrLabel, mrCusButt, padx = 20, sticky = "w")
-      tkgrid(degLabel, padx = 20, sticky = "w")
-      tkgrid(degWLabel, degWEntry, padx = 20, sticky = "w")
+      tkgrid(degLabel, degCusButt, padx = 20, sticky = "w")
       tkgrid(gtCombExcludeLab, padx = 20, sticky = "w")
       tkgrid(stLabel, stEntry, padx = 20, sticky = "w")
       tkgrid(hbFltrLabel, hbFltrEntry, padx = 20, sticky = "w")
@@ -1319,7 +1404,7 @@ Kongoh <- function(){
   }
   
   #Set degradation parameter of one contributor
-  degOneCMake <- function(cspSize, cspHeight, tempPerL, degVal){
+  degOneCMake <- function(cspSize, cspHeight, tempPerL, degOne){
     sizeMeanCalc <- function(sizeVec, heightVec){
       sum(sizeVec * heightVec) / sum(heightVec)
     }
@@ -1332,8 +1417,8 @@ Kongoh <- function(){
     heightVec <- unlist(cspHeight)
     sizeMean <- sizeMeanCalc(sizeVec, heightVec)
     tempMean <- mean(tempPerL)
-    degError <- sapply(degVal, lsDeg, sizeVec = sizeVec, sizeMean = sizeMean, heightVec = heightVec, tempMean = tempMean)
-    degOneContrib <- degVal[is.element(rank(degError), 1:3)]
+    degError <- sapply(degOne, lsDeg, sizeVec = sizeVec, sizeMean = sizeMean, heightVec = heightVec, tempMean = tempMean)
+    degOneContrib <- degOne[is.element(rank(degError), 1:3)]
     return(list(degOneContrib, sizeMean))
   }
   
@@ -1475,14 +1560,14 @@ Kongoh <- function(){
     }
     
     #Cauculate Dal values
-    degValCalc <- function(d, sizeOneL, sizeMean){
+    dalCalc <- function(d, sizeOneL, sizeMean){
       exp(d * (sizeOneL - sizeMean))
     }
     
     paramCond <- paramCondMake(mrOneC, peakOneL, degOneC)
     
     step2Height <- tempMean * mrOneC
-    dalVal <- sapply(degOneC, degValCalc, sizeOneL = sizeOneL, sizeMean = sizeMean)
+    dalVal <- sapply(degOneC, dalCalc, sizeOneL = sizeOneL, sizeMean = sizeMean)
     step4Height <- as.vector(matrix(step2Height / 2, ncol = 1) %*% matrix(dalVal, nrow = 1))
     
     nStep4 <- length(step4Height)
@@ -1813,14 +1898,13 @@ Kongoh <- function(){
   }
   
   #Interpret CSP
-  cspInterpret <- function(cspPeak, cspSize, cspHeight, refAllL, popAlList, popFreqList, QFreqAll, atAllL, tempPerL, srB1Peak, srF1Peak, srB2Peak, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, repLengthAll, hncFrom, hncTo, mrOne, degW, theta, numMc, mrDegCut, st, hbFltr, stFltr){
+  cspInterpret <- function(cspPeak, cspSize, cspHeight, refAllL, popAlList, popFreqList, QFreqAll, atAllL, tempPerL, srB1Peak, srF1Peak, srB2Peak, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, repLengthAll, hncFrom, hncTo, mrOne, degOne, theta, numMc, mrDegCut, st, hbFltr, stFltr){
     lociName <- names(cspPeak)
     nL <- length(lociName)
     nK <- ncol(refAllL) / 2
     nameKnown <- colnames(refAllL)[1:(nK * 2) %% 2 == 1]
     tempMean <- mean(tempPerL)
-    degVal <- seq(-0.05, 0, by = degW)
-    degData <- degOneCMake(cspSize, cspHeight, tempPerL, degVal)
+    degData <- degOneCMake(cspSize, cspHeight, tempPerL, degOne)
     degOneC <- degData[[1]]
     sizeMean <- degData[[2]]
     
