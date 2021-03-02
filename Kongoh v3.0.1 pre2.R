@@ -103,7 +103,7 @@ Kongoh <- function(){
   srB2Max <- 0.13
   srM2Max <- 0.12
   
-  #Default of mixture ratio (MRn) of one contributor (1 to n-1)
+  #Default of mixture ratios (MRn) of one contributor (1 to n-1)
   mrDefault <- c(0.0025, 0.005, 0.0075, 0.01, 0.025, 0.05, 0.075, 0.1, 0.2, 0.3, 0.4, 0.5)
   mrOne <<- mrDefault
   
@@ -952,7 +952,7 @@ Kongoh <- function(){
   #Make 'Calculation' tab
   tab2Make <- function(csp = NULL, ref = NULL, af = NULL, aeParamVal = NULL, hbParamVal = NULL, srB1ParamVal = NULL, srF1ParamVal = NULL, srB2ParamVal = NULL, srM2ParamVal = NULL, srConsider = NULL, srModel = NULL, repLengthAll = NULL, dyeAllL = NULL, hpVars = NULL, hdVars = NULL, atVars = NULL){
     
-    #Customize mixture ratio of one contributor
+    #Customize mixture ratios of one contributor
     mrCustomize <- function(){
       mrSort <- function(){
         mrList <- tclvalue(mrListVar)
@@ -998,10 +998,10 @@ Kongoh <- function(){
       mrListVar <- tclVar("")
       mrAddVar <- tclVar("")
       mr.tf <- tktoplevel()
-      tkwm.title(mr.tf, "Customize mixture ratio")
+      tkwm.title(mr.tf, "Customize mixture ratios")
       mrListFrame <- tkframe(mr.tf)
       mrListbox <- tk2listbox(mrListFrame, listvariable = mrListVar, height = 10, justify = "center", selectmode = "single")
-      tkgrid(tklabel(mrListFrame, text = "    mixture ratio per contributor"), padx = 20, sticky = "w")
+      tkgrid(tklabel(mrListFrame, text = "    mixture ratios per contributor"), padx = 20, sticky = "w")
       tkgrid(mrListbox, padx = 20, sticky = "w")
       nMrOne <- length(mrOne)
       for(i in 1:nMrOne){
@@ -1021,7 +1021,7 @@ Kongoh <- function(){
       mrDeleteButt <- tkbutton(mrDeleteFrame, text = " Delete ", command = function() mrDelete())
       mrSaveFrame <- tkframe(mrSetFrame)
       mrSaveButt <- tkbutton(mrSaveFrame, text = "Save", command = function() mrSave())
-      tkgrid(tklabel(mrSetFrame, text = "Add an entered value to the list of mixture ratio"), padx = 20, sticky = "w")
+      tkgrid(tklabel(mrSetFrame, text = "Add an entered value to the list of mixture ratios"), padx = 20, sticky = "w")
       tkgrid(mrAddEntry, mrAddButt, padx = 20)
       tkgrid(mrAddFrame, padx = 20, sticky = "w")
       tkgrid(tklabel(mrSetFrame, text = ""), padx = 20, sticky = "w")
@@ -1029,7 +1029,7 @@ Kongoh <- function(){
       tkgrid(tklabel(mrDeleteFrame, text = "                    "), mrDeleteButt, padx = 20)
       tkgrid(mrDeleteFrame, padx = 20, sticky = "w")
       tkgrid(tklabel(mrSetFrame, text = ""), padx = 20, sticky = "w")
-      tkgrid(tklabel(mrSetFrame, text = "Save the customized mixture ratio"), padx = 20, sticky = "w")
+      tkgrid(tklabel(mrSetFrame, text = "Save the customized mixture ratios"), padx = 20, sticky = "w")
       tkgrid(tklabel(mrSaveFrame, text = "                    "), mrSaveButt, padx = 20)
       tkgrid(mrSaveFrame, padx = 20, sticky = "w")
       tkgrid(mrListFrame, mrSetFrame, pady = 10)
