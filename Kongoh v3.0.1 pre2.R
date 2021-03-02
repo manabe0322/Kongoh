@@ -409,10 +409,10 @@ Kongoh <- function(){
       }
     }
     
-    #View Monte Carlo parameters
+    #View parameters for Monte Carlo simulation
     mcView <- function(){
       if(paste(tclvalue(mcName)) == ""){
-        tkmessageBox(message = "Load Monte Carlo Parameters!", icon = "error", type = "ok")
+        tkmessageBox(message = "Load parameters for Monte Carlo simulation!", icon = "error", type = "ok")
       }else{
         mc <- read.csv(tclvalue(mcFp), header = FALSE)
         mc <- as.matrix(mc)
@@ -429,7 +429,7 @@ Kongoh <- function(){
           }
         }
         mcTf <- tktoplevel()
-        tkwm.title(mcTf, "Monte Carlo Parameters")
+        tkwm.title(mcTf, "Parameters for Monte Carlo simulation")
         mcFrame <- tkframe(mcTf)
         mcTable <- tkwidget(mcFrame, "table", variable = mcTclArray, rows = nrow(mc), cols = ncol(mc), titlerows = "1", titlecols = "1", selectmode = "extended", colwidth = "20", xscrollcommand = function(...) tkset(xscr, ...), yscrollcommand = function(...) tkset(yscr, ...))
         xscr <- tkscrollbar(mcFrame, orient = "horizontal", command = function(...) tkxview(mcTable, ...))
@@ -492,10 +492,10 @@ Kongoh <- function(){
     afButt <- tkbutton(frameTab1_1, text = "    Load    ", cursor = "hand2", command = function() openFile(afFp, afName, tf, afButtS, afButtC))
     afShowButt <- tkbutton(frameTab1_1, text = "  View Frequencies  ", cursor = tclvalue(afButtC), state = tclvalue(afButtS), command = function() afView())
     
-    mcLabel <- tklabel(frameTab1_1, text = "Monte Carlo Parameters")
+    mcLabel <- tklabel(frameTab1_1, text = "Parameters for Monte Carlo simulation")
     mcFileLabel <- tklabel(frameTab1_1, textvariable = mcName, width = 30, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
     mcButt <- tkbutton(frameTab1_1, text = "    Load    ", cursor = "hand2", command = function() openFile(mcFp, mcName, tf, mcButtS, mcButtC))
-    mcShowButt <- tkbutton(frameTab1_1, text = "  View Monte Carlo Parameters  ", cursor = tclvalue(mcButtC), state = tclvalue(mcButtS), command = function() mcView())
+    mcShowButt <- tkbutton(frameTab1_1, text = "  View parameters for Monte Carlo simulation  ", cursor = tclvalue(mcButtC), state = tclvalue(mcButtS), command = function() mcView())
     
     alCorLabel <- tklabel(frameTab1_1, text = "Allele Repeat Correction")
     alCorFileLabel <- tklabel(frameTab1_1, textvariable = alCorName, width = 30, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
@@ -1305,7 +1305,7 @@ Kongoh <- function(){
       tkgrid(tklabel(frameTab2, text = "        Load allele frequencies!        "), pady = 10, sticky = "w")
     }
     if(tclvalue(mcName) == ""){
-      tkgrid(tklabel(frameTab2, text = "        Load Monte Carlo Parameters!        "), pady = 10, sticky = "w")
+      tkgrid(tklabel(frameTab2, text = "        Load parameters for Monte Carlo simulation!        "), pady = 10, sticky = "w")
     }
     if(all(c(tclvalue(cspName), tclvalue(refName), tclvalue(afName), tclvalue(mcName)) != "")){
       if(tclvalue(fileCkFin) == "0"){
@@ -2057,7 +2057,7 @@ Kongoh <- function(){
       tkgrid(tklabel(frameTab3, text = "        Load allele frequencies!        "), pady = 10, sticky = "w")
     }
     if(tclvalue(mcName) == ""){
-      tkgrid(tklabel(frameTab3, text = "        Load Monte Carlo Parameters!        "), pady = 10, sticky = "w")
+      tkgrid(tklabel(frameTab3, text = "        Load parameters for Monte Carlo simulation!        "), pady = 10, sticky = "w")
     }
     if(all(c(tclvalue(cspName), tclvalue(refName), tclvalue(afName)) != "")){
       if(tclvalue(calcFin) == "0"){
@@ -2372,7 +2372,7 @@ Kongoh <- function(){
       write.table(paste("Crime stain profile : ", tclvalue(cspName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(paste("Reference profile : ", tclvalue(refName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(paste("Allele frequencies : ", tclvalue(afName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
-      write.table(paste("Monte Carlo parameters : ", tclvalue(mcName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+      write.table(paste("Parameters for Monte Carlo simulation : ", tclvalue(mcName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(paste("Allele repeat correction : ", tclvalue(alCorName), sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       
@@ -2461,7 +2461,7 @@ Kongoh <- function(){
       tkgrid(tklabel(frameTab4, text = "        Load allele frequencies!        "), pady = 10, sticky = "w")
     }
     if(tclvalue(mcName) == ""){
-      tkgrid(tklabel(frameTab4, text = "        Load Monte Carlo Parameters!        "), pady = 10, sticky = "w")
+      tkgrid(tklabel(frameTab4, text = "        Load parameters for Monte Carlo simulation!        "), pady = 10, sticky = "w")
     }
     if(all(c(tclvalue(cspName), tclvalue(refName), tclvalue(afName)) != "")){
       if(tclvalue(calcFin) == "0"){
@@ -3611,9 +3611,9 @@ Kongoh <- function(){
     }
     
     
-    ###################################
-    # Estimate Monte Carlo parameters #
-    ###################################
+    ##################################################
+    # Estimate parameters for Monte Carlo simulation #
+    ##################################################
     
     #Make a list of model names in each parameter
     modelNameListMake <- function(modelName, modelCandFin, parDeal = NULL, multiModelName = NULL){
