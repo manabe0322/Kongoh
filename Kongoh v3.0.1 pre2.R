@@ -240,7 +240,6 @@ Kongoh <- function(){
   thetaVar <- tclVar("0")
   numMcVar <- tclVar("1000")
   
-  degWVar <- tclVar("0.0025")
   stVar <- tclVar("500")
   hbFltrVar <- tclVar("0.25")
   stB1FltrVar <- tclVar("0.7")
@@ -1202,7 +1201,6 @@ Kongoh <- function(){
       hncTo <- as.numeric(tclvalue(hncToVar))
       atVals <- as.numeric(sapply(atVars, tclvalue))
       names(atVals) <- names(atVars)
-      degW <- abs(as.numeric(tclvalue(degWVar)))
       afMeth <- as.numeric(tclvalue(afMethVar))
       if(afMeth == 1){
         maf <- 1
@@ -1216,8 +1214,8 @@ Kongoh <- function(){
       hbFltr <- as.numeric(tclvalue(hbFltrVar))
       stFltr <- c(as.numeric(tclvalue(stB1FltrVar)), as.numeric(tclvalue(stF1FltrVar)), as.numeric(tclvalue(stB2FltrVar)), as.numeric(tclvalue(stM2FltrVar)))
       names(stFltr) <- c("stB1Fltr", "stF1Fltr", "stB2Fltr", "stM2Fltr")
-      calcCond <- c(hncFrom, hncTo, atVals, degW, afMeth, maf, theta, numMc, mrDegCut, st, hbFltr, stFltr)
-      names(calcCond) <- c("hncFrom", "hncTo", names(atVals), "degW", "afMeth", "maf", "theta", "numMc", "mrDegCut", "st", "hbFltr", names(stFltr))
+      calcCond <- c(hncFrom, hncTo, atVals, afMeth, maf, theta, numMc, mrDegCut, st, hbFltr, stFltr)
+      names(calcCond) <- c("hncFrom", "hncTo", names(atVals), "afMeth", "maf", "theta", "numMc", "mrDegCut", "st", "hbFltr", names(stFltr))
       alCorJudge <- TRUE
       
       if(tclvalue(alCorFp) != ""){
@@ -1256,7 +1254,7 @@ Kongoh <- function(){
         }
         
         if(alCorJudge){
-          resultData <- cspInterpret(cspPeak, cspSize, cspHeight, refAllL, popAlList, popFreqList, QFreqAll, atAllL, tempPerL, srB1Peak, srF1Peak, srB2Peak, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, repLengthAll, hncFrom, hncTo, mrOne, degW, theta, numMc, mrDegCut, st, hbFltr, stFltr)
+          resultData <- cspInterpret(cspPeak, cspSize, cspHeight, refAllL, popAlList, popFreqList, QFreqAll, atAllL, tempPerL, srB1Peak, srF1Peak, srB2Peak, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, repLengthAll, hncFrom, hncTo, mrOne, degOne, theta, numMc, mrDegCut, st, hbFltr, stFltr)
           resultAllHnc <<- resultData[[1]]
           gammaAllList <<- resultData[[2]]
           hypIdAllList <<- resultData[[3]]
@@ -2387,7 +2385,7 @@ Kongoh <- function(){
       write.table("Mixture ratio", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table(matrix(mrOne, nrow = 1), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       write.table("Degradation", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
-      write.table(paste("  - Width : ", calcCond[names(calcCond) == "degW"], sep = ""), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+      write.table(matrix(degOne, nrow = 1), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       
       write.table("Allele frequencies", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
       afMeth <- calcCond[names(calcCond) == "afMeth"]
@@ -2503,8 +2501,8 @@ Kongoh <- function(){
         log10LikeHd <- matrix(-Inf, nL + 1, length(resultHd))
         rownames(log10LikeHd) <- c(lociName, "Total")
         colnames(log10LikeHd) <- rep("", length(resultHd))
-        hncFrom <- calcCond[1]
-        hncTo <- calcCond[2]
+        hncFrom <- calcCond[names(calcCond) == "hncFrom"]
+        hncTo <- calcCond[names(calcCond) == "hncTo"]
         mrEstimateHpAll <- mrEstimateHdAll <- dEstimateHpAll <- dEstimateHdAll <- matrix("", hncTo, 3 * hncTo - 1)
         colnames(mrEstimateHpAll) <- colnames(mrEstimateHdAll) <- colnames(dEstimateHpAll) <- colnames(dEstimateHdAll) <- rep("", 3 * hncTo - 1)
         
