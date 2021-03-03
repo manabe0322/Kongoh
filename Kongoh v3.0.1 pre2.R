@@ -2650,7 +2650,7 @@ Kongoh <- function(){
       tkdestroy(fTab1Par)
       fTab1Par <<- tkframe(tab1Par)
       
-      calibLabel <- tklabel(fTab1Par, text = "Calibration Data")
+      calibLabel <- tklabel(fTab1Par, text = "Experimental Data")
       calibFileLabel <- tklabel(fTab1Par, textvariable = calibName, width = 30, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
       calibButt <- tkbutton(fTab1Par, text = "    Load    ", cursor = "hand2", command = function() openFile2(calibFp, calibName, tfPar))
       
@@ -2693,7 +2693,7 @@ Kongoh <- function(){
           seqData <- as.matrix(seqData)
           seqDataLoci <- unique(seqData[, which(colnames(seqData) == "Locus")])
           if(!all(is.element(calDataLoci, seqDataLoci))){
-            tkmessageBox(message = "Some loci of calibration data are not included in the file of sequence data!", icon = "error", type = "ok")
+            tkmessageBox(message = "Some loci of experimental data are not included in the file of sequence data!", icon = "error", type = "ok")
             seqFileOk <- FALSE
           }
           if(seqFileOk){
@@ -3084,7 +3084,7 @@ Kongoh <- function(){
       tkdestroy(fTab2Par)
       fTab2Par <<- tkframe(tab2Par)
       if(tclvalue(calibName) == ""){
-        tkgrid(tklabel(fTab2Par, text = "        Load calibration data!        "), pady = 10, sticky = "w")
+        tkgrid(tklabel(fTab2Par, text = "        Load experimental data!        "), pady = 10, sticky = "w")
         tkgrid(fTab2Par)
       }
       if(tclvalue(gtAnsName) == ""){
@@ -3674,7 +3674,7 @@ Kongoh <- function(){
       return(mleCondFin)
     }
     
-    #Arrange calibration data
+    #Arrange experimental data
     calDataArrange <- function(calData, gtAns, parLocus, mt, srConsider){
       
       #pick up allele peak
@@ -4911,7 +4911,7 @@ Kongoh <- function(){
       tkdestroy(fTab3Par)
       fTab3Par <<- tkframe(tab3Par)
       if(tclvalue(calibName) == ""){
-        tkgrid(tklabel(fTab3Par, text = "        Load calibration data!        "), pady = 10, sticky = "w")
+        tkgrid(tklabel(fTab3Par, text = "        Load experimental data!        "), pady = 10, sticky = "w")
         tkgrid(fTab3Par)
       }
       if(tclvalue(gtAnsName) == ""){
