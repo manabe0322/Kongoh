@@ -2529,7 +2529,7 @@ Kongoh <- function(){
             gammaSum <- gammaSumCalc(gtCombOne, mrEstimate, degEstimate, peakOneL, gammaParamOneL[[1]], gammaParamOneL[[2]], gammaParamOneL[[3]], gammaParamOneL[[4]], gammaParamOneL[[5]], mrOneC, degOneC)
             densPos <- !is.nan(gammaSum[1, ])
             gammaSumGraph <- gammaSum[, densPos, drop = FALSE]
-            peakOneLGraph <- peakOneL[densPos]
+            peakOneLGraph <- peakOneLGraph2 <- peakOneL[densPos]
             if(any(is.element(peakOneLGraph, 99))){
               peakOneLGraph[which(peakOneLGraph == 99)] <- max(peakOneLGraph[which(peakOneLGraph != 99)]) + 2
             }
@@ -2546,10 +2546,10 @@ Kongoh <- function(){
               dens <- dens[densPos]
               par(new = TRUE)
               plot(peakOne - 0.1 - 0.3 / max(dens) * dens, gamHeightCand[densPos], type = "l", col = "red", xlim = c(min(peakOneLGraph) - 1, max(peakOneLGraph) + 1), ylim = c(0, yMax), xlab = "", ylab = "", axes = FALSE)
-              if(peakOneLGraph[i] == 99){
+              if(peakOneLGraph2[i] == 99){
                 xLabelOne <- "Q"
               }else{
-                xLabelOne <- peakOneLGraph[i]
+                xLabelOne <- peakOneLGraph2[i]
               }
               par(xpd = TRUE)
               text(peakOne, - yMax / 12, xLabelOne)
