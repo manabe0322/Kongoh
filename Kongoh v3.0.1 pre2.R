@@ -2531,7 +2531,7 @@ Kongoh <- function(){
             gammaSumGraph <- gammaSum[, densPos, drop = FALSE]
             peakOneLGraph <- peakOneL[densPos]
             if(any(is.element(peakOneLGraph, 99))){
-              peakOneLGraph[which(peakOneL == 99)] <- max(peakOneL[which(peakOneL != 99)]) + 2
+              peakOneLGraph[which(peakOneLGraph == 99)] <- max(peakOneLGraph[which(peakOneLGraph != 99)]) + 2
             }
             heightOneLGraph <- heightOneL[densPos]
             
