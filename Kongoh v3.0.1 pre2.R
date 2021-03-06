@@ -95,7 +95,7 @@ Kongoh <- function(){
   #software version
   softVer <- "Kongoh v3.0.1"
   
-  #Minimum or maximum of each parameter
+  #Minimum or maximum of each parameter for Monte Carlo simulation
   aeMin <- 0.058
   hbMin <- 0.046
   srB1Max <- 0.7
@@ -583,10 +583,10 @@ Kongoh <- function(){
   # 'Files' tab #
   ###############
   
-  #Make 'Files' tab
+  #Make the 'Files' tab
   tab1Make <- function(){
     
-    #Imput required files
+    #Input required files
     openFile <- function(fp, var, top, fileState, cursor){
       imputOk <- "ok"
       if(tclvalue(calcFin) == "1"){
@@ -614,7 +614,7 @@ Kongoh <- function(){
       }
     }
     
-    #View CSP profile
+    #View the inputted CSP profile
     cspView <- function(){
       if(paste(tclvalue(cspName)) == ""){
         tkmessageBox(message = "Load Crime Stain Profile!", icon = "error", type = "ok")
@@ -651,7 +651,7 @@ Kongoh <- function(){
       }
     }
     
-    #View reference profile
+    #View the inputted reference profile
     refView <- function(){
       if(paste(tclvalue(refName)) == ""){
         tkmessageBox(message = "Load Reference Profiles!", icon = "error", type = "ok")
@@ -674,7 +674,7 @@ Kongoh <- function(){
       }
     }
     
-    #View allele frequencies
+    #View the inputted allele frequencies
     afView <- function(){
       if(paste(tclvalue(afName)) == ""){
         tkmessageBox(message = "Load Allele Frequencies!", icon = "error", type = "ok")
@@ -724,7 +724,7 @@ Kongoh <- function(){
       }
     }
     
-    #View parameters for Monte Carlo simulation
+    #View the inputted parameters for Monte Carlo simulation
     mcView <- function(){
       if(paste(tclvalue(mcName)) == ""){
         tkmessageBox(message = "Load parameters for Monte Carlo simulation!", icon = "error", type = "ok")
@@ -757,7 +757,7 @@ Kongoh <- function(){
       }
     }
     
-    #View information of allele repeat correction
+    #View the inputted information of allele repeat correction
     alCorView <- function(){
       if(paste(tclvalue(alCorName)) == ""){
         tkmessageBox(message = "Load Crime Stain Profile!", icon = "error", type = "ok")
@@ -833,10 +833,10 @@ Kongoh <- function(){
   
   
   #####################
-  # Check imput files #
+  # Check input files #
   #####################
   
-  #Check imput files
+  #Check input files
   fileCk <- function(){
     if(any(c(tclvalue(cspFp) == "", tclvalue(refFp) == "", tclvalue(afFp) == "", tclvalue(mcFp) == ""))){
       tkmessageBox(message = "Load required file(s)!", icon = "error", type = "ok")
@@ -1087,7 +1087,7 @@ Kongoh <- function(){
     }
   }
   
-  #Arrange imput data for calculation
+  #Arrange input data for calculation
   dataArrange <- function(csp, ref, af, atVals, dyeAllL, repLengthAll, afMeth, maf, alCor = NULL, srModel = NULL){
     srXmake <- function(srId){
       modelName <- srModelOneL[srId]
@@ -1292,12 +1292,12 @@ Kongoh <- function(){
     return(list(resultHp, resultHd))
   }
   
-  #Make spinbox (GUI)
+  #Make a spinbox (GUI)
   tkspinbox <- function(parent, ...){
     tkwidget(parent, "tk::spinbox", ...)
   }
   
-  #Make 'Calculation' tab
+  #Make the 'Calculation' tab
   tab2Make <- function(csp = NULL, ref = NULL, af = NULL, aeParamVal = NULL, hbParamVal = NULL, srB1ParamVal = NULL, srF1ParamVal = NULL, srB2ParamVal = NULL, srM2ParamVal = NULL, srConsider = NULL, srModel = NULL, repLengthAll = NULL, dyeAllL = NULL, hpVars = NULL, hdVars = NULL, atVars = NULL){
     
     #Customize mixture ratios of one contributor
@@ -1383,7 +1383,7 @@ Kongoh <- function(){
       tkgrid(mrListFrame, mrSetFrame, pady = 10)
     }
     
-    #Customize degradation parameter
+    #Customize degradation parameters
     degCustomize <- function(){
       degSort <- function(){
         degList <- tclvalue(degListVar)
@@ -1715,7 +1715,7 @@ Kongoh <- function(){
   # Main calculation #
   ####################
   
-  #Set mixture ratio
+  #Set candidates of mixture ratios
   mrSetting <- function(hnc, mrOne){
     if(hnc == 1){
       return(matrix(1, 1, 1))
@@ -1750,7 +1750,7 @@ Kongoh <- function(){
     }
   }
   
-  #Set degradation parameter of one contributor
+  #Set candidates of the degradation parameter of one contributor
   degOneCMake <- function(cspSize, cspHeight, tempPerL, degOne){
     sizeMeanCalc <- function(sizeVec, heightVec){
       sum(sizeVec * heightVec) / sum(heightVec)
@@ -2001,7 +2001,7 @@ Kongoh <- function(){
     return(gammaParam)
   }
   
-  #Obtain density of gamma distribution
+  #Obtain density values of gamma distribution
   gammaDens <- function(gtCombOne, mrDegAll, peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at){
     
     #Sum gamma distributions of same allele repeat number
@@ -2105,7 +2105,7 @@ Kongoh <- function(){
     return(prodGtCombOne)
   }
   
-  #Calculate genotype probability
+  #Calculate probabilities of a genotype combination
   gtProbCalc <- function(gtCombOne, hypIdOne, popAl, popFreq, theta, knownGt = NULL, QFreq = NULL){
     hnc <- length(gtCombOne) / 2
     gtUnique <- unique(gtCombOne)
@@ -2244,7 +2244,7 @@ Kongoh <- function(){
     return(resultList)
   }
   
-  #Interpret CSP
+  #Interpret a CSP
   cspInterpret <- function(cspPeak, cspSize, cspHeight, refAllL, popAlList, popFreqList, QFreqAll, atAllL, tempPerL, srB1Peak, srF1Peak, srB2Peak, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, repLengthAll, hncFrom, hncTo, mrOne, degOne, theta, numMc, mrDegCut, st, hbFltr, stFltr){
     lociName <- names(cspPeak)
     nL <- length(lociName)
@@ -2390,7 +2390,7 @@ Kongoh <- function(){
   # 'Probabilistic genotyping' tab #
   ##################################
   
-  #Make 'Probabilistic genotyping' tab
+  #Make the 'Probabilistic genotyping' tab
   tab3Make <- function(resultHp = NULL, resultHd = NULL, cspPeak = NULL, cspHeight = NULL, gammaList = NULL, dyeAllL = NULL, calcCond = NULL, mrOneCList = NULL, degOneC = NULL, repLengthAll = NULL){
     tkdestroy(frameTab3)
     frameTab3 <<- tkframe(tab3)
@@ -2436,7 +2436,7 @@ Kongoh <- function(){
           return(pgNew)
         }
         
-        #Sum gamma distributions of same allele repeat number
+        #Sum gamma distributions of the same allele repeat number
         gammaSumCalc <- function(gtCombOne, mr, deg, peakOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC){
           nAl <- length(gtCombOne)
           nPeak <- length(peakOneL)
@@ -2784,7 +2784,7 @@ Kongoh <- function(){
     }
   }
   
-  #Make 'Likelihood Ratio' tab
+  #Make the 'Likelihood Ratio' tab
   tab4Make <- function(resultHp = NULL, resultHd = NULL, calcCond = NULL, mrOne = NULL, dyeNames = NULL, calcTime = NULL){
     tkdestroy(frameTab4)
     frameTab4 <<- tkframe(tab4)
@@ -2966,7 +2966,7 @@ Kongoh <- function(){
   
   #Open a new window for parameter estimation
   parEstWindow <- function(){
-    #Imput required files
+    #Input required files
     openFile2 <- function(fp, var, top){
       fileName <- tclvalue(tkgetOpenFile(parent = top, initialdir = tclvalue(fp), multiple = "true", filetypes = "{{CSV Files} {.csv}}"))
       if(!nchar(fileName)){
@@ -2984,7 +2984,7 @@ Kongoh <- function(){
       tab3ParMake()
     }
     
-    #Make 'Files' tab
+    #Make the 'Files' tab
     tab1ParMake <- function(){
       tkdestroy(fTab1Par)
       fTab1Par <<- tkframe(tab1Par)
@@ -3010,7 +3010,7 @@ Kongoh <- function(){
       tkgrid(fTab1Par)
     }
     
-    #Check imput files
+    #Check input files
     fileCk2 <- function(){
       if(any(c(tclvalue(calibFp) == "", tclvalue(gtAnsFp) == "", tclvalue(seqFp) == ""))){
         tkmessageBox(message = "Load required file(s)!", icon = "error", type = "ok")
@@ -3413,12 +3413,12 @@ Kongoh <- function(){
       return(m2srMleCond)
     }
     
-    #Re-make tab2 to restore default setting
+    #Re-make the 'Setting' tab to restore default setting
     restoreDefaults <- function(parLocus, parDye){
       tab2ParMake(parLocus, parDye)
     }
     
-    #Make 'Setting' tab
+    #Make the 'Setting' tab
     tab2ParMake <- function(parLocus = NULL, parDye = NULL){
       tkdestroy(fTab2Par)
       fTab2Par <<- tkframe(tab2Par)
@@ -3440,6 +3440,7 @@ Kongoh <- function(){
           tkgrid(fTab2Par)
         }else{
           advancedSetting <- function(){
+            #Make a window for advanced setting of AE
             tab1AdvMake <- function(){
               showCond <- function(){
                 tkdestroy(fTab1Adv_2)
@@ -3492,6 +3493,7 @@ Kongoh <- function(){
               tkgrid(fTab1Adv)
             }
             
+            #Make a window for advanced setting of Hb
             tab2AdvMake <- function(){
               showCond <- function(){
                 tkdestroy(fTab2Adv_2)
@@ -3544,6 +3546,7 @@ Kongoh <- function(){
               tkgrid(fTab2Adv)
             }
             
+            #Make a window for advanced setting of BSR
             tab3AdvMake <- function(){
               showCond <- function(){
                 tkdestroy(fTab3Adv_2)
@@ -3596,6 +3599,7 @@ Kongoh <- function(){
               tkgrid(fTab3Adv)
             }
             
+            #Make a window for advanced setting of FSR
             tab4AdvMake <- function(){
               showCond <- function(){
                 tkdestroy(fTab4Adv_2)
@@ -3648,6 +3652,7 @@ Kongoh <- function(){
               tkgrid(fTab4Adv)
             }
             
+            #Make a window for advanced setting of DSR
             tab5AdvMake <- function(){
               showCond <- function(){
                 tkdestroy(fTab5Adv_2)
@@ -3700,6 +3705,7 @@ Kongoh <- function(){
               tkgrid(fTab5Adv)
             }
             
+            #Make a window for advanced setting of M2SR
             tab6AdvMake <- function(){
               showCond <- function(){
                 tkdestroy(fTab6Adv_2)
@@ -3777,6 +3783,7 @@ Kongoh <- function(){
             tab6AdvMake()
           }
           
+          #Link a combobox1 and a combobox2
           comboBind <- function(combo1, combo2, srDealVar){
             tkbind(combo1, "<<ComboboxSelected>>", function(){
               if(tclvalue(srDealVar) == "Locus specific"){
@@ -3832,16 +3839,21 @@ Kongoh <- function(){
             locusPos <- which(parDefault[, 1] == parLocus[i])
             if(length(locusPos) == 1){
               parDefaultOneL <- parDefault[locusPos, ]
+              aeCandFin[[i]] <- aeCand[[locusPos]]
+              hbCandFin[[i]] <- hbCand[[locusPos]]
+              bsrCandFin[[i]] <- bsrCand[[locusPos]]
+              fsrCandFin[[i]] <- fsrCand[[locusPos]]
+              dsrCandFin[[i]] <- dsrCand[[locusPos]]
+              m2srCandFin[[i]] <- m2srCand[[locusPos]]
             }else{
               parDefaultOneL <- parGeneral
+              aeCandFin[[i]] <- aeCandGen
+              hbCandFin[[i]] <- hbCandGen
+              bsrCandFin[[i]] <- bsrCandGen
+              fsrCandFin[[i]] <- fsrCandGen
+              dsrCandFin[[i]] <- dsrCandGen
+              m2srCandFin[[i]] <- m2srCandGen
             }
-            
-            aeCandFin[[i]] <- aeCand[[locusPos]]
-            hbCandFin[[i]] <- hbCand[[locusPos]]
-            bsrCandFin[[i]] <- bsrCand[[locusPos]]
-            fsrCandFin[[i]] <- fsrCand[[locusPos]]
-            dsrCandFin[[i]] <- dsrCand[[locusPos]]
-            m2srCandFin[[i]] <- m2srCand[[locusPos]]
             
             repLengthVar[[i]] <- tclVar(parDefaultOneL[2])
             repLengthEntry[[i]] <- tkentry(fTab2Par_scr, textvariable = repLengthVar[[i]], width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white")
@@ -4016,7 +4028,7 @@ Kongoh <- function(){
     #Arrange experimental data
     calDataArrange <- function(calData, gtAns, parLocus, mt, srConsider){
       
-      #pick up allele peak
+      #Pick up allele sizes
       pickAlSize <- function(sampleL, peakAllL, sizeAllL, dyeAllL, gtOne, gtMarPos, gtAlPos){
         alPeak <- alSize <- alDye <- numeric(0)
         nL <- length(sampleL)
@@ -4039,7 +4051,7 @@ Kongoh <- function(){
         return(alSizeInfo)
       }
       
-      #Make possible peak of observation in CSP under a hypothesized genotype combination
+      #Make possible peaks of observation in CSP under a hypothesized genotype combination
       possiblePeakMake <- function(gtCombOne, srConsiderOneL){
         possiblePeak <- gtCombOne
         if(srConsiderOneL[1]){
@@ -4286,7 +4298,7 @@ Kongoh <- function(){
       return(list(hbData, hbHeightData))
     }
     
-    #Get data of stutter ratio
+    #Get data of stutter ratios
     srDataGet <- function(calData2, gtAns2, srConsider){
       numSample <- length(calData2)
       nL <- length(calData2[[1]])
@@ -4425,7 +4437,7 @@ Kongoh <- function(){
       return(list(bsrData, fsrData, dsrData, m2srData, srAlData, srHeightData))
     }
     
-    #Make motif length (for LUS and multi-sequence model)
+    #Make information of motif length (for LUS and multi-seq model)
     motifLengthMake <- function(repeatSeq){
       motifLength <- list()
       for(i in 1:length(repeatSeq)){
@@ -4471,7 +4483,7 @@ Kongoh <- function(){
       return(list(lusData, motifLengthList, seqAlList, seqCountList))
     }
     
-    #calculate AIC
+    #Calculate AIC
     aicCalc <- function(logLike, nP){
       return(-2 * logLike + 2 * nP)
     }
@@ -4570,7 +4582,7 @@ Kongoh <- function(){
       return(srUseList)
     }
     
-    #Make SR data of general model
+    #Make SR data for considering multiple loci together
     srGenMake <- function(srGenPos, srData, srAlData, srHeightData, lusData, motifLengthList, seqAlList, seqCountList, srMax){
       srGen <- srAlGen <- srHeightGen <- srLusGen <- motifLengthGen <- seqAlGen <- seqCountGen <- list()
       for(i in 1:length(srGenPos)){
@@ -4590,7 +4602,7 @@ Kongoh <- function(){
     }
     
     #Modeling stutter ratio
-      #When modeling multiple loci together, each object is the list of each locus data.
+      #When modeling multiple loci together, each object is the list of each locus data
     srModeling <- function(modelName, sr, srHeight, srAl, srLus = NULL, motifLength = NULL, seqAl = NULL, seqCount = NULL, srMax, srMleCondFinOneL){
       
       #likelihood function of Allele model
@@ -5051,7 +5063,7 @@ Kongoh <- function(){
     # After estimation of parameters #
     ##################################
     
-    #choose best model
+    #Choose the best model
     chooseAdoptModel <- function(parModel, method, posMOneL){
       nM <- length(parModel) - 1
       if(nM > 1){
@@ -5153,7 +5165,7 @@ Kongoh <- function(){
       }
     }
     
-    #Output allele repeat correction
+    #Output information of allele repeat correction
     alCorOutput <- function(lusData, motifLengthList, seqAlList, seqCountList, bsrBestList, fsrBestList, dsrBestList){
       #Calculate weighted average values of corrected allele numbers
       wCACalc <- function(parX, motifLength, seqAl, seqCount){
@@ -5236,7 +5248,7 @@ Kongoh <- function(){
       tkgrid(fTab2Par)
     }
     
-    #Make 'Result' tab
+    #Make the 'Result' tab
     tab3ParMake <- function(aeUseData = NULL, aeModel = NULL, hbUseData = NULL, hbModel = NULL, 
                             bsrGenData = NULL, bsrUseData = NULL, bsrModel = NULL, 
                             fsrGenData = NULL, fsrUseData = NULL, fsrModel = NULL, 
@@ -5271,6 +5283,7 @@ Kongoh <- function(){
         }else{
           #Detail of results
           resultDetail <- function(parModel, parUseData, factName, mleCondFin, minMax){
+            #Make a graph of the variance of AE or Hb
             graphVar <- function(parModelOneL, parUseOneL, factName, factMin){
               estPar <- parModelOneL[[1]][[2]]
               if(factName == "AE"){
@@ -5297,6 +5310,7 @@ Kongoh <- function(){
                    xlab = "", ylab = "", axes = FALSE)
             }
             
+            #Make a graph of the regression line of SR
             srGraphMean <- function(parModelOneL, parUseOneL, nameModel, selectModel, factName){
               modelPos <- which(nameModel == selectModel)
               estPar <- parModelOneL[[modelPos]][[2]]
@@ -5363,6 +5377,7 @@ Kongoh <- function(){
               }
             }
             
+            #Make a graph of the variance of SR
             srGraphVar <- function(parModelOneL, parUseOneL, nameModel, selectModel, factName, srMax){
               modelPos <- which(nameModel == selectModel)
               sr <- parUseOneL[[1]]
@@ -5585,6 +5600,7 @@ Kongoh <- function(){
               tkgrid(fReest_2, sticky = "w")
             }
             
+            #Show results of one locus in detail
             showDetail <- function(){
               tkdestroy(fDetail_2)
               fDetail_2 <<- tkframe(tfParResult, relief = "groove", borderwidth = 2)
@@ -5830,11 +5846,11 @@ Kongoh <- function(){
     # Information of generally used locus #
     #######################################
     
-    #Autosomal STR marker
+    #Autosomal STR markers
     strMar <- c("D3S1358", "vWA", "D16S539", "CSF1PO", "TPOX", "D8S1179", "D21S11", "D18S51", "D2S441", "D19S433", "TH01", "FGA", "D22S1045", "D5S818", "D13S317", "D7S820", "SE33", "D10S1248", "D1S1656", "D12S391", "D2S1338", "D6S1043", "Penta D", "Penta E")
     nStr <- length(strMar)
     
-    #Sex chromosomal marker
+    #Sex chromosomal markers
     sexChrMar <- c("AMEL", "Amelogenin", "Yindel", "YIndel", "YInDel", "DYS391")
     
     #STR repeat length
@@ -5855,7 +5871,7 @@ Kongoh <- function(){
     fileCk2Fin <- tclVar("0")
     paramEstFin <- tclVar("0")
     
-    #Default of min. threshold
+    #Default of the min. threshold
     mtDefault <- 30
     
     #Default of parameter setting in each locus
@@ -5904,7 +5920,9 @@ Kongoh <- function(){
     }
     names(aeCand) <- names(hbCand) <- names(bsrCand) <- names(fsrCand) <- names(dsrCand) <- names(m2srCand) <- strMar
     
-    #Candidate models of each factor (for new loci)
+    #Candidate models of each factor for new loci
+    aeCandGen <- "Log-normal"
+    hbCandGen <- "Log-normal"
     bsrCandGen <- c("Best", "Allele", "LUS", "Multi-seq")
     fsrCandGen <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
     dsrCandGen <- c("Best", "Allele", "LUS", "Multi-seq", "Uniform")
