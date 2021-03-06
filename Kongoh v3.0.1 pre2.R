@@ -2513,53 +2513,43 @@ Kongoh <- function(){
           if(tclvalue(tkcurselection(pgMlb)) == ""){
             tkmessageBox(message = "Select one genotype combination!", icon = "error", type = "ok")
           }else{
-            lociName <- names(cspPeak)
-            lPos <- which(lociName == tclvalue(selectL))
-            peakOneL2 <- cspPeak[[lPos]]
-            heightOneL2 <- cspHeight[[lPos]]
-            
-            peakPos <- heightOneL2 >= at
-            peakOneL <- peakOneL2[peakPos]
-            heightOneL <- heightOneL2[peakPos]
-            
             gtCombOne <- gtComb[as.numeric(tclvalue(tkcurselection(pgMlb))) + 1, ]
             
-            dropAl <- setdiff(gtCombOne, peakOneL)
-            nD <- length(dropAl)
-            if(nD > 0){
-              peakOneL <- c(peakOneL, dropAl)
-              heightOneL <- c(heightOneL, rep(0, nD))
-            }
-            
+            lociName <- names(cspPeak)
+            lPos <- which(lociName == tclvalue(selectL))
+            peakOneL <- cspPeak[[lPos]]
+            heightOneL <- cspHeight[[lPos]]
             if(max(heightOneL) >= at){
               yMax <- 2 * max(heightOneL)
             }else{
               yMax <- 2 * at
             }
-            
-            gammaSum <- gammaSumCalc(gtCombOne, mrEstimate, degEstimate, peakOneL2, gammaParamOneL[[1]], gammaParamOneL[[2]], gammaParamOneL[[3]], gammaParamOneL[[4]], gammaParamOneL[[5]], mrOneC, degOneC)
             gamHeightCand <- 1:yMax
             
-            peakOneLGraph <- peakOneL
-            if(any(is.element(peakOneL, 99))){
+            gammaSum <- gammaSumCalc(gtCombOne, mrEstimate, degEstimate, peakOneL, gammaParamOneL[[1]], gammaParamOneL[[2]], gammaParamOneL[[3]], gammaParamOneL[[4]], gammaParamOneL[[5]], mrOneC, degOneC)
+            densPos <- !is.nan(gammaSum[1, ])
+            gammaSumGraph <- gammaSum[, densPos, drop = FALSE]
+            peakOneLGraph <- peakOneL[densPos]
+            if(any(is.element(peakOneLGraph, 99))){
               peakOneLGraph[which(peakOneL == 99)] <- max(peakOneL[which(peakOneL != 99)]) + 2
             }
+            heightOneLGraph <- heightOneL[densPos]
             
             plot(-1, -1, xlim = c(min(peakOneLGraph) - 1, max(peakOneLGraph) + 1), ylim = c(0, yMax), xaxt = "n", xlab = "Allele repeat number", ylab = "Peak height (RFU)", las = 1)
             segments(min(peakOneLGraph) - 1, 0, max(peakOneLGraph) + 1, 0)
             for(i in 1:length(peakOneLGraph)){
               peakOne <- variantCor(peakOneLGraph[i], repLength)
-              segments(peakOne - 0.1, 0, peakOne, heightOneL[i], col = "blue")
-              segments(peakOne + 0.1, 0, peakOne, heightOneL[i], col = "blue")
-              dens <- dgamma(gamHeightCand, shape = gammaSum[1, i], scale = gammaSum[2, i])
+              segments(peakOne - 0.1, 0, peakOne, heightOneLGraph[i], col = "blue")
+              segments(peakOne + 0.1, 0, peakOne, heightOneLGraph[i], col = "blue")
+              dens <- dgamma(gamHeightCand, shape = gammaSumGraph[1, i], scale = gammaSumGraph[2, i])
               densPos <- dens > 0.005 * max(dens)
               dens <- dens[densPos]
               par(new = TRUE)
               plot(peakOne - 0.1 - 0.3 / max(dens) * dens, gamHeightCand[densPos], type = "l", col = "red", xlim = c(min(peakOneLGraph) - 1, max(peakOneLGraph) + 1), ylim = c(0, yMax), xlab = "", ylab = "", axes = FALSE)
-              if(peakOneL[i] == 99){
+              if(peakOneLGraph[i] == 99){
                 xLabelOne <- "Q"
               }else{
-                xLabelOne <- peakOneL[i]
+                xLabelOne <- peakOneLGraph[i]
               }
               par(xpd = TRUE)
               text(peakOne, - yMax / 12, xLabelOne)
