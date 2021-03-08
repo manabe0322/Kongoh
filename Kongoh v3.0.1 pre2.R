@@ -5179,13 +5179,15 @@ Kongoh <- function(){
         uniqAl <- sort(unique(seqAl))
         nU <- length(uniqAl)
         wCA <- rep(0, nU)
+        countML <- 0
         for(i in 1:nU){
           alPos <- which(seqAl == uniqAl[i])
           seqCountOneA <- seqCount[alPos]
           nCA <- length(alPos)
           CAs <- rep(0, nCA)
           for(j in 1:nCA){
-            caPre <- motifLength[[j]] - parX
+            countML <- countML + 1
+            caPre <- motifLength[[countML]] - parX
             caPre[which(caPre < 0)] <- 0
             CAs[j] <- sum(caPre)
           }
