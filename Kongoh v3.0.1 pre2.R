@@ -2968,20 +2968,26 @@ Kongoh <- function(){
   parEstWindow <- function(){
     #Input required files
     openFile2 <- function(fp, var, top){
-      fileName <- tclvalue(tkgetOpenFile(parent = top, initialdir = tclvalue(fp), multiple = "true", filetypes = "{{CSV Files} {.csv}}"))
-      if(!nchar(fileName)){
-        tkmessageBox(message = "No file was selected!", icon = "error", type = "ok")
-      }else{
-        tmp <- sub("\\}", fileName, replacement = "")
-        tmp2 <- sub("\\{", tmp, replacement = "")
-        tclvalue(fp) <- tmp2
-        foo3 <- strsplit(tmp2, "/")[[1]]
-        tclvalue(var) <- strsplit(foo3[length(foo3)], "\\.csv")[[1]][1]
+      imputOk <- "ok"
+      if(tclvalue(paramEstFin) == "1"){
+        imputOk <- tclvalue(tkmessageBox(message = "Results of estimating parameters will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
       }
-      tclvalue(fileCk2Fin) <- "0"
-      tclvalue(paramEstFin) <- "0"
-      tab2ParMake()
-      tab3ParMake()
+      if(imputOk == "ok"){
+        fileName <- tclvalue(tkgetOpenFile(parent = top, initialdir = tclvalue(fp), multiple = "true", filetypes = "{{CSV Files} {.csv}}"))
+        if(!nchar(fileName)){
+          tkmessageBox(message = "No file was selected!", icon = "error", type = "ok")
+        }else{
+          tmp <- sub("\\}", fileName, replacement = "")
+          tmp2 <- sub("\\{", tmp, replacement = "")
+          tclvalue(fp) <- tmp2
+          foo3 <- strsplit(tmp2, "/")[[1]]
+          tclvalue(var) <- strsplit(foo3[length(foo3)], "\\.csv")[[1]][1]
+        }
+        tclvalue(fileCk2Fin) <- "0"
+        tclvalue(paramEstFin) <- "0"
+        tab2ParMake()
+        tab3ParMake()
+      }
     }
     
     #Make the 'Files' tab
