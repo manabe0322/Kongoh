@@ -4882,6 +4882,7 @@ Kongoh <- function(){
         aeModel[[i]][[length(aeModel[[i]]) + 1]] <- "Locus specific"
       }
       names(aeUseData) <- names(aeModel) <- parLocus
+      cat("Estimation of parameters for locus-specific amplification efficiency was finished.", "\n")
       
       cat("Estimation of parameters for heterozygote balance was started.", "\n")
       hbUseData <- hbModel <- mapply(rep, 1:nL, 0)
@@ -4896,6 +4897,7 @@ Kongoh <- function(){
         hbModel[[i]][[length(hbModel[[i]]) + 1]] <- "Locus specific"
       }
       names(hbUseData) <- names(hbModel) <- parLocus
+      cat("Estimation of parameters for heterozygote balance was finished.", "\n")
       
       cat("Estimation of parameters for back stutter ratio was started.", "\n")
       options(warn = -1)
@@ -4936,6 +4938,7 @@ Kongoh <- function(){
         }
       }
       names(bsrUseData) <- names(bsrModel) <- parLocus
+      cat("Estimation of parameters for back stutter ratio was finished.", "\n")
       
       cat("Estimation of parameters for forward stutter ratio was started.", "\n")
       options(warn = -1)
@@ -4976,6 +4979,7 @@ Kongoh <- function(){
         }
       }
       names(fsrUseData) <- names(fsrModel) <- parLocus
+      cat("Estimation of parameters for forward stutter ratio was finished.", "\n")
       
       cat("Estimation of parameters for double-back stutter ratio was started.", "\n")
       options(warn = -1)
@@ -5016,6 +5020,7 @@ Kongoh <- function(){
         }
       }
       names(dsrUseData) <- names(dsrModel) <- parLocus
+      cat("Estimation of parameters for double-back stutter ratio was finished.", "\n")
       
       cat("Estimation of parameters for minus 2-nt stutter ratio was started.", "\n")
       options(warn = -1)
@@ -5044,6 +5049,8 @@ Kongoh <- function(){
         }
       }
       names(m2srUseData) <- names(m2srModel) <- parLocus
+      cat("Estimation of parameters for minus 2-nt stutter ratio was finished.", "\n")
+      cat("Estimation of all parameters was finished.", "\n")
       
       tclvalue(paramEstFin) <- "1"
       tab3ParMake(aeUseData, aeModel, hbUseData, hbModel, 
