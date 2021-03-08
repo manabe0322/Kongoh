@@ -5215,25 +5215,31 @@ Kongoh <- function(){
           alCorData[rowPos, 2] <- names(lusOneL)
           alCorData[rowPos, 3] <- lusOneL
           
-          if(bsrBestOneL[[3]] == "Multi-seq"){
-            parX <- bsrBestOneL[[2]][4]
-            nSeq <- length(motifLength)
-            caOneL <- rep(0, nSeq)
-            alCorData[rowPos, 4] <- wCACalc(parX, motifLength, seqAl, seqCount)
+          if(length(bsrBestOneL) != 0){
+            if(bsrBestOneL[[3]] == "Multi-seq"){
+              parX <- bsrBestOneL[[2]][4]
+              nSeq <- length(motifLength)
+              caOneL <- rep(0, nSeq)
+              alCorData[rowPos, 4] <- wCACalc(parX, motifLength, seqAl, seqCount)
+            }
           }
-          
-          if(fsrBestOneL[[3]] == "Multi-seq"){
-            parX <- fsrBestOneL[[2]][4]
-            nSeq <- length(motifLength)
-            caOneL <- rep(0, nSeq)
-            alCorData[rowPos, 5] <- wCACalc(parX, motifLength, seqAl, seqCount)
+
+          if(length(fsrBestOneL) != 0){
+            if(fsrBestOneL[[3]] == "Multi-seq"){
+              parX <- fsrBestOneL[[2]][4]
+              nSeq <- length(motifLength)
+              caOneL <- rep(0, nSeq)
+              alCorData[rowPos, 5] <- wCACalc(parX, motifLength, seqAl, seqCount)
+            }
           }
-          
-          if(dsrBestOneL[[3]] == "Multi-seq"){
-            parX <- dsrBestOneL[[2]][4]
-            nSeq <- length(motifLength)
-            caOneL <- rep(0, nSeq)
-            alCorData[rowPos, 6] <- wCACalc(parX, motifLength, seqAl, seqCount)
+
+          if(length(dsrBestOneL) != 0){
+            if(dsrBestOneL[[3]] == "Multi-seq"){
+              parX <- dsrBestOneL[[2]][4]
+              nSeq <- length(motifLength)
+              caOneL <- rep(0, nSeq)
+              alCorData[rowPos, 6] <- wCACalc(parX, motifLength, seqAl, seqCount)
+            }
           }
         }
         write.csv(alCorData, alCorName, row.names = FALSE, col.names = TRUE)
