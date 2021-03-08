@@ -3030,7 +3030,7 @@ Kongoh <- function(){
         if(setequal(calDataLoci, gtAnsLoci)){
           seqData <- read.csv(tclvalue(seqFp), header = TRUE)
           seqData <- as.matrix(seqData)
-          seqDataLoci <- unique(seqData[, which(colnames(seqData) == "Locus")])
+          seqDataLoci <- unique(seqData[, which(colnames(seqData) == "Marker")])
           if(!all(is.element(calDataLoci, seqDataLoci))){
             tkmessageBox(message = "Some loci of experimental data are not included in the file of sequence data!", icon = "error", type = "ok")
             seqFileOk <- FALSE
@@ -4462,7 +4462,7 @@ Kongoh <- function(){
       seqAlList <- list()
       seqCountList <- list()
       for(i in 1:length(parLocus)){
-        locusPos <- which(seqData[, which(colnames(seqData) == "Locus")] == parLocus[i])
+        locusPos <- which(seqData[, which(colnames(seqData) == "Marker")] == parLocus[i])
         seqAlList[[i]] <- alleles <- as.numeric(seqData[locusPos, which(colnames(seqData) == "Allele")])
         alNames <- sort(unique(alleles))
         seqCountList[[i]] <- count <- as.numeric(seqData[locusPos, which(colnames(seqData) == "Count")])
