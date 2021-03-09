@@ -5137,37 +5137,61 @@ Kongoh <- function(){
           dsrBestModel <- dsrBestList[[i]]
           m2srBestModel <- m2srBestList[[i]]
           
-          mcParFormat[i, 5] <- aeBestModel[[3]]
+          if(length(grep(" \u2020", aeBestModel[[3]]) == 0)){
+            mcParFormat[i, 5] <- aeBestModel[[3]]
+          }else{
+            mcParFormat[i, 5] <- gsub(" \u2020", "", aeBestModel[[3]])
+          }
           mcParFormat[i, 6] <- TRUE
           mcParFormat[i, 7:(6 + length(aeBestModel[[2]]))] <- aeBestModel[[2]]
           
-          mcParFormat[nL + i, 5] <- hbBestModel[[3]]
+          if(length(grep(" \u2020", hbBestModel[[3]]) == 0)){
+            mcParFormat[nL + i, 5] <- hbBestModel[[3]]
+          }else{
+            mcParFormat[nL + i, 5] <- gsub(" \u2020", "", hbBestModel[[3]])
+          }
           mcParFormat[nL + i, 6] <- TRUE
           mcParFormat[nL + i, 7:(6 + length(hbBestModel[[2]]))] <- hbBestModel[[2]]
           
           if(srConsider[i, 1] == 1){
-            mcParFormat[2 * nL + i, 5] <- bsrBestModel[[3]]
+            if(length(grep(" \u2020", bsrBestModel[[3]]) == 0)){
+              mcParFormat[2 * nL + i, 5] <- bsrBestModel[[3]]
+            }else{
+              mcParFormat[2 * nL + i, 5] <- gsub(" \u2020", "", bsrBestModel[[3]])
+            }
             mcParFormat[2 * nL + i, 6] <- srLSp[i, 1] == 1
             mcParFormat[2 * nL + i, 7:(6 + length(bsrBestModel[[2]]))] <- bsrBestModel[[2]]
           }else{
             mcParFormat[2 * nL + i, 5] <- "No"
           }
           if(srConsider[i, 2] == 1){
-            mcParFormat[3 * nL + i, 5] <- fsrBestModel[[3]]
+            if(length(grep(" \u2020", fsrBestModel[[3]]) == 0)){
+              mcParFormat[3 * nL + i, 5] <- fsrBestModel[[3]]
+            }else{
+              mcParFormat[3 * nL + i, 5] <- gsub(" \u2020", "", fsrBestModel[[3]])
+            }
             mcParFormat[3 * nL + i, 6] <- srLSp[i, 2] == 1
             mcParFormat[3 * nL + i, 7:(6 + length(fsrBestModel[[2]]))] <- fsrBestModel[[2]]
           }else{
             mcParFormat[3 * nL + i, 5] <- "No"
           }
           if(srConsider[i, 3] == 1){
-            mcParFormat[4 * nL + i, 5] <- dsrBestModel[[3]]
+            if(length(grep(" \u2020", dsrBestModel[[3]]) == 0)){
+              mcParFormat[4 * nL + i, 5] <- dsrBestModel[[3]]
+            }else{
+              mcParFormat[4 * nL + i, 5] <- gsub(" \u2020", "", dsrBestModel[[3]])
+            }
             mcParFormat[4 * nL + i, 6] <- srLSp[i, 3] == 1
             mcParFormat[4 * nL + i, 7:(6 + length(dsrBestModel[[2]]))] <- dsrBestModel[[2]]
           }else{
             mcParFormat[4 * nL + i, 5] <- "No"
           }
           if(srConsider[i, 4] == 1){
-            mcParFormat[5 * nL + i, 5] <- m2srBestModel[[3]]
+            if(length(grep(" \u2020", m2srBestModel[[3]]) == 0)){
+              mcParFormat[5 * nL + i, 5] <- m2srBestModel[[3]]
+            }else{
+              mcParFormat[5 * nL + i, 5] <- gsub(" \u2020", "", m2srBestModel[[3]])
+            }
             mcParFormat[5 * nL + i, 6] <- srLSp[i, 4] == 1
             mcParFormat[5 * nL + i, 7:(6 + length(m2srBestModel[[2]]))] <- m2srBestModel[[2]]
           }else{
