@@ -5318,7 +5318,7 @@ Kongoh <- function(){
               xMax <- round(max(h) + 1, 0)
               yMin <- min(f)
               yMax <- max(f)
-              plot(h, f, xlim = c(xMin, xMax), ylim = c(yMin, yMax), xlab = "peak height (RFU)", ylab = yLab)
+              plot(h, f, xlim = c(xMin, xMax), ylim = c(yMin, yMax), xlab = "Average heterozygous peak height (RFU)", ylab = yLab)
               myu <- estPar[1]
               sigma <- estPar[2]
               Q0.95 <- qtruncnorm(0.95, a = log(factMin), b = log(1 / factMin), mean = myu, sd = sqrt(sigma / (100:xMax)))
