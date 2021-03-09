@@ -5137,7 +5137,7 @@ Kongoh <- function(){
           dsrBestModel <- dsrBestList[[i]]
           m2srBestModel <- m2srBestList[[i]]
           
-          if(length(grep(" \u2020", aeBestModel[[3]]) == 0)){
+          if(length(grep(" \u2020", aeBestModel[[3]])) == 0){
             mcParFormat[i, 5] <- aeBestModel[[3]]
           }else{
             mcParFormat[i, 5] <- gsub(" \u2020", "", aeBestModel[[3]])
@@ -5154,7 +5154,7 @@ Kongoh <- function(){
           mcParFormat[nL + i, 7:(6 + length(hbBestModel[[2]]))] <- hbBestModel[[2]]
           
           if(srConsider[i, 1] == 1){
-            if(length(grep(" \u2020", bsrBestModel[[3]]) == 0)){
+            if(length(grep(" \u2020", bsrBestModel[[3]])) == 0){
               mcParFormat[2 * nL + i, 5] <- bsrBestModel[[3]]
             }else{
               mcParFormat[2 * nL + i, 5] <- gsub(" \u2020", "", bsrBestModel[[3]])
@@ -5165,7 +5165,7 @@ Kongoh <- function(){
             mcParFormat[2 * nL + i, 5] <- "No"
           }
           if(srConsider[i, 2] == 1){
-            if(length(grep(" \u2020", fsrBestModel[[3]]) == 0)){
+            if(length(grep(" \u2020", fsrBestModel[[3]])) == 0){
               mcParFormat[3 * nL + i, 5] <- fsrBestModel[[3]]
             }else{
               mcParFormat[3 * nL + i, 5] <- gsub(" \u2020", "", fsrBestModel[[3]])
@@ -5176,7 +5176,7 @@ Kongoh <- function(){
             mcParFormat[3 * nL + i, 5] <- "No"
           }
           if(srConsider[i, 3] == 1){
-            if(length(grep(" \u2020", dsrBestModel[[3]]) == 0)){
+            if(length(grep(" \u2020", dsrBestModel[[3]])) == 0){
               mcParFormat[4 * nL + i, 5] <- dsrBestModel[[3]]
             }else{
               mcParFormat[4 * nL + i, 5] <- gsub(" \u2020", "", dsrBestModel[[3]])
@@ -5187,7 +5187,7 @@ Kongoh <- function(){
             mcParFormat[4 * nL + i, 5] <- "No"
           }
           if(srConsider[i, 4] == 1){
-            if(length(grep(" \u2020", m2srBestModel[[3]]) == 0)){
+            if(length(grep(" \u2020", m2srBestModel[[3]])) == 0){
               mcParFormat[5 * nL + i, 5] <- m2srBestModel[[3]]
             }else{
               mcParFormat[5 * nL + i, 5] <- gsub(" \u2020", "", m2srBestModel[[3]])
@@ -5255,7 +5255,7 @@ Kongoh <- function(){
           alCorData[rowPos, 3] <- lusOneL
           
           if(length(bsrBestOneL) != 0){
-            if(length(grep(" \u2020", bsrBestOneL[[3]]) == 0)){
+            if(length(grep(" \u2020", bsrBestOneL[[3]])) == 0){
               bsrBestName <- bsrBestOneL[[3]]
             }else{
               bsrBestName <- gsub(" \u2020", "", bsrBestOneL[[3]])
@@ -5269,7 +5269,7 @@ Kongoh <- function(){
           }
 
           if(length(fsrBestOneL) != 0){
-            if(length(grep(" \u2020", fsrBestOneL[[3]]) == 0)){
+            if(length(grep(" \u2020", fsrBestOneL[[3]])) == 0){
               fsrBestName <- fsrBestOneL[[3]]
             }else{
               fsrBestName <- gsub(" \u2020", "", fsrBestOneL[[3]])
@@ -5283,7 +5283,7 @@ Kongoh <- function(){
           }
 
           if(length(dsrBestOneL) != 0){
-            if(length(grep(" \u2020", dsrBestOneL[[3]]) == 0)){
+            if(length(grep(" \u2020", dsrBestOneL[[3]])) == 0){
               dsrBestName <- dsrBestOneL[[3]]
             }else{
               dsrBestName <- gsub(" \u2020", "", dsrBestOneL[[3]])
