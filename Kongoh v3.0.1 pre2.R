@@ -5936,7 +5936,7 @@ Kongoh <- function(){
     
     #Default of parameter setting in each locus
     parDefault <- matrix("", nStr, 13)
-    colnames(parDefault) <- c("Locus", "Motif length", "Min. threshold", "AE model", "Hb model", "BSR method", "BSR model", "FSR method", "FSR model", "DSR method", "DSR model", "M2SR method", "M2SR model")
+    colnames(parDefault) <- c("Locus", "Repeat length", "Min. threshold", "AE model", "Hb model", "BSR method", "BSR model", "FSR method", "FSR model", "DSR method", "DSR model", "M2SR method", "M2SR model")
     parDefault[, 1] <- strMar
     parDefault[, 2] <- repLengthInfo
     parDefault[, 3] <- mtDefault
