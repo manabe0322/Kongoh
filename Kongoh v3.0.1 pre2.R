@@ -5255,10 +5255,10 @@ Kongoh <- function(){
           alCorData[rowPos, 3] <- lusOneL
           
           if(length(bsrBestOneL) != 0){
-            if(length(grep(" \u2020", bsrBestModel[[3]]) == 0)){
-              bsrBestName <- bsrBestModel[[3]]
+            if(length(grep(" \u2020", bsrBestOneL[[3]]) == 0)){
+              bsrBestName <- bsrBestOneL[[3]]
             }else{
-              bsrBestName <- gsub(" \u2020", "", bsrBestModel[[3]])
+              bsrBestName <- gsub(" \u2020", "", bsrBestOneL[[3]])
             }
             if(bsrBestName == "Multi-seq"){
               parX <- bsrBestOneL[[2]][4]
@@ -5269,10 +5269,10 @@ Kongoh <- function(){
           }
 
           if(length(fsrBestOneL) != 0){
-            if(length(grep(" \u2020", fsrBestModel[[3]]) == 0)){
-              fsrBestName <- fsrBestModel[[3]]
+            if(length(grep(" \u2020", fsrBestOneL[[3]]) == 0)){
+              fsrBestName <- fsrBestOneL[[3]]
             }else{
-              fsrBestName <- gsub(" \u2020", "", fsrBestModel[[3]])
+              fsrBestName <- gsub(" \u2020", "", fsrBestOneL[[3]])
             }
             if(fsrBestName == "Multi-seq"){
               parX <- fsrBestOneL[[2]][4]
@@ -5283,10 +5283,10 @@ Kongoh <- function(){
           }
 
           if(length(dsrBestOneL) != 0){
-            if(length(grep(" \u2020", dsrBestModel[[3]]) == 0)){
-              dsrBestName <- dsrBestModel[[3]]
+            if(length(grep(" \u2020", dsrBestOneL[[3]]) == 0)){
+              dsrBestName <- dsrBestOneL[[3]]
             }else{
-              dsrBestName <- gsub(" \u2020", "", dsrBestModel[[3]])
+              dsrBestName <- gsub(" \u2020", "", dsrBestOneL[[3]])
             }
             if(dsrBestName == "Multi-seq"){
               parX <- dsrBestOneL[[2]][4]
