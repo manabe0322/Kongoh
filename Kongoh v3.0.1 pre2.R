@@ -5145,7 +5145,7 @@ Kongoh <- function(){
           mcParFormat[i, 6] <- TRUE
           mcParFormat[i, 7:(6 + length(aeBestModel[[2]]))] <- aeBestModel[[2]]
           
-          if(length(grep(" \u2020", hbBestModel[[3]]) == 0)){
+          if(length(grep(" \u2020", hbBestModel[[3]])) == 0){
             mcParFormat[nL + i, 5] <- hbBestModel[[3]]
           }else{
             mcParFormat[nL + i, 5] <- gsub(" \u2020", "", hbBestModel[[3]])
