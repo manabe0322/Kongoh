@@ -3806,7 +3806,7 @@ Kongoh <- function(){
           fTab2Par_scr <- scrollGet(fTab2Par)
           
           tkgrid(tklabel(fTab2Par_scr, text = "Locus", font = "Helvetica 10 bold"), row = 0, column = 0, padx = 5)
-          tkgrid(tklabel(fTab2Par_scr, text = "Motif length", font = "Helvetica 10 bold"), row = 0, column = 1, padx = 5)
+          tkgrid(tklabel(fTab2Par_scr, text = "Repeat length", font = "Helvetica 10 bold"), row = 0, column = 1, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "Min. threshold", font = "Helvetica 10 bold"), row = 0, column = 2, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "Locus-specific", font = "Helvetica 10 bold"), row = 0, column = 3, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "amplification efficiency", font = "Helvetica 10 bold"), row = 1, column = 3, padx = 5)
