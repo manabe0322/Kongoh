@@ -1631,7 +1631,7 @@ Kongoh <- function(){
           tclvalue(otherButtVar) <- "disable"
           tclvalue(resetArrowVar) <- "hand2"
           tclvalue(resetButtVar) <- "normal"
-          dev.off()
+          try(dev.off(), silent = TRUE)
           tab2Make(csp, ref, af, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, srModel, repLengthAll, dyeAllL, hpVars, hdVars, atVars)
           tab3Make(resultHp, resultHd, cspPeak, cspHeight, gammaAllList, dyeAllL, calcCond, mrOneCList, degOneC, repLengthAll)
           tab4Make(resultHp, resultHd, calcCond, mrOne, unique(dyeAllL), calcTime)
