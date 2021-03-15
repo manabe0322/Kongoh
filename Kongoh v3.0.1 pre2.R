@@ -2678,7 +2678,7 @@ Kongoh <- function(){
           }
           tkgrid(pgMlb, padx = 20, pady = 20, sticky = "w")
           tk2insert.multi(pgMlb, "end", pgResultOneL)
-          pgGraphButt <- tkbutton(frameTab3_2, text = "    Graph    ", cursor = "hand2", command = function() pgGraphMake(resultOneHnc[[3]][[1]][, 1:(2 * as.numeric(tclvalue(selectNc))), drop = FALSE], calcCond[names(calcCond) == dyeAllL[1]], resultOneHnc[[4]], resultOneHnc[[5]], gammaAllList[[1]][[1]], mrOneC[[1]], degOneC, repLengthAll[[1]]))
+          pgGraphButt <- tkbutton(frameTab3_2, text = "    Graph    ", cursor = "hand2", command = function() pgGraphMake(resultOneHnc[[3]][[1]][, 1:(2 * as.numeric(tclvalue(selectNc))), drop = FALSE], calcCond[names(calcCond) == dyeAllL[1]], resultOneHnc[[4]], resultOneHnc[[5]], gammaAllList[[1]][[1]], mrOneCList[[1]], degOneC, repLengthAll[[1]]))
           tkgrid(pgGraphButt, padx = 20)
         }
         tkgrid(frameTab3_2, padx = 20, pady = 20, sticky = "w")
