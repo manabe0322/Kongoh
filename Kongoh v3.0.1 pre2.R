@@ -88,9 +88,9 @@ Kongoh <- function(){
   tclRequire("Tktable")
   
   
-  ####################
-  # hidden parameter #
-  ####################
+  #############
+  # Parameter #
+  #############
   
   #software version
   softVer <- "Kongoh v3.0.1"
@@ -590,7 +590,7 @@ Kongoh <- function(){
     openFile <- function(fp, var, top, fileState, cursor){
       imputOk <- "ok"
       if(tclvalue(calcFin) == "1"){
-        imputOk <- tclvalue(tkmessageBox(message = "Calculation result for current crime stain profile will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
+        imputOk <- tclvalue(tkmessageBox(message = "Calculation results will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
       }
       if(imputOk == "ok"){
         fileName <- tclvalue(tkgetOpenFile(parent = top, initialdir = tclvalue(fp), multiple = "true", filetypes = "{{CSV Files} {.csv}}"))
@@ -1526,7 +1526,7 @@ Kongoh <- function(){
     
     #Reset calculational conditions
     resetCondition <- function(){
-      imputOk <- tclvalue(tkmessageBox(message = "Calculation result for current crime stain profile will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
+      imputOk <- tclvalue(tkmessageBox(message = "Calculation results will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
       if(imputOk == "ok"){
         tclvalue(calcFin) <- 0
         tclvalue(hncFromSpinVar) <- "normal"
@@ -5492,23 +5492,62 @@ Kongoh <- function(){
             modelChange <- function(nameModel, posL, factName){
               #Adopt the selected model
               adoptModel <- function(selectModel){
-                tkdestroy(tfChange)
-                tkdestroy(tfParResult)
                 modelPos <- which(nameModel == selectModel)
+                changeOk <- TRUE
                 if(factName == "AE"){
                   aeAdoptModelPos[posL] <<- modelPos
                 }else if(factName == "Hb"){
                   hbAdoptModelPos[posL] <<- modelPos
                 }else if(factName == "BSR"){
-                  bsrAdoptModelPos[posL] <<- modelPos
+                  if(srLSp[posL, 1] == 1){
+                    bsrAdoptModelPos[posL] <<- modelPos
+                  }else{
+                    imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. The selected model will be also reflected in these loci. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
+                    if(imputOk == "ok"){
+                      bsrAdoptModelPos[srLSp[, 1] != 1] <<- modelPos
+                    }else{
+                      changeOk <- FALSE
+                    }
+                  }
                 }else if(factName == "FSR"){
-                  fsrAdoptModelPos[posL] <<- modelPos
+                  if(srLSp[posL, 2] == 1){
+                    fsrAdoptModelPos[posL] <<- modelPos
+                  }else{
+                    imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. The selected model will be also reflected in these loci. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
+                    if(imputOk == "ok"){
+                      fsrAdoptModelPos[srLSp[, 2] != 1] <<- modelPos
+                    }else{
+                      changeOk <- FALSE
+                    }
+                  }
                 }else if(factName == "DSR"){
-                  dsrAdoptModelPos[posL] <<- modelPos
+                  if(srLSp[posL, 3] == 1){
+                    dsrAdoptModelPos[posL] <<- modelPos
+                  }else{
+                    imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. The selected model will be also reflected in these loci. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
+                    if(imputOk == "ok"){
+                      dsrAdoptModelPos[srLSp[, 3] != 1] <<- modelPos
+                    }else{
+                      changeOk <- FALSE
+                    }
+                  }
                 }else if(factName == "M2SR"){
-                  m2srAdoptModelPos[posL] <<- modelPos
+                  if(srLSp[posL, 3] == 1){
+                    m2srAdoptModelPos[posL] <<- modelPos
+                  }else{
+                    imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. The selected model will be also reflected in these loci. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
+                    if(imputOk == "ok"){
+                      m2srAdoptModelPos[srLSp[, 4] != 1] <<- modelPos
+                    }else{
+                      changeOk <- FALSE
+                    }
+                  }
                 }
-                summaryMake()
+                if(changeOk){
+                  tkdestroy(tfChange)
+                  tkdestroy(tfParResult)
+                  summaryMake()
+                }
               }
               
               tfChange <- tktoplevel()
@@ -5529,9 +5568,11 @@ Kongoh <- function(){
                 tkgrid(tklabel(fTab3Par, text = "        Wait!        "), pady = 10, sticky = "w")
                 tkgrid(fTab3Par)
                 if(factName == "AE"){
+                  cat("Reestimation of parameters was started.", "\n")
                   aeMleCondFin[[posL]][[posM]] <<- mleCondFinMake(list(mleCOneM), list(selectModel))[[1]][[1]]
                   aeModel[[posL]][[posM]] <<- aeModeling(selectModel, parUseOneL[, 1], parUseOneL[, 2], minMax, list(aeMleCondFin[[posL]][[posM]]))[[1]]
                 }else if(factName == "Hb"){
+                  cat("Reestimation of parameters was started.", "\n")
                   hbMleCondFin[[posL]][[posM]] <<- mleCondFinMake(list(mleCOneM), list(selectModel))[[1]][[1]]
                   hbModel[[posL]][[posM]] <<- hbModeling(selectModel, parUseOneL[, 1], parUseOneL[, 2], minMax, list(hbMleCondFin[[posL]][[posM]]))[[1]]
                 }else if(factName == "BSR"){
@@ -5539,6 +5580,7 @@ Kongoh <- function(){
                   if(srLSp[posL, 1] == 0){
                     imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. Re-estimation of parameters will be also performed by considering multiple loci together. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
                     if(imputOk == "ok"){
+                      cat("Reestimation of parameters was started.", "\n")
                       options(warn = -1)
                       bsrGenPos <- which(apply(rbind(srConsider[, 1], !srLSp[, 1]), 2, all) == TRUE)
                       options(warn = 0)
@@ -5548,6 +5590,7 @@ Kongoh <- function(){
                       }
                     }
                   }else{
+                    cat("Reestimation of parameters was started.", "\n")
                     bsrModel[[posL]][[posM]] <<- srModeling(selectModel, parUseOneL[[1]], parUseOneL[[2]], parUseOneL[[3]], parUseOneL[[4]], motifLengthList[[posL]], seqAlList[[posL]], seqCountList[[posL]], minMax, list(bsrMleCondFin[[posL]][[posM]]))[[1]]
                   }
                 }else if(factName == "FSR"){
@@ -5555,6 +5598,7 @@ Kongoh <- function(){
                   if(srLSp[posL, 2] == 0){
                     imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. Re-estimation of parameters will be also performed by considering multiple loci together. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
                     if(imputOk == "ok"){
+                      cat("Reestimation of parameters was started.", "\n")
                       options(warn = -1)
                       fsrGenPos <- which(apply(rbind(srConsider[, 2], !srLSp[, 2]), 2, all) == TRUE)
                       options(warn = 0)
@@ -5564,6 +5608,7 @@ Kongoh <- function(){
                       }
                     }
                   }else{
+                    cat("Reestimation of parameters was started.", "\n")
                     fsrModel[[posL]][[posM]] <<- srModeling(selectModel, parUseOneL[[1]], parUseOneL[[2]], parUseOneL[[3]], parUseOneL[[4]], motifLengthList[[posL]], seqAlList[[posL]], seqCountList[[posL]], minMax, list(fsrMleCondFin[[posL]][[posM]]))[[1]]
                   }
                 }else if(factName == "DSR"){
@@ -5571,6 +5616,7 @@ Kongoh <- function(){
                   if(srLSp[posL, 3] == 0){
                     imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. Re-estimation of parameters will be also performed by considering multiple loci together. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
                     if(imputOk == "ok"){
+                      cat("Reestimation of parameters was started.", "\n")
                       options(warn = -1)
                       dsrGenPos <- which(apply(rbind(srConsider[, 3], !srLSp[, 3]), 2, all) == TRUE)
                       options(warn = 0)
@@ -5580,6 +5626,7 @@ Kongoh <- function(){
                       }
                     }
                   }else{
+                    cat("Reestimation of parameters was started.", "\n")
                     dsrModel[[posL]][[posM]] <<- srModeling(selectModel, parUseOneL[[1]], parUseOneL[[2]], parUseOneL[[3]], parUseOneL[[4]], motifLengthList[[posL]], seqAlList[[posL]], seqCountList[[posL]], minMax, list(dsrMleCondFin[[posL]][[posM]]))[[1]]
                   }
                 }else if(factName == "M2SR"){
@@ -5587,6 +5634,7 @@ Kongoh <- function(){
                   if(srLSp[posL, 4] == 0){
                     imputOk <- tclvalue(tkmessageBox(message = paste(factName, "of the selected locus was modeled considering multiple loci together. Re-estimation of parameters will be also performed by considering multiple loci together. Do you want to continue?", sep = ""), type = "okcancel", icon = "warning"))
                     if(imputOk == "ok"){
+                      cat("Reestimation of parameters was started.", "\n")
                       options(warn = -1)
                       m2srGenPos <- which(apply(rbind(srConsider[, 4], !srLSp[, 4]), 2, all) == TRUE)
                       options(warn = 0)
@@ -5596,6 +5644,7 @@ Kongoh <- function(){
                       }
                     }
                   }else{
+                    cat("Reestimation of parameters was started.", "\n")
                     m2srModel[[posL]][[posM]] <<- srModeling(selectModel, parUseOneL[[1]], parUseOneL[[2]], parUseOneL[[3]], parUseOneL[[4]], motifLengthList[[posL]], seqAlList[[posL]], seqCountList[[posL]], minMax, list(m2srMleCondFin[[posL]][[posM]]))[[1]]
                   }
                 }
