@@ -1000,7 +1000,7 @@ Kongoh <- function(){
           tk2notetab.select(tabs, "Calculation")
         }
       }else{
-        tkmessageBox(message = "Names of loci are not equal in each file!", icon = "error", type = "ok")
+        tkmessageBox(message = "Format of some files are inappropriate!", icon = "error", type = "ok")
       }
     }
   }
@@ -1524,7 +1524,7 @@ Kongoh <- function(){
       tkgrid(frameParamSet, pady = 10)
     }
     
-    #Reset calculational conditions
+    #Users can change calculational conditions
     resetCondition <- function(){
       imputOk <- tclvalue(tkmessageBox(message = "Calculation results will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
       if(imputOk == "ok"){
@@ -1701,7 +1701,7 @@ Kongoh <- function(){
         tkgrid(frameTab2_param1, frameTab2_param2, padx = 20, pady = 10, sticky = "nw")
         
         otherButt <- tkbutton(frameTab2_param, text = "    Others    ", cursor = tclvalue(otherArrowVar), state = tclvalue(otherButtVar), command = function() paramSetting())
-        resetButt <- tkbutton(frameTab2_param, text = "    Reset    ", cursor = tclvalue(resetArrowVar), state = tclvalue(resetButtVar), command = function() resetCondition())
+        resetButt <- tkbutton(frameTab2_param, text = "    Change conditions    ", cursor = tclvalue(resetArrowVar), state = tclvalue(resetButtVar), command = function() resetCondition())
         tkgrid(otherButt, resetButt, padx = 20, pady = 10, sticky = "w")
         tkgrid(frameTab2_param, padx = 20, pady = 10)
         tkgrid(tkbutton(frameTab2, text = "    Calculate    ", cursor = "hand2", command = function() calcFunc()), padx = 20, pady = 10)
