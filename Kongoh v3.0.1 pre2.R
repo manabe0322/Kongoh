@@ -571,8 +571,6 @@ Kongoh <- function(){
   hncToSpinVar <- tclVar("normal")
   atEntryVar <- tclVar("normal")
   thetaEntryVar <- tclVar("normal")
-#  locusSetVar <- tclVar("readonly")
-#  paramSetVar <- tclVar("readonly")
   otherArrowVar <- tclVar("hand2")
   otherButtVar <- tclVar("normal")
   resetArrowVar <- tclVar("arrow")
@@ -1632,8 +1630,6 @@ Kongoh <- function(){
           tclvalue(hncToSpinVar) <- "disable"
           tclvalue(atEntryVar) <- "disable"
           tclvalue(thetaEntryVar) <- "disable"
-#          tclvalue(locusSetVar) <- "disable"
-#          tclvalue(paramSetVar) <- "disable"
           tclvalue(otherArrowVar) <- "arrow"
           tclvalue(otherButtVar) <- "disable"
           tclvalue(resetArrowVar) <- "hand2"
