@@ -1537,7 +1537,6 @@ Kongoh <- function(){
         tclvalue(otherButtVar) <- "normal"
         tclvalue(resetArrowVar) <- "arrow"
         tclvalue(resetButtVar) <- "disable"
-        fileCk()
         tab3Make()
         tab4Make()
       }
