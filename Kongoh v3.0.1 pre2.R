@@ -1529,14 +1529,14 @@ Kongoh <- function(){
       imputOk <- tclvalue(tkmessageBox(message = "Calculation results will be deleted. Do you want to continue?", type = "okcancel", icon = "warning"))
       if(imputOk == "ok"){
         tclvalue(calcFin) <- 0
-        tclvalue(hncFromSpinVar) <- "normal"
-        tclvalue(hncToSpinVar) <- "normal"
-        tclvalue(atEntryVar) <- "normal"
-        tclvalue(thetaEntryVar) <- "normal"
-        tclvalue(otherArrowVar) <- "hand2"
-        tclvalue(otherButtVar) <- "normal"
-        tclvalue(resetArrowVar) <- "arrow"
-        tclvalue(resetButtVar) <- "disable"
+        tkconfigure(hncFromSpin, state = "normal")
+        tkconfigure(hncToSpin, state = "normal")
+        for(i in 1:length(atEntry)){
+          tkconfigure(atEntry[[i]], state = "normal")
+        }
+        tkconfigure(thetaEntry, state = "normal")
+        tkconfigure(otherButt, cursor = "hand2", state = "normal")
+        tkconfigure(resetButt, cursor = "arrow", state = "disable")
         tab3Make()
         tab4Make()
       }
@@ -1694,8 +1694,11 @@ Kongoh <- function(){
         frameTab2_param2 <- tkframe(frameTab2_param)
         tkgrid(tklabel(frameTab2_param2, text = "Analytical threshold"), sticky = "w")
         dyeNames <- unique(dyeAllL)
+        atLabel <- atEntry <- list()
         for(i in 1:length(atVars)){
-          tkgrid(tklabel(frameTab2_param2, text = dyeNames[i]), tkentry(frameTab2_param2, textvariable = atVars[[i]], width = 6, highlightthickness = 1, relief = "solid", justify = "center", background = "white", state = tclvalue(atEntryVar)), padx = 20, sticky = "w")
+          atLabel[[i]] <- tklabel(frameTab2_param2, text = dyeNames[i])
+          atEntry[[i]] <- tkentry(frameTab2_param2, textvariable = atVars[[i]], width = 6, highlightthickness = 1, relief = "solid", justify = "center", background = "white", state = tclvalue(atEntryVar))
+          tkgrid(atLabel[[i]], atEntry[[i]], padx = 20, sticky = "w")
         }
         tkgrid(frameTab2_param1, frameTab2_param2, padx = 20, pady = 10, sticky = "nw")
         
