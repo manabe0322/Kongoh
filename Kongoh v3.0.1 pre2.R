@@ -996,14 +996,14 @@ Kongoh <- function(){
           names(atVars) <- dyeNames
           
           tclvalue(fileCkFin) <- 1
-          tclvaue(hncFromSpinVar) <- "normal"
-          tclvaue(hncToSpinVar) <- "normal"
-          tclvaue(atEntryVar) <- "normal"
-          tclvaue(thetaEntryVar) <- "normal"
-          tclvaue(otherArrowVar) <- "hand2"
-          tclvaue(otherButtVar) <- "normal"
-          tclvaue(resetArrowVar) <- "arrow"
-          tclvaue(resetButtVar) <- "disable"
+          tclvalue(hncFromSpinVar) <- "normal"
+          tclvalue(hncToSpinVar) <- "normal"
+          tclvalue(atEntryVar) <- "normal"
+          tclvalue(thetaEntryVar) <- "normal"
+          tclvalue(otherArrowVar) <- "hand2"
+          tclvalue(otherButtVar) <- "normal"
+          tclvalue(resetArrowVar) <- "arrow"
+          tclvalue(resetButtVar) <- "disable"
           tab2Make(csp, ref, af, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, srModel, repLengthAll, dyeAllL, hpVars, hdVars, atVars)
           tk2notetab.select(tabs, "Calculation")
         }
