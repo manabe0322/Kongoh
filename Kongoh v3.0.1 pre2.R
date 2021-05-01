@@ -571,8 +571,8 @@ Kongoh <- function(){
   hncToSpinVar <- tclVar("normal")
   atEntryVar <- tclVar("normal")
   thetaEntryVar <- tclVar("normal")
-  locusSetVar <- tclVar("readonly")
-  paramSetVar <- tclVar("readonly")
+#  locusSetVar <- tclVar("readonly")
+#  paramSetVar <- tclVar("readonly")
   otherArrowVar <- tclVar("hand2")
   otherButtVar <- tclVar("normal")
   resetArrowVar <- tclVar("arrow")
@@ -996,6 +996,14 @@ Kongoh <- function(){
           names(atVars) <- dyeNames
           
           tclvalue(fileCkFin) <- 1
+          hncFromSpinVar <- tclVar("normal")
+          hncToSpinVar <- tclVar("normal")
+          atEntryVar <- tclVar("normal")
+          thetaEntryVar <- tclVar("normal")
+          otherArrowVar <- tclVar("hand2")
+          otherButtVar <- tclVar("normal")
+          resetArrowVar <- tclVar("arrow")
+          resetButtVar <- tclVar("disable")
           tab2Make(csp, ref, af, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, srModel, repLengthAll, dyeAllL, hpVars, hdVars, atVars)
           tk2notetab.select(tabs, "Calculation")
         }
@@ -1624,8 +1632,8 @@ Kongoh <- function(){
           tclvalue(hncToSpinVar) <- "disable"
           tclvalue(atEntryVar) <- "disable"
           tclvalue(thetaEntryVar) <- "disable"
-          tclvalue(locusSetVar) <- "disable"
-          tclvalue(paramSetVar) <- "disable"
+#          tclvalue(locusSetVar) <- "disable"
+#          tclvalue(paramSetVar) <- "disable"
           tclvalue(otherArrowVar) <- "arrow"
           tclvalue(otherButtVar) <- "disable"
           tclvalue(resetArrowVar) <- "hand2"
