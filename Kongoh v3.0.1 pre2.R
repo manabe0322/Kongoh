@@ -6098,7 +6098,7 @@ Kongoh <- function(){
   tkwm.title(tf, softVer)
   topMenu <- tkmenu(tf)
   tkconfigure(tf, menu = topMenu)
-  tabs <- tk2notebook(tf, tabs = c("Files", "Calculation", "Probabilistic genotyping", "Likelihood ratio","Estimation of parameters"))
+  tabs <- tk2notebook(tf, tabs = c("Files", "Calculation", "Probabilistic genotyping", "Likelihood ratio", "Estimation of parameters"))
   tkpack(tabs, fill = "both", expand = 1)
   tab1 <- tk2notetab(tabs, "Files")
   tab2 <- tk2notetab(tabs, "Calculation")
