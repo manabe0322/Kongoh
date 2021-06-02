@@ -2473,6 +2473,7 @@ Kongoh <- function(){
           overallLike <- overallLike + log10Like
           gtProbList[[j]] <- gtProb
         }
+        resultAllHnc[[countHnc]] <- resultMake(hypIdAll, nameKnown, mrDegAll, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName)
       }
       gammaAllList[[countHnc]] <- gammaList
       timeOneHnc <- proc.time() - t
