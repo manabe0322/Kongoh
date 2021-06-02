@@ -2256,10 +2256,14 @@ Kongoh <- function(){
     sortH <- sort(heightOneL, decreasing = TRUE)
     judgeMat <- matrix(TRUE, nrow(gtComb), hnc)
     for(i in 1:hnc){
-      gt1p <- gtComb[, 2 * hnc - c(2 * (i - 1) + 1, 2 * (i - 1))]
-      candAl <- peakOneL[which(heightOneL %in% sortH[1:(2 * i)])]
-      judge1 <- apply(gt1p, 1, is.element, candAl)
-      judgeMat[, hnc - i + 1] <- apply(judge1, 2, all)
+      gt1p <- gtComb[, 2 * hnc - c(2 * (i - 1) + 1, 2 * (i - 1)), drop = FALSE]
+      if(length(sortH) <= 2 * i){
+        break
+      }else{
+        candAl <- peakOneL[which(heightOneL %in% sortH[1:(2 * i)])]
+        judge1 <- apply(gt1p, 1, is.element, candAl)
+        judgeMat[, hnc - i + 1] <- apply(judge1, 2, all)
+      }
     }
     gtCombRough <- gtComb[apply(judgeMat, 1, all), , drop = FALSE]
     return(gtCombRough)

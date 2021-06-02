@@ -118,7 +118,7 @@ gtCombMake <- function(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr
   }
 }
 
-gtCombCut <- function(gtComb, peakOneL, heightOneL){
+gtCombCutPre <- function(gtComb, peakOneL, heightOneL){
   hnc <- ncol(gtComb) / 2
   sortH <- sort(heightOneL, decreasing = TRUE)
   judgeMat <- matrix(TRUE, nrow(gtComb), hnc - 1)
@@ -136,15 +136,19 @@ gtCombCut <- function(gtComb, peakOneL, heightOneL){
   return(gtCombRough)
 }
 
-gtCombCut2 <- function(gtComb, peakOneL, heightOneL){
+gtCombCut <- function(gtComb, peakOneL, heightOneL){
   hnc <- ncol(gtComb) / 2
   sortH <- sort(heightOneL, decreasing = TRUE)
   judgeMat <- matrix(TRUE, nrow(gtComb), hnc)
   for(i in 1:hnc){
-    gt1p <- gtComb[, 2 * hnc - c(2 * (i - 1) + 1, 2 * (i - 1))]
-    candAl <- peakOneL[which(heightOneL %in% sortH[1:(2 * i)])]
-    judge1 <- apply(gt1p, 1, is.element, candAl)
-    judgeMat[, hnc - i + 1] <- apply(judge1, 2, all)
+    gt1p <- gtComb[, 2 * hnc - c(2 * (i - 1) + 1, 2 * (i - 1)), drop = FALSE]
+    if(length(sortH) <= 2 * i){
+      break
+    }else{
+      candAl <- peakOneL[which(heightOneL %in% sortH[1:(2 * i)])]
+      judge1 <- apply(gt1p, 1, is.element, candAl)
+      judgeMat[, hnc - i + 1] <- apply(judge1, 2, all)
+    }
   }
   gtCombRough <- gtComb[apply(judgeMat, 1, all), , drop = FALSE]
   return(gtCombRough)
@@ -159,15 +163,15 @@ hbFltr <- 0.25
 stFltr <- c(0.7, 0.35, 0.13, 0.12)
 st <- 500
 gtCombTest2 <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
-gtCombRoughTest2 <- gtCombCut(gtCombTest2, peakOneL, heightOneL)
-gtCombRoughTest2_2 <- gtCombCut2(gtCombTest2, peakOneL, heightOneL)
+gtCombRoughTest2 <- gtCombCutPre(gtCombTest2, peakOneL, heightOneL)
+gtCombRoughTest2_2 <- gtCombCut(gtCombTest2, peakOneL, heightOneL)
 
 hnc <- 3
 gtCombTest3 <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
-gtCombRoughTest3 <- gtCombCut(gtCombTest3, peakOneL, heightOneL)
-gtCombRoughTest3_2 <- gtCombCut2(gtCombTest3, peakOneL, heightOneL)
+gtCombRoughTest3 <- gtCombCutPre(gtCombTest3, peakOneL, heightOneL)
+gtCombRoughTest3_2 <- gtCombCut(gtCombTest3, peakOneL, heightOneL)
 
 hnc <- 4
 gtCombTest4 <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
-gtCombRoughTest4 <- gtCombCut(gtCombTest4, peakOneL, heightOneL)
-gtCombRoughTest4_2 <- gtCombCut2(gtCombTest4, peakOneL, heightOneL)
+gtCombRoughTest4 <- gtCombCutPre(gtCombTest4, peakOneL, heightOneL)
+gtCombRoughTest4_2 <- gtCombCut(gtCombTest4, peakOneL, heightOneL)
