@@ -2332,7 +2332,7 @@ Kongoh <- function(){
         
         gtComb <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
         gtCombList[[j]] <- gtComb
-        if(length(gtCombRough) == 0){
+        if(length(gtComb) == 0){
           impossible <- TRUE
           break
         }else{
