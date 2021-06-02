@@ -2332,11 +2332,11 @@ Kongoh <- function(){
         
         gtComb <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
         gtCombList[[j]] <- gtComb
-        gtCombRough <- gtCombCut(gtComb, peakOneL, heightOneL)
         if(length(gtCombRough) == 0){
           impossible <- TRUE
           break
         }else{
+          gtCombRough <- gtCombCut(gtComb, peakOneL, heightOneL)
           ephData <- ephEstimate(peakOneL, sizeOneL, numMc, tempMean, mrOneC, degOneC, sizeMean, srB1PeakOneL, srF1PeakOneL, srB2PeakOneL, aeParamOneL, hbParamOneL, srB1ParamOneL, srF1ParamOneL, srB2ParamOneL, srM2ParamOneL)
           gammaAl <- gammaEstimate(ephData[[1]])
           gammaStB1 <- gammaEstimate(ephData[[2]])
