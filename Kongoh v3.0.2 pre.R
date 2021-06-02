@@ -2340,7 +2340,6 @@ Kongoh <- function(){
           impossible <- TRUE
           break
         }else{
-          gtCombRough <- gtCombCut(gtComb, peakOneL, heightOneL)
           ephData <- ephEstimate(peakOneL, sizeOneL, numMc, tempMean, mrOneC, degOneC, sizeMean, srB1PeakOneL, srF1PeakOneL, srB2PeakOneL, aeParamOneL, hbParamOneL, srB1ParamOneL, srF1ParamOneL, srB2ParamOneL, srM2ParamOneL)
           gammaAl <- gammaEstimate(ephData[[1]])
           gammaStB1 <- gammaEstimate(ephData[[2]])
@@ -2352,9 +2351,14 @@ Kongoh <- function(){
           nGC <- nrow(gtCombRough)
           products <- matrix(0, nGC, nMD)
           if(hnc >= 3){
+            gtCombRough <- gtCombCut(gtComb, peakOneL, heightOneL)
+            if(nrow(gtCombRough) == 0){
+              gtCombRough <- gtComb
+            }
             productsOneL <- parRapply(cl, gtCombRough, gammaDens, mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
             products[, mrDegID] <- matrix(productsOneL, nrow = nGC, byrow = TRUE)
           }else{
+            gtCombRough <- gtComb
             for(k in 1:nGC){
               products[k, mrDegID] <- gammaDens(gtCombRough[k, ], mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
             }
