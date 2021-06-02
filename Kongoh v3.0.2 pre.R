@@ -2403,9 +2403,12 @@ Kongoh <- function(){
       if(impossible){
         resultAllHnc[[countHnc]] <- NULL
         rect(0, nBerPos, 100, nBerPos + 1, col = "greenyellow")
+      }else if(hnc < 3){
+        resultAllHnc[[countHnc]] <- resultMake(hypIdAll, nameKnown, mrDegAll, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName)
       }else{
         mrDegFinal <- mrDegAll[mrDegID, , drop = FALSE]
         nMD <- nrow(mrDegFinal)
+        overallLike <- matrix(0, nH, nMD)
         
         for(j in 1:nL){
           peakOneL <- cspPeak[[j]]
@@ -2470,7 +2473,6 @@ Kongoh <- function(){
           overallLike <- overallLike + log10Like
           gtProbList[[j]] <- gtProb
         }
-        resultAllHnc[[countHnc]] <- resultMake(hypIdAll, nameKnown, mrDegFinal, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName)
       }
       gammaAllList[[countHnc]] <- gammaList
       timeOneHnc <- proc.time() - t
