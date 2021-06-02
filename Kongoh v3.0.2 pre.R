@@ -2250,6 +2250,21 @@ Kongoh <- function(){
     return(resultList)
   }
   
+  #Cut gtComb
+  gtCombCut <- function(gtComb, peakOneL, heightOneL){
+    hnc <- ncol(gtComb) / 2
+    sortH <- sort(heightOneL, decreasing = TRUE)
+    judgeMat <- matrix(TRUE, nrow(gtComb), hnc)
+    for(i in 1:hnc){
+      gt1p <- gtComb[, 2 * hnc - c(2 * (i - 1) + 1, 2 * (i - 1))]
+      candAl <- peakOneL[which(heightOneL %in% sortH[1:(2 * i)])]
+      judge1 <- apply(gt1p, 1, is.element, candAl)
+      judgeMat[, hnc - i + 1] <- apply(judge1, 2, all)
+    }
+    gtCombRough <- gtComb[apply(judgeMat, 1, all), , drop = FALSE]
+    return(gtCombRough)
+  }
+  
   #Interpret a CSP
   cspInterpret <- function(cspPeak, cspSize, cspHeight, refAllL, popAlList, popFreqList, QFreqAll, atAllL, tempPerL, srB1Peak, srF1Peak, srB2Peak, aeParamVal, hbParamVal, srB1ParamVal, srF1ParamVal, srB2ParamVal, srM2ParamVal, srConsider, repLengthAll, hncFrom, hncTo, mrOne, degOne, theta, numMc, mrDegCut, st, hbFltr, stFltr){
     lociName <- names(cspPeak)
@@ -2317,7 +2332,8 @@ Kongoh <- function(){
         
         gtComb <- gtCombMake(peakOneL, heightOneL, hnc, srConsiderOneL, hbFltr, stFltr, st)
         gtCombList[[j]] <- gtComb
-        if(length(gtComb) == 0){
+        gtCombRough <- gtCombCut(gtComb, peakOneL, heightOneL)
+        if(length(gtCombRough) == 0){
           impossible <- TRUE
           break
         }else{
@@ -2329,14 +2345,14 @@ Kongoh <- function(){
           gammaStM2 <- gammaEstimate(ephData[[5]])
           gammaList[[j]] <- list(gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2)
           
-          nGC <- nrow(gtComb)
+          nGC <- nrow(gtCombRough)
           products <- matrix(0, nGC, nMD)
           if(hnc >= 3){
-            productsOneL <- parRapply(cl, gtComb, gammaDens, mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
+            productsOneL <- parRapply(cl, gtCombRough, gammaDens, mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
             products[, mrDegID] <- matrix(productsOneL, nrow = nGC, byrow = TRUE)
           }else{
             for(k in 1:nGC){
-              products[k, mrDegID] <- gammaDens(gtComb[k, ], mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
+              products[k, mrDegID] <- gammaDens(gtCombRough[k, ], mrDegAll[mrDegID, , drop = FALSE], peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
             }
           }
           productsList[[j]] <- products
@@ -2350,7 +2366,7 @@ Kongoh <- function(){
             for(l in 1:nHI2){
               countHyp <- countHyp + 1
               hypIdOne <- hypIdOneAll[l, ]
-              gtProb[countHyp, ] <- apply(gtComb, 1, gtProbCalc, hypIdOne, popAl, popFreq, theta, refOneL, QFreq)
+              gtProb[countHyp, ] <- apply(gtCombRough, 1, gtProbCalc, hypIdOne, popAl, popFreq, theta, refOneL, QFreq)
               log10LikeOne <- log10(matrix(gtProb[countHyp, ], nrow = 1) %*% products)
               log10Like[countHyp, ] <- log10LikeOne
             }
@@ -2378,7 +2394,73 @@ Kongoh <- function(){
         resultAllHnc[[countHnc]] <- NULL
         rect(0, nBerPos, 100, nBerPos + 1, col = "greenyellow")
       }else{
-        resultAllHnc[[countHnc]] <- resultMake(hypIdAll, nameKnown, mrDegAll, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName)
+        mrDegFinal <- mrDegAll[mrDegID, , drop = FALSE]
+        nMD <- nrow(mrDegFinal)
+        
+        for(j in 1:nL){
+          peakOneL <- cspPeak[[j]]
+          sizeOneL <- cspSize[[j]]
+          heightOneL <- cspHeight[[j]]
+          srConsiderOneL <- srConsider[j, ]
+          refOneL <- refAllL[j, ]
+          srB1PeakOneL <- srB1Peak[[j]]
+          srF1PeakOneL <- srF1Peak[[j]]
+          srB2PeakOneL <- srB2Peak[[j]]
+          aeParamOneL <- aeParamVal[j, ]
+          hbParamOneL <- hbParamVal[j, ]
+          srB1ParamOneL <- srB1ParamVal[j, ]
+          srF1ParamOneL <- srF1ParamVal[j, ]
+          srB2ParamOneL <- srB2ParamVal[j, ]
+          srM2ParamOneL <- srM2ParamVal[j, ]
+          repLength <- repLengthAll[names(repLengthAll) == lociName[j]]
+          popAl <- popAlList[[j]]
+          popFreq <- popFreqList[[j]]
+          QFreq <- QFreqAll[j]
+          at <- atAllL[j]
+          
+          gtComb <- gtCombList[[j]]
+          ephData <- ephEstimate(peakOneL, sizeOneL, numMc, tempMean, mrOneC, degOneC, sizeMean, srB1PeakOneL, srF1PeakOneL, srB2PeakOneL, aeParamOneL, hbParamOneL, srB1ParamOneL, srF1ParamOneL, srB2ParamOneL, srM2ParamOneL)
+          gammaAl <- gammaEstimate(ephData[[1]])
+          gammaStB1 <- gammaEstimate(ephData[[2]])
+          gammaStF1 <- gammaEstimate(ephData[[3]])
+          gammaStB2 <- gammaEstimate(ephData[[4]])
+          gammaStM2 <- gammaEstimate(ephData[[5]])
+          gammaList[[j]] <- list(gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2)
+          
+          nGC <- nrow(gtComb)
+          if(hnc >= 3){
+            productsOneL <- parRapply(cl, gtComb, gammaDens, mrDegFinal, peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
+            products <- matrix(productsOneL, nrow = nGC, byrow = TRUE)
+          }else{
+            products <- matrix(0, nGC, nMD)
+            for(k in 1:nGC){
+              products[k, ] <- gammaDens(gtComb[k, ], mrDegFinal, peakOneL, heightOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC, at) 
+            }
+          }
+          productsList[[j]] <- products
+          log10Like <- mrDegAdopt <- matrix(0, nH, nMD)
+          gtProb <- matrix(0, nH, nGC)
+          countHyp <- 0
+          nHI1 <- length(hypIdAll)
+          
+          for(k in 1:nHI1){
+            hypIdOneAll <- hypIdAll[[k]]
+            nHI2 <- nrow(hypIdOneAll)
+            for(l in 1:nHI2){
+              countHyp <- countHyp + 1
+              hypIdOne <- hypIdOneAll[l, ]
+              gtProb[countHyp, ] <- apply(gtComb, 1, gtProbCalc, hypIdOne, popAl, popFreq, theta, refOneL, QFreq)
+              log10LikeOne <- log10(matrix(gtProb[countHyp, ], nrow = 1) %*% products)
+              log10Like[countHyp, ] <- log10LikeOne
+            }
+            likePos <- (countHyp - nHI2 + 1):countHyp
+            log10LikeOne2 <- as.numeric(log10Like[likePos, ])
+          }
+          log10LikeList[[j]] <- log10Like
+          overallLike <- overallLike + log10Like
+          gtProbList[[j]] <- gtProb
+        }
+        resultAllHnc[[countHnc]] <- resultMake(hypIdAll, nameKnown, mrDegFinal, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName)
       }
       gammaAllList[[countHnc]] <- gammaList
       timeOneHnc <- proc.time() - t
