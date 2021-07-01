@@ -5564,7 +5564,7 @@ Kongoh <- function(){
               tkgrid(tkbutton(tfChange, text = "    Adopt    ", cursor = "hand2", command = function() adoptModel(tclvalue(selectM))), row = 0, column = 2, padx = 5, pady = 5)
             }
             
-            #Reestimate parameters
+            #Re-estimate parameters
             reestParam <- function(parUseOneL, nameModel, posL, factName, minMax, mleCondOneL){
               reestRun <- function(mleCOneM, posM, selectModel){
                 tkdestroy(tfReest)
@@ -5705,7 +5705,7 @@ Kongoh <- function(){
               selectM <- tclVar(nameModel[1])
               
               tfReest <- tktoplevel()
-              tkwm.title(tfReest, "Reestimate parameters")
+              tkwm.title(tfReest, "Re-estimate parameters")
               fReest_1 <- tkframe(tfReest)
               fReest_2 <- tkframe(tfReest)
               tkgrid(tklabel(fReest_1, text = "Select a model : "), row = 0, column = 0, padx = 5, pady = 5)
@@ -5814,7 +5814,7 @@ Kongoh <- function(){
                 tkgrid(fDetail_4, padx = 5, pady = 5, sticky = "w")
                 
                 tkgrid(tkbutton(fDetail_5, text = "    Change the adopted model    ", cursor = "hand2", command = function() modelChange(nameModel, posL, factName)), row = 0, column = 0, padx = 5, pady = 5, sticky = "w")
-                tkgrid(tkbutton(fDetail_5, text = "    Reestimate parameters    ", cursor = "hand2", command = function() reestParam(parUseOneL, nameModel, posL, factName, minMax, mleCondFin[[posL]])), row = 0, column = 1, padx = 5, pady = 5, sticky = "w")
+                tkgrid(tkbutton(fDetail_5, text = "    Re-estimate parameters    ", cursor = "hand2", command = function() reestParam(parUseOneL, nameModel, posL, factName, minMax, mleCondFin[[posL]])), row = 0, column = 1, padx = 5, pady = 5, sticky = "w")
                 tkgrid(fDetail_5, padx = 5, pady = 5, sticky = "w")
               }
             }
