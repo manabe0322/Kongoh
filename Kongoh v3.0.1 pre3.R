@@ -3813,7 +3813,7 @@ Kongoh <- function(){
           
           tkgrid(tklabel(fTab2Par_scr, text = "Locus", font = "Helvetica 10 bold"), row = 0, column = 0, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "Repeat length", font = "Helvetica 10 bold"), row = 0, column = 1, padx = 5)
-          tkgrid(tklabel(fTab2Par_scr, text = "Min. threshold", font = "Helvetica 10 bold"), row = 0, column = 2, padx = 5)
+          tkgrid(tklabel(fTab2Par_scr, text = "Minimum threshold", font = "Helvetica 10 bold"), row = 0, column = 2, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "Locus-specific", font = "Helvetica 10 bold"), row = 0, column = 3, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "amplification efficiency", font = "Helvetica 10 bold"), row = 1, column = 3, padx = 5)
           tkgrid(tklabel(fTab2Par_scr, text = "Model"), row = 2, column = 3, padx = 5, pady = 5)
@@ -5986,12 +5986,12 @@ Kongoh <- function(){
     fileCk2Fin <- tclVar("0")
     paramEstFin <- tclVar("0")
     
-    #Default of the min. threshold
+    #Default of the minimum threshold
     mtDefault <- 30
     
     #Default of parameter setting in each locus
     parDefault <- matrix("", nStr, 13)
-    colnames(parDefault) <- c("Locus", "Repeat length", "Min. threshold", "AE model", "Hb model", "BSR method", "BSR model", "FSR method", "FSR model", "DSR method", "DSR model", "M2SR method", "M2SR model")
+    colnames(parDefault) <- c("Locus", "Repeat length", "Minimum threshold", "AE model", "Hb model", "BSR method", "BSR model", "FSR method", "FSR model", "DSR method", "DSR model", "M2SR method", "M2SR model")
     parDefault[, 1] <- strMar
     parDefault[, 2] <- repLengthInfo
     parDefault[, 3] <- mtDefault
