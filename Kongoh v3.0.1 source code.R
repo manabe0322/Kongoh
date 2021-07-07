@@ -1056,7 +1056,7 @@ Kongoh <- function(){
     return(refAl[!is.element(refAl, peakOneL)])
   }
   
-  #Estimate size of a drop-out allele
+  #Estimate the size of a drop-out allele
   sizeDropEst <- function(dropOneAl, peakOneL, sizeOneL, repLength){
     peakOneLCor <- sapply(peakOneL, variantCor, repLength = repLength)
     dropOneAlCor <- variantCor(dropOneAl, repLength)
