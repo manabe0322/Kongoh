@@ -1,7 +1,7 @@
 Kongoh <- function(){
   
   #############################
-  # Install required packages #
+  # Install required packages 
   #############################
   
   #tcltk
