@@ -2036,11 +2036,9 @@ Kongoh <- function(){
       p2 <- gammaAl[2, condPos]
       gammaSumPre1Al[gammaAlPos] <- p1 * p2
       gammaSumPre2Al[gammaAlPos] <- p1 * (p2^2)
-## Improvement in v3.0.2
       gammaSumPre1Al[is.nan(gammaSumPre1Al)] <- 0
       gammaSumPre2Al[is.nan(gammaSumPre2Al)] <- 0
-##
-      
+
       gammaStPos <- matrix(0, nAl, 2)
       gammaStPos[, 1] <- 1:nAl
       
@@ -2052,11 +2050,9 @@ Kongoh <- function(){
       p2 <- gammaStB1[2, condPos]
       gammaSumPre1StB1[gammaStB1Pos] <- (p1 * p2)[peakStB1ObsPos]
       gammaSumPre2StB1[gammaStB1Pos] <- (p1 * (p2^2))[peakStB1ObsPos]
-## Improvement in v3.0.2
       gammaSumPre1StB1[is.nan(gammaSumPre1StB1)] <- 0
       gammaSumPre2StB1[is.nan(gammaSumPre2StB1)] <- 0
-##
-      
+
       peakStF1Pos <- match(round(gtCombOne + 1, 1), peakOneL)
       gammaStPos[, 2] <- peakStF1Pos
       peakStF1ObsPos <- !is.na(peakStF1Pos)
@@ -2065,10 +2061,8 @@ Kongoh <- function(){
       p2 <- gammaStF1[2, condPos]
       gammaSumPre1StF1[gammaStF1Pos] <- (p1 * p2)[peakStF1ObsPos]
       gammaSumPre2StF1[gammaStF1Pos] <- (p1 * (p2^2))[peakStF1ObsPos]
-## Improvement in v3.0.2
       gammaSumPre1StF1[is.nan(gammaSumPre1StF1)] <- 0
       gammaSumPre2StF1[is.nan(gammaSumPre2StF1)] <- 0
-##
       
       peakStB2Pos <- match(round(gtCombOne - 2, 1), peakOneL)
       gammaStPos[, 2] <- peakStB2Pos
@@ -2078,11 +2072,9 @@ Kongoh <- function(){
       p2 <- gammaStB2[2, condPos]
       gammaSumPre1StB2[gammaStB2Pos] <- (p1 * p2)[peakStB2ObsPos]
       gammaSumPre2StB2[gammaStB2Pos] <- (p1 * (p2^2))[peakStB2ObsPos]
-## Improvement in v3.0.2
       gammaSumPre1StB2[is.nan(gammaSumPre1StB2)] <- 0
       gammaSumPre2StB2[is.nan(gammaSumPre2StB2)] <- 0
-##
-      
+
       peakStM2Pos <- rep(0, nAl)
       m2AlPos1 <- gtCombOne %% 1 < 0.15
       m2AlPos2 <- gtCombOne %% 1 >= 0.15
@@ -2095,11 +2087,9 @@ Kongoh <- function(){
       p2 <- gammaStM2[2, condPos]
       gammaSumPre1StM2[gammaStM2Pos] <- (p1 * p2)[peakStM2ObsPos]
       gammaSumPre2StM2[gammaStM2Pos] <- (p1 * (p2^2))[peakStM2ObsPos]
-## Improvement in v3.0.2
       gammaSumPre1StM2[is.nan(gammaSumPre1StM2)] <- 0
       gammaSumPre2StM2[is.nan(gammaSumPre2StM2)] <- 0
-##
-      
+
       gammaSumPre1 <- apply(gammaSumPre1Al + gammaSumPre1StB1 + gammaSumPre1StF1 + gammaSumPre1StB2 + gammaSumPre1StM2, 2, sum)
       gammaSumPre2 <- apply(gammaSumPre2Al + gammaSumPre2StB1 + gammaSumPre2StF1 + gammaSumPre2StB2 + gammaSumPre2StM2, 2, sum)
       
@@ -2130,14 +2120,12 @@ Kongoh <- function(){
       mr <- mrDeg[1:hnc]
       deg <- mrDeg[(hnc + 1):(2 * hnc)]
       gammaSum <- gammaSumCalc(gtCombOne, mr, deg, peakOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC)
-## Improvement in v3.0.2      
       densPos <- which(!is.nan(gammaSum[1, ]) == TRUE)
       obsPos <- which(heightOneL != 0)
       if(length(setdiff(obsPos, densPos)) == 0){
         dens <- cfOphEph(heightOneL[densPos], gammaSum[, densPos, drop = FALSE], at)
         prodGtCombOne[i] <- dens
       }
-##
     }
     return(prodGtCombOne)
   }
@@ -2473,7 +2461,7 @@ Kongoh <- function(){
           return(pgNew)
         }
         
-        #Sum gamma distributions of the same allele repeat number
+        #Sum gamma distributions of same allele repeat number
         gammaSumCalc <- function(gtCombOne, mr, deg, peakOneL, gammaAl, gammaStB1, gammaStF1, gammaStB2, gammaStM2, mrOneC, degOneC){
           nAl <- length(gtCombOne)
           nPeak <- length(peakOneL)
@@ -2493,6 +2481,8 @@ Kongoh <- function(){
           p2 <- gammaAl[2, condPos]
           gammaSumPre1Al[gammaAlPos] <- p1 * p2
           gammaSumPre2Al[gammaAlPos] <- p1 * (p2^2)
+          gammaSumPre1Al[is.nan(gammaSumPre1Al)] <- 0
+          gammaSumPre2Al[is.nan(gammaSumPre2Al)] <- 0
           
           gammaStPos <- matrix(0, nAl, 2)
           gammaStPos[, 1] <- 1:nAl
@@ -2505,6 +2495,8 @@ Kongoh <- function(){
           p2 <- gammaStB1[2, condPos]
           gammaSumPre1StB1[gammaStB1Pos] <- (p1 * p2)[peakStB1ObsPos]
           gammaSumPre2StB1[gammaStB1Pos] <- (p1 * (p2^2))[peakStB1ObsPos]
+          gammaSumPre1StB1[is.nan(gammaSumPre1StB1)] <- 0
+          gammaSumPre2StB1[is.nan(gammaSumPre2StB1)] <- 0
           
           peakStF1Pos <- match(round(gtCombOne + 1, 1), peakOneL)
           gammaStPos[, 2] <- peakStF1Pos
@@ -2514,6 +2506,8 @@ Kongoh <- function(){
           p2 <- gammaStF1[2, condPos]
           gammaSumPre1StF1[gammaStF1Pos] <- (p1 * p2)[peakStF1ObsPos]
           gammaSumPre2StF1[gammaStF1Pos] <- (p1 * (p2^2))[peakStF1ObsPos]
+          gammaSumPre1StF1[is.nan(gammaSumPre1StF1)] <- 0
+          gammaSumPre2StF1[is.nan(gammaSumPre2StF1)] <- 0
           
           peakStB2Pos <- match(round(gtCombOne - 2, 1), peakOneL)
           gammaStPos[, 2] <- peakStB2Pos
@@ -2523,6 +2517,8 @@ Kongoh <- function(){
           p2 <- gammaStB2[2, condPos]
           gammaSumPre1StB2[gammaStB2Pos] <- (p1 * p2)[peakStB2ObsPos]
           gammaSumPre2StB2[gammaStB2Pos] <- (p1 * (p2^2))[peakStB2ObsPos]
+          gammaSumPre1StB2[is.nan(gammaSumPre1StB2)] <- 0
+          gammaSumPre2StB2[is.nan(gammaSumPre2StB2)] <- 0
           
           peakStM2Pos <- rep(0, nAl)
           m2AlPos1 <- gtCombOne %% 1 < 0.15
@@ -2536,6 +2532,8 @@ Kongoh <- function(){
           p2 <- gammaStM2[2, condPos]
           gammaSumPre1StM2[gammaStM2Pos] <- (p1 * p2)[peakStM2ObsPos]
           gammaSumPre2StM2[gammaStM2Pos] <- (p1 * (p2^2))[peakStM2ObsPos]
+          gammaSumPre1StM2[is.nan(gammaSumPre1StM2)] <- 0
+          gammaSumPre2StM2[is.nan(gammaSumPre2StM2)] <- 0
           
           gammaSumPre1 <- apply(gammaSumPre1Al + gammaSumPre1StB1 + gammaSumPre1StF1 + gammaSumPre1StB2 + gammaSumPre1StM2, 2, sum)
           gammaSumPre2 <- apply(gammaSumPre2Al + gammaSumPre2StB1 + gammaSumPre2StF1 + gammaSumPre2StB2 + gammaSumPre2StM2, 2, sum)
