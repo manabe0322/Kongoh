@@ -1949,53 +1949,42 @@ Kongoh <- function(){
     if(length(srB1PeakOneL) != 0){
       srB1Mean <- srB1ParamOneL[1] * srB1PeakOneL + srB1ParamOneL[2]      
       srB1Mean <- rep(as.vector(matrix(rep(srB1Mean, nMrOne), nrow = nMrOne, byrow = TRUE)), nDegOne)
-##Improvement in v3.0.2      
       posSrB1Adopt <- which(srB1Mean > 0)
-      
       srB1Var <- srB1ParamOneL[3]
       for(i in 1:length(posSrB1Adopt)){
         posSrB1AdoptOne <- posSrB1Adopt[i]
         srB1Val[, posSrB1AdoptOne] <- exp(rtruncnorm(numMc, b = log(srB1Max), mean = log(srB1Mean[posSrB1AdoptOne]), sd = sqrt(srB1Var / step6Height[, posSrB1AdoptOne])))
       }
     }
-##
     
     srF1Val <- srB1Val * 0
     if(length(srF1PeakOneL) != 0){
       srF1Mean <- srF1ParamOneL[1] * srF1PeakOneL + srF1ParamOneL[2]
       srF1Mean <- rep(as.vector(matrix(rep(srF1Mean, nMrOne), nrow = nMrOne, byrow = TRUE)), nDegOne)
-##Improvement in v3.0.2
       posSrF1Adopt <- which(srF1Mean > 0)
-      
       srF1Var <- srF1ParamOneL[3]
       for(i in 1:nStep6){
         posSrF1AdoptOne <- posSrF1Adopt[i]
         srF1Val[, posSrF1AdoptOne] <- exp(rtruncnorm(numMc, b = log(srF1Max), mean = log(srF1Mean[posSrF1AdoptOne]), sd = sqrt(srF1Var / step6Height[, posSrF1AdoptOne])))
       }
     }
-##
-    
+
     srB2Val <- srB1Val * 0
     if(length(srB2PeakOneL) != 0){
       srB2Mean <- srB2ParamOneL[1] * srB2PeakOneL + srB2ParamOneL[2]
       srB2Mean <- rep(as.vector(matrix(rep(srB2Mean, nMrOne), nrow = nMrOne, byrow = TRUE)), nDegOne)
-##Improvement in v3.0.2
       posSrB2Adopt <- which(srB2Mean > 0)
-      
       srB2Var <- srB2ParamOneL[3]
       for(i in 1:nStep6){
         posSrB2AdoptOne <- posSrB2Adopt[i]
         srB2Val[, posSrB2AdoptOne] <- exp(rtruncnorm(numMc, b = log(srB2Max), mean = log(srB2Mean[posSrB2AdoptOne]), sd = sqrt(srB2Var / step6Height[, posSrB2AdoptOne])))
       }
     }
-##
-    
+
     srM2Val <- srB1Val * 0
     srM2Mean <- as.numeric(srM2ParamOneL[1])
     srM2Var <- as.numeric(srM2ParamOneL[2])
-##Improvement in v3.0.2
     if((srM2Mean > 0) && (srM2Var > 0)){
-##
       for(i in 1:nStep6){
         srM2Val[, i] <- exp(rtruncnorm(numMc, b = log(srM2Max), mean = log(srM2Mean), sd = sqrt(srM2Var / step6Height[, i])))
       }
