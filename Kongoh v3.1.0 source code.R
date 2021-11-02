@@ -93,7 +93,7 @@ Kongoh <- function(){
   #############
   
   #software version
-  softVer <- "Kongoh v3.0.1"
+  softVer <- "Kongoh v3.1.0"
   
   #Minimum or maximum of each parameter for Monte Carlo simulation
   aeMin <- 0.058
