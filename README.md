@@ -18,12 +18,14 @@ Kongoh()
 
 Manabe S, Morimoto C, Hamano Y, Fujimoto S, Tamaki K. Development and validation of open-source software for DNA mixture interpretation based on a quantitative continuous model. PLOS ONE 2017;12(11):e0188183.
 
-Manabe S, Hamano Y, Morimoto C, Kawai C, Fujimoto S, Tamaki K. New stutter ratio distribution for DNA mixture interpretation based on a continuous model. Leg Med (Tokyo). 2016;19:16-21.
+Manabe S, Hamano Y, Morimoto C, Kawai C, Fujimoto S, Tamaki K. New stutter ratio distribution for DNA mixture interpretation based on a continuous model. Leg Med. 2016;19:16-21.
 
-Manabe S, Fujii K, Fukagawa T, Mizuno N, Sekiguchi K, Inoue K, Hashiyada M, Akane A, Tamaki K. Evaluation of probability distribution models for stutter ratios in the typing system of GlobalFiler and 3500xL Genetic Analyzer. Leg Med (Tokyo). 2021;52:101906.
+Manabe S, Fujii K, Fukagawa T, Mizuno N, Sekiguchi K, Inoue K, Hashiyada M, Akane A, Tamaki K. Evaluation of probability distribution models for stutter ratios in the typing system of GlobalFiler and 3500xL Genetic Analyzer. Leg Med. 2021;52:101906.
+
+Manabe S, Fujii K, Fukagawa T, Mizuno N, Sekiguchi K, Inoue K, Hashiyada M, Akane A, Tamaki K. corrigendum to "Evaluation of probability distribution models for stutter ratios in the typing system of GlobalFiler and 3500xL Genetic Analyzer" [Leg. Med. 52 (2021) 101906]. Leg Med. 2022;54:101984.
 
 Manabe S, Fukagawa T, Fujii K, Mizuno N, Sekiguchi K, Akane A, Tamaki K. Development and validation of Kongoh ver. 3.0.1: Open-source software for
-DNA mixture interpretation in the GlobalFiler system based on a quantitative continuous model. Leg Med (Tokyo). 2021 (in press).
+DNA mixture interpretation in the GlobalFiler system based on a quantitative continuous model. Leg Med. 2021 (in press).
 
 ## License
 
