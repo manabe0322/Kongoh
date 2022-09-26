@@ -1,0 +1,63 @@
+Conditions,Values
+Kit,Identifiler-Plus
+Parameters for Monte Carlo simulations,IDP_28cycles_3130xl_10sec.csv
+Allele repeat correction,IDP_repeat_correction.csv
+Method of estimating allele frequencies,No correction
+Minimum allele frequency,0.001
+Theta,0
+Number of Monte Carlo simulations,1000
+Analytical threshold_D8S1179,30
+Analytical threshold_D21S11,30
+Analytical threshold_D7S820,30
+Analytical threshold_CSF1PO,30
+Analytical threshold_D3S1358,30
+Analytical threshold_TH01,30
+Analytical threshold_D13S317,30
+Analytical threshold_D16S539,30
+Analytical threshold_D2S1338,30
+Analytical threshold_D19S433,30
+Analytical threshold_vWA,30
+Analytical threshold_TPOX,30
+Analytical threshold_D18S51,30
+Analytical threshold_D5S818,30
+Analytical threshold_FGA,30
+Mixture proportion,0.0025
+Mixture proportion,0.005
+Mixture proportion,0.0075
+Mixture proportion,0.01
+Mixture proportion,0.025
+Mixture proportion,0.05
+Mixture proportion,0.075
+Mixture proportion,0.1
+Mixture proportion,0.2
+Mixture proportion,0.3
+Mixture proportion,0.4
+Mixture proportion,0.5
+Degradation parameter,-0.05
+Degradation parameter,-0.0475
+Degradation parameter,-0.045
+Degradation parameter,-0.0425
+Degradation parameter,-0.04
+Degradation parameter,-0.0375
+Degradation parameter,-0.035
+Degradation parameter,-0.0325
+Degradation parameter,-0.03
+Degradation parameter,-0.0275
+Degradation parameter,-0.025
+Degradation parameter,-0.0225
+Degradation parameter,-0.02
+Degradation parameter,-0.0175
+Degradation parameter,-0.015
+Degradation parameter,-0.0125
+Degradation parameter,-0.01
+Degradation parameter,-0.0075
+Degradation parameter,-0.005
+Degradation parameter,-0.0025
+Degradation parameter,0
+Stochastic threshold,500
+Filter of mixture ratio,4
+Filter of heterozygote balance,0.25
+Filter of back stutter ratio,0.7
+Filter of forward stutter ratio,0.35
+Filter of double-back stutter ratio,0.13
+Filter of minus 2-nt stutter ratio,0.12

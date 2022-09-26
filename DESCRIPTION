@@ -1,0 +1,17 @@
+Package: kongohPack
+Type: Package
+Title: Interpretation of crime stain profiles based on a continuous model
+Version: 3.2.0
+Author: Sho Manabe <manabesh@hirakata.kmu.ac.jp>
+Maintainer: Sho Manabe <manabesh@hirakata.kmu.ac.jp>
+Description: Interpretation of crime stain profiles based on a continuous model.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 4.2.0), tcltk, tcltk2
+Imports: gtools, parallel, truncnorm, GenSA
+Suggests: 
+    testthat (>= 2.0.0)
+Config/testthat/edition: 2
+RoxygenNote: 7.2.0
