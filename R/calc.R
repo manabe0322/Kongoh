@@ -1120,7 +1120,7 @@ analyzeCSP <- function(csp, ref, af,
         t <- proc.time()
         countHnc <- countHnc + 1
         hnc <- i
-        if((calcAllHyp == 0) && (hnc < nRef)){
+        if((calcAllHyp == 0) && (hnc < max(c(length(knownHp), length(knownHd))))){
           errorHnc <- TRUE
           break
         }else{
@@ -1268,7 +1268,7 @@ analyzeCSP <- function(csp, ref, af,
       t2 <- proc.time()
       for(i in hncFrom:hncTo){
         hnc <- i
-        if((calcAllHyp == 0) && (hnc < nRef)){
+        if((calcAllHyp == 0) && (hnc < max(c(length(knownHp), length(knownHd))))){
           errorHnc <- TRUE
           break
         }else{

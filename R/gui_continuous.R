@@ -381,7 +381,7 @@ makeReport_Deconvo <- function(envProj, envGUI, envDeconvo){
     write.table(anaMeth_deconvo, file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
     write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
 
-    write.table("======== Likelihoods ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table("======== Log10 (Likelihood) ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
     write.table(likeAll, file = reportName, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
     write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
 
@@ -635,7 +635,7 @@ makeSubTabResult_Deconvo <- function(envProj, envGUI){
     tkgrid(framePG_3, pady = 5, sticky = "w")
     tkgrid(framePG_4, pady = 5, sticky = "w")
 
-    tkgrid(tklabel(frameL_1, text = "Likelihood", font = "Helvetica 10 bold"), pady = 5)
+    tkgrid(tklabel(frameL_1, text = "Log10 (Likelihood)", font = "Helvetica 10 bold"), pady = 5)
     tkgrid(tklabel(frameL_3, text = "Estimated parameters", font = "Helvetica 10 bold"), pady = 5)
     buttReport <- tkbutton(frameL_5, text = "    Report    ", cursor = "hand2", command = function() makeReport_Deconvo(envProj, envGUI, envDeconvo))
 #    buttProceed <- tkbutton(frameL_5, text = "    Proceed to likelihood ratio    ", cursor = "hand2", command = function() proceedLR(envProj, envGUI))
@@ -982,6 +982,85 @@ makeReport_LR <- function(envProj, envGUI, envLR, hp, hd){
   }
 }
 
+exportLikeAll <- function(envProj, envGUI, cspLoci, hyps){
+  saveAs <- tkgetSaveFile(filetypes = "{{CSV Files} {.csv}}")
+  if(tclvalue(saveAs) != ""){
+    if(substr(tclvalue(saveAs), nchar(tclvalue(saveAs)) - 3, nchar(tclvalue(saveAs))) == ".csv"){
+      reportName <- tclvalue(saveAs)
+    }else{
+      reportName <- paste0(tclvalue(saveAs), ".csv")
+    }
+
+    softVer <- get("softVer", pos = envGUI)
+    cspFn <- get("cspFn", pos = envProj)
+    refFn <- get("refFn", pos = envProj)
+    afFn <- get("afFn", pos = envProj)
+    anaMeth_lr <- get("anaMeth_lr", pos = envProj)
+    dataLR <- get("dataLR", pos = envProj)
+
+    nL <- length(cspLoci)
+    nH <- length(hyps)
+    matLike <- matrix(0, nL + 1, nH)
+    count <- 0
+    for(i in 1:length(dataLR)){
+      dataOneHnc <- dataLR[[i]]
+      for(j in 1:length(dataOneHnc)){
+        count <- count + 1
+        dataOneHyp <- dataOneHnc[[j]]
+        matLike[, count] <- dataOneHyp[[2]]
+      }
+    }
+
+    matLR <- matrix(0, nH, nH)
+    for(i in 1:nH){
+      likeHp <- matLike[nL + 1, i]
+      for(j in 1:nH){
+        likeHd <- matLike[nL + 1, j]
+        matLR[i, j] <- 10^(likeHp - likeHd)
+      }
+    }
+    
+    matLike <- cbind(c(cspLoci, "Total"), matLike)
+    colnames(matLike) <- c("Marker", hyps)
+    matLR <- cbind(hyps, matLR)
+    colnames(matLR) <- c("", hyps)
+
+    options(warn = -1)
+
+    write.table("======== Software version ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = FALSE)
+    write.table(softVer, file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+
+    write.table("======== Input files ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table(paste0("Crime stain profile : ", cspFn), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table(paste0("Reference profile : ", refFn), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table(paste0("Allele frequencies : ", afFn), file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+
+    write.table("======== Analysis method ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table(anaMeth_lr, file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+
+    write.table("======== Hypothesis ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    for(i in 1:nH){
+      write.table(hyps[i], file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    }
+    write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+
+    write.table("======== Log10 (Likelihood) ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table(matLike, file = reportName, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
+    write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+
+    write.table("======== Likelihood ratio ========", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table("Row: Hp", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table("Column: Hd", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+    write.table(matLR, file = reportName, sep = ",", row.names = FALSE, col.names = TRUE, append = TRUE)
+    write.table("", file = reportName, sep = ",", row.names = FALSE, col.names = FALSE, append = TRUE)
+
+    options(warn = 0)
+  }
+}
+
 # Make a sub-tab of results for LR
 makeSubTabResult_LR <- function(envProj, envGUI){
   finLR <- get("finLR", pos = envProj)
@@ -1139,20 +1218,22 @@ makeSubTabResult_LR <- function(envProj, envGUI){
       assign("calcTimeHd", dataOneHd[[7]], envir = envLR)
 
       nL <- length(cspLoci)
-      selectLR <- matrix(0, nL + 1, 4)
-      colnames(selectLR) <- c("Marker", "Log10 (Likelihood (Hp))", "Log10 (Likelihood (Hd))", "Log10 (LR)")
+      selectLR <- matrix(0, nL + 1, 5)
+      colnames(selectLR) <- c("Marker", "Log10 (Likelihood (Hp))", "Log10 (Likelihood (Hd))", "Log10 (LR)", "LR")
       selectLR[, 1] <- names(likeHp)
       selectLR[, 2] <- likeHp
       selectLR[, 3] <- likeHd
       selectLR[, 4] <- likeHp - likeHd
+      selectLR[, 5] <- 10^(likeHp - likeHd)
       assign("selectLR", selectLR, envir = envLR)
 
-      selectLR_display <- matrix(0, nL + 1, 4)
-      colnames(selectLR_display) <- c("Marker", "Log10 (Likelihood (Hp))", "Log10 (Likelihood (Hd))", "Log10 (LR)")
+      selectLR_display <- matrix(0, nL + 1, 5)
+      colnames(selectLR_display) <- c("Marker", "Log10 (Likelihood (Hp))", "Log10 (Likelihood (Hd))", "Log10 (LR)", "LR")
       selectLR_display[, 1] <- names(likeHp)
       selectLR_display[, 2] <- signif(likeHp, 3)
       selectLR_display[, 3] <- signif(likeHd, 3)
       selectLR_display[, 4] <- signif(likeHp - likeHd, 3)
+      selectLR_display[, 5] <- signif(10^(likeHp - likeHd), 3)
 
       selectParHp <- matrix(0, hncHp, 3)
       colnames(selectParHp) <- c("Contributor", "Mix prop. (Hp)", "Degradation (Hp)")
@@ -1191,11 +1272,12 @@ makeSubTabResult_LR <- function(envProj, envGUI){
       tkdestroy(scrY_LR)
 
       scrY_LR <- tkscrollbar(frameL_3, repeatinterval = 5, command = function(...) tkyview(mlbLR, ...))
-      mlbLR <- tk2mclistbox(frameL_3, width = 75, height = 25, resizablecolumns = TRUE, selectmode = "single", yscrollcommand = function(...) tkset(scrY_LR, ...))
+      mlbLR <- tk2mclistbox(frameL_3, width = 90, height = 25, resizablecolumns = TRUE, selectmode = "single", yscrollcommand = function(...) tkset(scrY_LR, ...))
       tk2column(mlbLR, "add", label = "Marker", width = 10)
       tk2column(mlbLR, "add", label = "Log10 (Likelihood (Hp))", width = 25)
       tk2column(mlbLR, "add", label = "Log10 (Likelihood (Hd))", width = 25)
       tk2column(mlbLR, "add", label = "Log10 (LR)", width = 15)
+      tk2column(mlbLR, "add", label = "LR", width = 15)
       tkgrid(mlbLR, scrY_LR)
       tk2insert.multi(mlbLR, "end", selectLR_display)
       tkgrid.configure(scrY_LR, rowspan = 25, sticky = "nsw")
@@ -1306,7 +1388,8 @@ makeSubTabResult_LR <- function(envProj, envGUI){
     showLR(hp, hd)
 
     buttReport <- tkbutton(frameL_5, text = "    Report (displayed data)    ", cursor = "hand2", command = function() makeReport_LR(envProj, envGUI, envLR, tclvalue(selectHp), tclvalue(selectHd)))
-    tkgrid(buttReport, padx = 5, pady = 5)
+    buttExportLikeAll <- tkbutton(frameL_5, text = "    Export all likelihoods    ", cursor = "hand2", command = function() exportLikeAll(envProj, envGUI, cspLoci, hyps))
+    tkgrid(buttReport, buttExportLikeAll, padx = 5, pady = 5)
 
     tkgrid(frameL_1, pady = 5, sticky = "w")
     tkgrid(frameL_2, pady = 5, sticky = "w")
