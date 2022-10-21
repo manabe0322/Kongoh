@@ -484,9 +484,9 @@ Kongoh <- function(){
   }
 
   envGUI <- new.env(parent = globalenv())
-  softVer <- packageVersion("KongohDev")
-  pathPack <- path.package("KongohDev", quiet = FALSE)
-#  pathPack <- "D:/RStudio_GitHub/KongohDev/inst"
+  softVer <- packageVersion("Kongoh")
+  pathPack <- path.package("Kongoh", quiet = FALSE)
+#  pathPack <- "D:/RStudio_GitHub/Kongoh/inst"
   assign("softVer", softVer, envir = envGUI)
   assign("pathPack", pathPack, envir = envGUI)
 

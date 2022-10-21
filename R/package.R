@@ -1,4 +1,4 @@
-#' KongohDev: A package for probabilistic genotyping based on a continuous model
+#' Kongoh: A package for probabilistic genotyping based on a continuous model
 #'
 #' @import tcltk
 #' @import tcltk2
