@@ -1,4 +1,4 @@
 library(testthat)
-library(kongohPack)
+library(Kongoh)
 
-test_check("kongohPack")
+test_check("Kongoh")
