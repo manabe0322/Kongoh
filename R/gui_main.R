@@ -336,6 +336,7 @@ openFile <- function(envProj, envGUI, type, labelFn, viewButt, finConsider, labe
       }else if(type == "af"){
         afInput <- read.csv(tclvalue(fpVar), header = TRUE)
         afInput <- as.matrix(afInput)
+        colnames(afInput) <- gsub(".", "", colnames(afInput), fixed = TRUE)
         assign("afInput", afInput, envir = envProj)
         assign("afFp", tclvalue(fpVar), envir = envProj)
         assign("afFn", tclvalue(fnVar), envir = envProj)
@@ -483,9 +484,9 @@ Kongoh <- function(){
   }
 
   envGUI <- new.env(parent = globalenv())
-  softVer <- packageVersion("Kongoh")
-  pathPack <- path.package("Kongoh", quiet = FALSE)
-#  pathPack <- "D:/RStudio_GitHub/Kongoh/inst"
+  softVer <- packageVersion("KongohDev")
+  pathPack <- path.package("KongohDev", quiet = FALSE)
+#  pathPack <- "D:/RStudio_GitHub/KongohDev/inst"
   assign("softVer", softVer, envir = envGUI)
   assign("pathPack", pathPack, envir = envGUI)
 

@@ -7,6 +7,7 @@ searchKit <- function(loci, pathPack){
     kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", kitNames[i], ".csv"), header = TRUE)
     kitInfo <- as.matrix(kitInfo)
     kitLoci <- unique(kitInfo[, "Marker"])
+    kitLoci <- gsub(" ", "", kitLoci, fixed = TRUE)
     if(setequal(kitLoci, loci)){
       kit <- c(kit, kitNames[i])
     }
@@ -117,14 +118,23 @@ guiAnalyze <- function(anaType, envProj, envGUI,
     namePar <- values[which(conditions == "Parameters for Monte Carlo simulations")]
     nameAlCor <- values[which(conditions == "Allele repeat correction")]
     afMeth <- values[which(conditions == "Method of estimating allele frequencies")]
-
+    
+    lociAtPre <- strsplit(conditions[grep("Analytical threshold", conditions)], "_")
+    for(i in 1:length(lociAtPre)){
+      lociAtPre[[i]][2] <- gsub(" ", "", lociAtPre[[i]][2], fixed = TRUE)
+    }
+    selectMethData[grep("Analytical threshold", conditions), which(colnames(selectMethData) == "Conditions")] <- sapply(lociAtPre, paste0, collapse = "_")
+    
     mcPar <- read.csv(paste(pathPack, "/extdata/parameters/", namePar, sep = ""), header = TRUE)
     mcPar <- as.matrix(mcPar)
+    mcPar <- gsub(" ", "", mcPar, fixed = TRUE)
     alCor <- read.csv(paste(pathPack, "/extdata/repeat_correction/", nameAlCor, sep = ""), header = TRUE)
     alCor <- as.matrix(alCor)
+    alCor <- gsub(" ", "", alCor, fixed = TRUE)
 
     kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", kit, ".csv"), header = TRUE)
     kitInfo <- as.matrix(kitInfo)
+    kitInfo[, "Marker"] <- gsub(" ", "", kitInfo[, "Marker"], fixed = TRUE)
     kitLoci <- unique(kitInfo[, "Marker"])
     posSexMar <- which(kitInfo[, "Sex_chromosomal_marker"] == "yes")
     if(length(posSexMar) > 0){
@@ -1180,10 +1190,10 @@ makeSubTabResult_LR <- function(envProj, envGUI){
       }
       tfExportAll <- tktoplevel()
       tkwm.title(tfExportAll, "Export results of probabilistic genotyping")
-      tkgrid(tklabel(tfExportAll, text = "Enter the folder name for saving files."), padx = 10, pady = 5, sticky = "w")
+      tkgrid(tklabel(tfExportAll, text = "Enter the folder name for saving files."), padx = 110, pady = 5)
       pgFolderName <- tclVar("")
-      tkgrid(tkentry(tfExportAll, textvariable = pgFolderName, width = 30, highlightthickness = 1, relief = "solid", justify = "center", background = "white"), padx = 20, pady = 5, sticky = "w")
-      tkgrid(tkbutton(tfExportAll, text = "    Save    ", cursor = "hand2", command = function() savePG()), padx = 20, pady = 20, sticky = "w")
+      tkgrid(tkentry(tfExportAll, textvariable = pgFolderName, width = 30, highlightthickness = 1, relief = "solid", justify = "center", background = "white"), padx = 120, pady = 5)
+      tkgrid(tkbutton(tfExportAll, text = "    Save    ", cursor = "hand2", command = function() savePG()), padx = 120, pady = 20)
     }
 
     showLR <- function(hp, hd){

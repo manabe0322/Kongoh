@@ -81,7 +81,7 @@ setAnaMeth <- function(action, envAnaMeth){
       nAt <- length(selectLoci)
       atVars <- list()
       for(i in 1:nAt){
-        atVars[[i]] <- tclVar(atSingleDefault)
+        atVars[[i]] <- tclVar(100)
       }
       names(atVars) <- selectLoci
       assign("atVars", atVars, envir = envAnaMeth)

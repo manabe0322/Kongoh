@@ -509,7 +509,7 @@ estEPH <- function(peakOneL, sizeOneL, numMC, tempMean, mrOneC, degOneC, sizeMea
     fsrMean <- rep(as.vector(matrix(rep(fsrMean, nMrOne), nrow = nMrOne, byrow = TRUE)), nDegOne)
     posFsrAdopt <- which(fsrMean > 0)
     fsrVar <- fsrParOneL[3]
-    for(i in 1:nStep6){
+    for(i in 1:length(posFsrAdopt)){
       posFsrAdoptOne <- posFsrAdopt[i]
       fsrVal[, posFsrAdoptOne] <- exp(rtruncnorm(numMC, b = log(maxFSR), mean = log(fsrMean[posFsrAdoptOne]), sd = sqrt(fsrVar / step6Height[, posFsrAdoptOne])))
     }
@@ -521,7 +521,7 @@ estEPH <- function(peakOneL, sizeOneL, numMC, tempMean, mrOneC, degOneC, sizeMea
     dsrMean <- rep(as.vector(matrix(rep(dsrMean, nMrOne), nrow = nMrOne, byrow = TRUE)), nDegOne)
     posDsrAdopt <- which(dsrMean > 0)
     dsrVar <- dsrParOneL[3]
-    for(i in 1:nStep6){
+    for(i in 1:length(posDsrAdopt)){
       posDsrAdoptOne <- posDsrAdopt[i]
       dsrVal[, posDsrAdoptOne] <- exp(rtruncnorm(numMC, b = log(maxDSR), mean = log(dsrMean[posDsrAdoptOne]), sd = sqrt(dsrVar / step6Height[, posDsrAdoptOne])))
     }

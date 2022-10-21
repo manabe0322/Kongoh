@@ -53,6 +53,7 @@ makeTab1Par <- function(envParProj, envParGUI){
         }else if(type == "seq"){
           seqData <- read.csv(tclvalue(fpVar), header = TRUE)
           seqData <- as.matrix(seqData)
+          seqData[, "Marker"] <- gsub(" ", "", seqData[, "Marker"], fixed = TRUE)
           assign("seqData", seqData, envir = envParProj)
           assign("seqFp", tclvalue(fpVar), envir = envParProj)
           assign("seqFn", tclvalue(fnVar), envir = envParProj)
@@ -142,6 +143,7 @@ checkFilePar <- function(envParProj, envParGUI){
         kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", exKit[1], ".csv"), header = TRUE)
         kitInfo <- as.matrix(kitInfo)
         kitLoci <- unique(kitInfo[, "Marker"])
+        kitLoci <- gsub(" ", "", kitLoci, fixed = TRUE)
         posSexMar <- which(kitInfo[, "Sex_chromosomal_marker"] == "yes")
         if(length(posSexMar) > 0){
           sexMar <- unique(kitInfo[posSexMar, "Marker"])
