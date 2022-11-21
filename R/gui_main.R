@@ -410,9 +410,8 @@ makeTabFiles <- function(envProj, envGUI){
 
   tkgrid(frameFiles)
   assign("frameFiles", frameFiles, envir = envGUI)
-# for proceedLR
-#  assign("labelRefName", labelRefName, envir = envGUI)
-#  assign("buttViewRef", buttViewRef, envir = envGUI)
+  assign("labelRefName", labelRefName, envir = envGUI)
+  assign("buttViewRef", buttViewRef, envir = envGUI)
 }
 
 # Set environmental objects for envProj
