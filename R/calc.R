@@ -1342,7 +1342,7 @@ analyzeCSP <- function(csp, ref, af,
         }
       }
       ct2 <- proc.time() - t2
-      cat(paste0(round(ct2[3], 3), " sec."), "\n")
+      cat(paste0("Time of LR assignment : ", round(ct2[3], 3), " sec."), "\n")
       stopCluster(cl)
     }
     if(errorHnc){

@@ -407,33 +407,33 @@ makeReport_Deconvo <- function(envProj, envGUI, envDeconvo){
 }
 
 # Proceed to likelihood ratio
-#proceedLR <- function(envProj, envGUI){
-#  refInput <- get("refInput", pos = envProj)
-#  if(length(refInput) == 0){
-#    refFn <- get("refFn", pos = envProj)
-#    refFnVar <- tclVar(refFn)
-#    labelRefName <- get("labelRefName", pos = envGUI)
-#    buttViewRef <- get("buttViewRef", pos = envGUI)
+proceedLR <- function(envProj, envGUI){
+  refInput <- get("refInput", pos = envProj)
+  if(length(refInput) == 0){
+    refFn <- get("refFn", pos = envProj)
+    refFnVar <- tclVar(refFn)
+    labelRefName <- get("labelRefName", pos = envGUI)
+    buttViewRef <- get("buttViewRef", pos = envGUI)
 
-#    tfRef <- tktoplevel()
-#    tkwm.title(tfRef, "Load reference profiles")
-#    frameRef1 <- tkframe(tfRef)
-#    frameRef2 <- tkframe(tfRef)
+    tfRef <- tktoplevel()
+    tkwm.title(tfRef, "Load reference profiles")
+    frameRef1 <- tkframe(tfRef)
+    frameRef2 <- tkframe(tfRef)
 
-#    tkgrid(tklabel(frameRef1, text = "Input File", font = "Helvetica 10 bold"), padx = 10, pady = 5, sticky = "w")
-#    labelRef <- tklabel(frameRef1, text = "Reference Profiles")
-#    labelRefName_new <- tklabel(frameRef1, textvariable = refFnVar, width = 35, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
-#    buttLoadRef <- tkbutton(frameRef1, text = "    Load    ", cursor = "hand2", command = function() openFile(envProj, envGUI, "ref", labelRefName, buttViewRef, FALSE, labelRefName_new))
-#    tkconfigure(labelRefName_new, textvariable = refFnVar)
-#    tkgrid(labelRef, labelRefName_new, buttLoadRef, padx = 10, pady = 5, sticky = "w")
-#    tkgrid(frameRef1, padx = 10, pady = 5, sticky = "w")
-#    tkgrid(tkbutton(frameRef2, text = "    Next    ", cursor = "hand2", command = function() makeTabLR(envProj, envGUI, tfRef)),
-#           padx = 10, pady = 5, sticky = "w")
-#    tkgrid(frameRef2, padx = 10, pady = 5, sticky = "w")
-#  }else{
-#    makeTabLR(envProj, envGUI)
-#  }
-#}
+    tkgrid(tklabel(frameRef1, text = "Input File", font = "Helvetica 10 bold"), padx = 10, pady = 5, sticky = "w")
+    labelRef <- tklabel(frameRef1, text = "Reference Profiles")
+    labelRefName_new <- tklabel(frameRef1, textvariable = refFnVar, width = 35, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
+    buttLoadRef <- tkbutton(frameRef1, text = "    Load    ", cursor = "hand2", command = function() openFile(envProj, envGUI, "ref", labelRefName, buttViewRef, FALSE, labelRefName_new))
+    tkconfigure(labelRefName_new, textvariable = refFnVar)
+    tkgrid(labelRef, labelRefName_new, buttLoadRef, padx = 10, pady = 5, sticky = "w")
+    tkgrid(frameRef1, padx = 10, pady = 5, sticky = "w")
+    tkgrid(tkbutton(frameRef2, text = "    Next    ", cursor = "hand2", command = function() makeTabLR(envProj, envGUI, tfRef)),
+           padx = 10, pady = 5, sticky = "w")
+    tkgrid(frameRef2, padx = 10, pady = 5, sticky = "w")
+  }else{
+    makeTabLR(envProj, envGUI)
+  }
+}
 
 # Make a sub-tab of results for Deconvolution
 makeSubTabResult_Deconvo <- function(envProj, envGUI){
@@ -648,15 +648,14 @@ makeSubTabResult_Deconvo <- function(envProj, envGUI){
     tkgrid(tklabel(frameL_1, text = "Log10 (Likelihood)", font = "Helvetica 10 bold"), pady = 5)
     tkgrid(tklabel(frameL_3, text = "Estimated parameters", font = "Helvetica 10 bold"), pady = 5)
     buttReport <- tkbutton(frameL_5, text = "    Report    ", cursor = "hand2", command = function() makeReport_Deconvo(envProj, envGUI, envDeconvo))
-#    buttProceed <- tkbutton(frameL_5, text = "    Proceed to likelihood ratio    ", cursor = "hand2", command = function() proceedLR(envProj, envGUI))
+    buttProceed <- tkbutton(frameL_5, text = "    Proceed to likelihood ratio    ", cursor = "hand2", command = function() proceedLR(envProj, envGUI))
     showLike()
-#    tkgrid(buttReport, buttProceed, padx = 5, pady = 5)
-    tkgrid(buttReport, padx = 5, pady = 5)
+    tkgrid(buttReport, buttProceed, padx = 5, pady = 5)
     tkgrid(frameL_1, sticky = "w")
     tkgrid(frameL_2, sticky = "w")
     tkgrid(frameL_3, sticky = "w")
     tkgrid(frameL_4, sticky = "w")
-#    tkgrid(frameL_5, sticky = "w")
+    tkgrid(frameL_5, sticky = "w")
     tkgrid(frameL_5)
 
     tkgrid(framePG, frameL, padx = 5, pady = 5, sticky = "nw")
@@ -699,34 +698,34 @@ makeTabDeconvo <- function(envProj, envGUI){
 
 # Make a sub-tab of proposition for LR
 makeSubTabProp_LR <- function(envProj, envGUI){
-#  changeHncAnaMeth <- function(){
-#    if(tclvalue(baseDeconvoVar) == "1"){
-#      tclvalue(anaMethVar_lr) <- get("anaMeth_deconvo", pos = envProj)
-#      tclvalue(anaMethStateVar) <- "disabled"
-#      tclvalue(hncStateVar_lr) <- "disabled"
-#      tclvalue(hncFromVar_lr) <- hncFrom_deconvo
-#      tclvalue(hncToVar_lr) <- hncTo_deconvo
-#      hncMin_lr <- hncFrom_deconvo
-#      hncMax_lr <- hncTo_deconvo
-#      assign("hncState_lr", tclvalue(hncStateVar_lr), envir = envProj)
-#      assign("hncMin_lr", hncMin_lr, envir = envProj)
-#      assign("hncMax_lr", hncMax_lr, envir = envProj)
-#    }else{
-#      tclvalue(anaMethVar_lr) <- get("anaMeth_lr", pos = envProj)
-#      tclvalue(anaMethStateVar) <- "normal"
-#      tclvalue(hncStateVar_lr) <- "normal"
-#      tclvalue(hncFromVar_lr) <- 1
-#      tclvalue(hncToVar_lr) <- 4
-#      hncMin_lr <- 1
-#      hncMax_lr <- 4
-#      assign("hncState_lr", tclvalue(hncStateVar_lr), envir = envProj)
-#      assign("hncMin_lr", hncMin_lr, envir = envProj)
-#      assign("hncMax_lr", hncMax_lr, envir = envProj)
-#    }
-#    tkconfigure(comboMeth, state = tclvalue(anaMethStateVar))
-#    tkconfigure(hncFromSpin, from = hncMin_lr, to = hncMax_lr, state = tclvalue(hncStateVar_lr))
-#    tkconfigure(hncToSpin, from = hncMin_lr, to = hncMax_lr, state = tclvalue(hncStateVar_lr))
-#  }
+  changeHncAnaMeth <- function(){
+    if(tclvalue(baseDeconvoVar) == "1"){
+      tclvalue(anaMethVar_lr) <- get("anaMeth_deconvo", pos = envProj)
+      tclvalue(anaMethStateVar) <- "disabled"
+      tclvalue(hncStateVar_lr) <- "disabled"
+      tclvalue(hncFromVar_lr) <- hncFrom_deconvo
+      tclvalue(hncToVar_lr) <- hncTo_deconvo
+      hncMin_lr <- hncFrom_deconvo
+      hncMax_lr <- hncTo_deconvo
+      assign("hncState_lr", tclvalue(hncStateVar_lr), envir = envProj)
+      assign("hncMin_lr", hncMin_lr, envir = envProj)
+      assign("hncMax_lr", hncMax_lr, envir = envProj)
+    }else{
+      tclvalue(anaMethVar_lr) <- get("anaMeth_lr", pos = envProj)
+      tclvalue(anaMethStateVar) <- "normal"
+      tclvalue(hncStateVar_lr) <- "normal"
+      tclvalue(hncFromVar_lr) <- 1
+      tclvalue(hncToVar_lr) <- 4
+      hncMin_lr <- 1
+      hncMax_lr <- 4
+      assign("hncState_lr", tclvalue(hncStateVar_lr), envir = envProj)
+      assign("hncMin_lr", hncMin_lr, envir = envProj)
+      assign("hncMax_lr", hncMax_lr, envir = envProj)
+    }
+    tkconfigure(comboMeth, state = tclvalue(anaMethStateVar))
+    tkconfigure(hncFromSpin, from = hncMin_lr, to = hncMax_lr, state = tclvalue(hncStateVar_lr))
+    tkconfigure(hncToSpin, from = hncMin_lr, to = hncMax_lr, state = tclvalue(hncStateVar_lr))
+  }
 
   changeHypState <- function(){
     if(tclvalue(calcAllHypVar) == 1){
@@ -759,8 +758,8 @@ makeSubTabProp_LR <- function(envProj, envGUI){
   anaMethVar_lr <- tclVar(anaMeth_lr)
   baseDeconvo <- get("baseDeconvo", pos = envProj)
   baseDeconvoVar <- tclVar(baseDeconvo)
-#  baseDeconvoState <- get("baseDeconvoState", pos = envProj)
-#  baseDeconvoStateVar <- tclVar(baseDeconvoState)
+  baseDeconvoState <- get("baseDeconvoState", pos = envProj)
+  baseDeconvoStateVar <- tclVar(baseDeconvoState)
   calcAllHyp <- get("calcAllHyp", pos = envProj)
   calcAllHypVar <- tclVar(calcAllHyp)
   calcAllHypState <- get("calcAllHypState", pos = envProj)
@@ -774,28 +773,24 @@ makeSubTabProp_LR <- function(envProj, envGUI){
   nameMeth <- list.files(paste0(pathPack, "/extdata/analysis_method"))
   nameMeth <- gsub(".csv", "", nameMeth)
 
-####
-#  if(finDeconvo){
-#    tclvalue(baseDeconvoVar) <- 1
-#    tclvalue(baseDeconvoStateVar) <- "normal"
-#    tclvalue(hncStateVar_lr) <- "disabled"
-#    tclvalue(hncFromVar_lr) <- hncFrom_deconvo
-#    tclvalue(hncToVar_lr) <- hncTo_deconvo
-#    tclvalue(anaMethVar_lr) <- get("anaMeth_deconvo", pos = envProj)
-#    anaMethStateVar <- tclVar("disabled")
-#    hncMin_lr <- hncFrom_deconvo
-#    hncMax_lr <- hncTo_deconvo
-#    assign("hncMin_lr", hncMin_lr, envir = envProj)
-#    assign("hncMax_lr", hncMax_lr, envir = envProj)
-#  }else{
-#    anaMethStateVar <- tclVar("readonly")
-#    hncMin_lr <- get("hncMin_lr", pos = envProj)
-#    hncMax_lr <- get("hncMax_lr", pos = envProj)
-#  }
-  anaMethStateVar <- tclVar("readonly")
-  hncMin_lr <- get("hncMin_lr", pos = envProj)
-  hncMax_lr <- get("hncMax_lr", pos = envProj)
-####
+
+  if(finDeconvo){
+    tclvalue(baseDeconvoVar) <- 1
+    tclvalue(baseDeconvoStateVar) <- "normal"
+    tclvalue(hncStateVar_lr) <- "disabled"
+    tclvalue(hncFromVar_lr) <- hncFrom_deconvo
+    tclvalue(hncToVar_lr) <- hncTo_deconvo
+    tclvalue(anaMethVar_lr) <- get("anaMeth_deconvo", pos = envProj)
+    anaMethStateVar <- tclVar("disabled")
+    hncMin_lr <- hncFrom_deconvo
+    hncMax_lr <- hncTo_deconvo
+    assign("hncMin_lr", hncMin_lr, envir = envProj)
+    assign("hncMax_lr", hncMax_lr, envir = envProj)
+  }else{
+    anaMethStateVar <- tclVar("readonly")
+    hncMin_lr <- get("hncMin_lr", pos = envProj)
+    hncMax_lr <- get("hncMax_lr", pos = envProj)
+  }
 
   tkdestroy(frameProp_LR)
   frameProp_LR <- tkframe(subTabProp_LR)
@@ -853,8 +848,8 @@ makeSubTabProp_LR <- function(envProj, envGUI){
   labelMeth <- tklabel(frameSetting1, text = "Analysis method")
   comboMeth <- ttkcombobox(frameSetting1, values = nameMeth, textvariable = anaMethVar_lr, width = 25, state = tclvalue(anaMethStateVar))
   tkgrid(labelMeth, comboMeth, padx = 10, pady = 5, sticky = "w")
-#  ckbuttBaseDeconvo <- tkcheckbutton(frameSetting2, text = "Based on the result of deconvolution", variable = baseDeconvoVar, state = tclvalue(baseDeconvoStateVar), command = function() changeHncAnaMeth())
-#  tkgrid(ckbuttBaseDeconvo, padx = 10, pady = 5, sticky = "w")
+  ckbuttBaseDeconvo <- tkcheckbutton(frameSetting2, text = "Based on the result of deconvolution", variable = baseDeconvoVar, state = tclvalue(baseDeconvoStateVar), command = function() changeHncAnaMeth())
+  tkgrid(ckbuttBaseDeconvo, padx = 10, pady = 5, sticky = "w")
   ckbuttCalcAllHyp <- tkcheckbutton(frameSetting2, text = "Calculate the likelihood of all assumed hypotheses", variable = calcAllHypVar, state = tclvalue(calcAllHypStateVar), command = function() changeHypState())
   tkgrid(ckbuttCalcAllHyp, padx = 10, pady = 5, sticky = "w")
   tkgrid(frameSetting1, sticky = "w")
