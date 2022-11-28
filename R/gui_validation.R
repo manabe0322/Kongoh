@@ -35,13 +35,16 @@ setEnvValidData <- function(envValidData, setfiles){
     assign("afValidInput", NULL, envir = envValidData)
     assign("afValidFp", character(0), envir = envValidData)
     assign("afValidFn", character(0), envir = envValidData)
+    assign("randValidInput", NULL, envir = envValidData)
+    assign("randValidFp", character(0), envir = envValidData)
+    assign("randValidFn", character(0), envir = envValidData)
   }
   assign("hncMin_valid", 1, envir = envValidData)
   assign("hncMax_valid", 4, envir = envValidData)
   assign("hncFrom_valid", 1, envir = envValidData)
   assign("hncTo_valid", 4, envir = envValidData)
   assign("anaMeth_valid", "", envir = envValidData)
-  assign("numHdTest", 100, envir = envValidData)
+#  assign("numHdTest", 100, envir = envValidData)
   assign("finValid", FALSE, envir = envValidData)
 }
 
@@ -64,6 +67,9 @@ makeTabVF <- function(envValidData, envValidGUI){
       }else if(type == "af"){
         fpVar <- afValidFpVar
         fnVar <- afValidFnVar
+      }else if(type == "rand"){
+        fpVar <- randValidFpVar
+        fnVar <- randValidFnVar
       }
 
       fileName <- tclvalue(tkgetOpenFile(initialdir = tclvalue(fpVar), multiple = "true", filetypes = "{{CSV Files} {.csv}}"))
@@ -95,6 +101,12 @@ makeTabVF <- function(envValidData, envValidGUI){
           assign("afValidInput", afValidInput, envir = envValidData)
           assign("afValidFp", tclvalue(fpVar), envir = envValidData)
           assign("afValidFn", tclvalue(fnVar), envir = envValidData)
+        }else if(type == "rand"){
+          randValidInput <- read.csv(tclvalue(fpVar), header = TRUE)
+          randValidInput <- as.matrix(randValidInput)
+          assign("randValidInput", randValidInput, envir = envValidData)
+          assign("randValidFp", tclvalue(fpVar), envir = envValidData)
+          assign("randValidFn", tclvalue(fnVar), envir = envValidData)
         }
       }
     }
@@ -112,6 +124,10 @@ makeTabVF <- function(envValidData, envValidGUI){
   afValidFpVar <- tclVar(afValidFp)
   afValidFn <- get("afValidFn", pos = envValidData)
   afValidFnVar <- tclVar(afValidFn)
+  randValidFp <- get("randValidFp", pos = envValidData)
+  randValidFpVar <- tclVar(randValidFp)
+  randValidFn <- get("randValidFn", pos = envValidData)
+  randValidFnVar <- tclVar(randValidFn)
   tabVF <- get("tabVF", pos = envValidGUI)
   frameVF <- get("frameVF", pos = envValidGUI)
 
@@ -135,6 +151,11 @@ makeTabVF <- function(envValidData, envValidGUI){
   labelAfName <- tklabel(frameVF_1, textvariable = afValidFnVar, width = 35, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
   buttLoadAf <- tkbutton(frameVF_1, text = "    Load    ", cursor = "hand2", command = function() openFileValid("af"))
   tkgrid(labelAf, labelAfName, buttLoadAf, padx = 10, pady = 5, sticky = "w")
+  
+  labelRand <- tklabel(frameVF_1, text = "Non-contributor profiles")
+  labelRandName <- tklabel(frameVF_1, textvariable = randValidFnVar, width = 35, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
+  buttLoadRand <- tkbutton(frameVF_1, text = "    Load    ", cursor = "hand2", command = function() openFileValid("rand"))
+  tkgrid(labelRand, labelRandName, buttLoadRand, padx = 10, pady = 5, sticky = "w")
 
   tkgrid(frameVF_1, padx = 10, pady = 5, sticky = "w")
 
@@ -179,6 +200,7 @@ checkValidFile <- function(envValidData, envValidGUI){
   cspValidInput <- get("cspValidInput", pos = envValidData)
   refValidInput <- get("refValidInput", pos = envValidData)
   afValidInput <- get("afValidInput", pos = envValidData)
+  randValidInput <- get("randValidInput", pos = envValidData)
   if(any(c(length(cspValidInput) == 0, length(refValidInput) == 0, length(afValidInput) == 0))){
     tkmessageBox(message = "Load required file(s)!", icon = "error", type = "ok")
   }else{
@@ -189,7 +211,7 @@ checkValidFile <- function(envValidData, envValidGUI){
       pathPack <- get("pathPack", pos = envValidGUI)
       cspKit <- searchKit(cspLoci, pathPack)
       if(length(cspKit) > 0){
-        kitInfo <- read.csv(paste0(pathPack, "/kit information/", cspKit[1], ".csv"), header = TRUE)
+        kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", cspKit[1], ".csv"), header = TRUE)
         kitInfo <- as.matrix(kitInfo)
         posSexMar <- which(kitInfo[, "Sex_chromosomal_marker"] == "yes")
         if(length(posSexMar) > 0){
@@ -201,15 +223,20 @@ checkValidFile <- function(envValidData, envValidGUI){
         outSnRn <- checkRefLoci(refValidInput)
         if(length(outSnRn) == 0){
           colRef <- colnames(refValidInput)
-          refLoci <- unique(refValidInput[, grep("Marker", colRef)])
+          refLoci <- unique(refValidInput[, "Marker"])
           refLoci <- setdiff(refLoci, sexMar)
 
           posAf <- !is.element(colnames(afValidInput), sexMar)
           afValid <- afValidInput[, posAf, drop = FALSE]
           afLoci <- colnames(afValid)[posAf]
           afLoci <- afLoci[- grep("Allele", colnames(afValid))]
+          
+          posRandMar <- which(colnames(randValidInput) == "Marker")
+          randValid <- randValidInput[, -posRandMar]
+          randLoci <- randValidInput[, posRandMar]
+          randLoci <- setdiff(randLoci, sexMar)
 
-          if(all(c(setequal(cspLoci, refLoci), setequal(cspLoci, afLoci)))){
+          if(all(c(setequal(cspLoci, refLoci), setequal(cspLoci, afLoci), setequal(cspLoci, randLoci)))){
             posCspSn <- intersect(grep("Sample", colCsp), grep("Name", colCsp))
             cspSn <- unique(cspValidInput[, posCspSn])
             posRefSn <- intersect(grep("Sample", colRef), grep("Name", colRef))
@@ -234,10 +261,13 @@ checkValidFile <- function(envValidData, envValidGUI){
               colnames(refValid) <- colRef
               posAf <- match(cspLoci, afLoci)
               afValid <- afValid[, c(1, posAf + 1), drop = FALSE]
+              posRand <- match(cspLoci, randLoci)
+              randValid <- randValid[posRand, drop = FALSE]
 
               assign("cspValid", cspValid, envir = envValidData)
               assign("refValid", refValid, envir = envValidData)
               assign("afValid", afValid, envir = envValidData)
+              assign("randValid", randValid, envir = envValidData)
               makeTabVS(envValidData, envValidGUI)
               tabsValid <- get("tabsValid", pos = envValidGUI)
               tk2notetab.select(tabsValid, "Setting")
@@ -266,16 +296,17 @@ makeTabVS <- function(envValidData, envValidGUI){
   cspValidFn <- get("cspValidFn", pos = envValidData)
   refValidFn <- get("refValidFn", pos = envValidData)
   afValidFn <- get("afValidFn", pos = envValidData)
+  randValidFn <- get("randValidFn", pos = envValidData)
   hncFrom_valid <- get("hncFrom_valid", pos = envValidData)
   hncFromVar_valid <- tclVar(hncFrom_valid)
   hncTo_valid <- get("hncTo_valid", pos = envValidData)
   hncToVar_valid <- tclVar(hncTo_valid)
   anaMeth_valid <- get("anaMeth_valid", pos = envValidData)
   anaMethVar_valid <- tclVar(anaMeth_valid)
-  numHdTest <- get("numHdTest", pos = envValidData)
-  numHdTestVar <- tclVar(numHdTest)
+#  numHdTest <- get("numHdTest", pos = envValidData)
+#  numHdTestVar <- tclVar(numHdTest)
 
-  nameMeth <- list.files(paste0(pathPack, "/analysis method"))
+  nameMeth <- list.files(paste0(pathPack, "/extdata/analysis_method"))
   nameMeth <- gsub(".csv", "", nameMeth)
 
   tabVS <- get("tabVS", pos = envValidGUI)
@@ -303,31 +334,33 @@ makeTabVS <- function(envValidData, envValidGUI){
   tkgrid(tklabel(frameVS_set, text = "Analysis method"),
          ttkcombobox(frameVS_set, values = nameMeth, textvariable = anaMethVar_valid, width = 25, state = "readonly"),
          padx = 10, pady = 5, sticky = "w")
-  tkgrid(tklabel(frameVS_set, text = "Number of non-contributor tests"),
-         tkentry(frameVS_set, textvariable = numHdTestVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white"),
-         padx = 10, pady = 5, sticky = "w")
+#  tkgrid(tklabel(frameVS_set, text = "Number of non-contributor tests"),
+#         tkentry(frameVS_set, textvariable = numHdTestVar, width = 10, highlightthickness = 1, relief = "solid", justify = "center", background = "white"),
+#         padx = 10, pady = 5, sticky = "w")
 
   frameVS_files <- tkframe(frameVS_2, relief = "groove", borderwidth = 2)
   tkgrid(tklabel(frameVS_files, text = "Files", font = "Helvetica 10 bold"), sticky = "w")
   tkgrid(tklabel(frameVS_files, text = "Crime Stain Profile"), tklabel(frameVS_files, text = cspValidFn), padx = 10, sticky = "w")
   tkgrid(tklabel(frameVS_files, text = "Reference Profile"), tklabel(frameVS_files, text = refValidFn), padx = 10, sticky = "w")
   tkgrid(tklabel(frameVS_files, text = "Allele Frequencies"), tklabel(frameVS_files, text = afValidFn), padx = 10, sticky = "w")
+  tkgrid(tklabel(frameVS_files, text = "Non-contributor Profiles"), tklabel(frameVS_files, text = randValidFn), padx = 10, sticky = "w")
   tkgrid(frameVS_set, frameVS_files, padx = 5, pady = 5, sticky = "nw")
   tkgrid(frameVS_2, sticky = "w")
 
   tkgrid(tkbutton(frameVS, text = "    Analyze    ", cursor = "hand2",
                   command = function() guiValid(envValidData, envValidGUI,
                                                 as.numeric(tclvalue(hncFromVar_valid)), as.numeric(tclvalue(hncToVar_valid)),
-                                                tclvalue(anaMethVar_valid), as.numeric(tclvalue(numHdTestVar)))), pady = 5)
+                                                tclvalue(anaMethVar_valid))), pady = 5)
 
   tkgrid(frameVS, padx = 20, pady = 10)
   assign("frameVS", frameVS, envir = envValidGUI)
 }
 
-guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth, numHdTest){
+guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
   cspValid <- get("cspValid", pos = envValidData)
   refValid <- get("refValid", pos = envValidData)
   af <- get("afValid", pos = envValidData)
+  randValid <- get("randValid", pos = envValidData)
   pathPack <- get("pathPack", pos = envValidGUI)
 
   hncMin <- get("hncMin_valid", pos = envValidData)
@@ -336,14 +369,14 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth, numHdTe
   assign("hncFrom_valid", hncFrom, pos = envValidData)
   assign("hncTo_valid", hncTo, pos = envValidData)
   assign("anaMeth_valid", anaMeth, pos = envValidData)
-  assign("numHdTest", numHdTest, pos = envValidData)
+#  assign("numHdTest", numHdTest, pos = envValidData)
 
   if(anaMeth == ""){
     tkmessageBox(message = "Select an analysis method!", icon = "error", type = "ok")
   }else if(!is.element(hncFrom, hncMin:hncMax) || !is.element(hncTo, hncMin:hncMax)){
     tkmessageBox(message = paste0("Set the number of contributors from ", hncMin, " to ", hncMax), icon = "error", type = "ok")
   }else{
-    selectMethData <- read.csv(paste(pathPack, "/analysis method/", anaMeth, ".csv", sep = ""), header = TRUE)
+    selectMethData <- read.csv(paste(pathPack, "/extdata/analysis_method/", anaMeth, ".csv", sep = ""), header = TRUE)
     selectMethData <- as.matrix(selectMethData)
     conditions <- selectMethData[, which(colnames(selectMethData) == "Conditions")]
     values <- selectMethData[, which(colnames(selectMethData) == "Values")]
@@ -352,12 +385,12 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth, numHdTe
     nameAlCor <- values[which(conditions == "Allele repeat correction")]
     afMeth <- values[which(conditions == "Method of estimating allele frequencies")]
 
-    mcPar <- read.csv(paste(pathPack, "/parameters for Monte Carlo simulation/", namePar, sep = ""), header = TRUE)
+    mcPar <- read.csv(paste(pathPack, "/extdata/parameters/", namePar, sep = ""), header = TRUE)
     mcPar <- as.matrix(mcPar)
-    alCor <- read.csv(paste(pathPack, "/allele repeat correction/", nameAlCor, sep = ""), header = TRUE)
+    alCor <- read.csv(paste(pathPack, "/extdata/repeat_correction/", nameAlCor, sep = ""), header = TRUE)
     alCor <- as.matrix(alCor)
 
-    kitInfo <- read.csv(paste0(pathPack, "/kit information/", kit, ".csv"), header = TRUE)
+    kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", kit, ".csv"), header = TRUE)
     kitInfo <- as.matrix(kitInfo)
     kitLoci <- unique(kitInfo[, "Marker"])
     posSexMar <- which(kitInfo[, "Sex_chromosomal_marker"] == "yes")
@@ -404,9 +437,6 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth, numHdTe
           posAfAl <- !is.na(afOneL)
           afList[[i]] <- makePopFreq(afOneL[posAfAl], afAl[posAfAl], afMeth)
         }
-#        randGts <- makeRandGt(numHdTest, afList)
-#        randGts <- read.csv("D:/法医学/研究データ/Continuous model/Kongoh v3.2.0/validation_RData/randGts.csv", header = FALSE)
-#        randGts <- as.matrix(randGts)
 
         count <- 1
         countHd <- 1
@@ -422,19 +452,19 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth, numHdTe
           for(j in 1:length(refNames)){
             ref[, c(2 * j, 2 * j + 1)] <- refOneS[refOneS[, posRn] == refNames[j], grep("Allele", colRef)]
           }
-#          cat("1st deconvolution", "\n")
-#          dataDeconvo_1 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, anaType = "Deconvo", FALSE)
+          cat("1st deconvolution", "\n")
+          dataDeconvo_1 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("1st LR", "\n")
           dataLR_1 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo,
-                                 anaType = "LR", baseDeconvo = 0, dataDeconvo = NULL, calcAllHyp = 1, FALSE)
+                                 anaType = "LR", baseDeconvo = 0, dataDeconvo = NULL, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
-#          cat("2nd deconvolution", "\n")
-#          dataDeconvo_2 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, anaType = "Deconvo", FALSE)
+          cat("2nd deconvolution", "\n")
+          dataDeconvo_2 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("2nd LR", "\n")
           dataLR_2 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo,
-                                 anaType = "LR", baseDeconvo = 0, dataDeconvo = NULL, calcAllHyp = 1, FALSE)
+                                 anaType = "LR", baseDeconvo = 0, dataDeconvo = NULL, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           hncAll <- as.numeric(gsub("hnc_", "", names(dataLR_1)))
           for(j in 1:length(dataLR_1)){
@@ -468,49 +498,49 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth, numHdTe
             }
           }
 
-#          cat("Non-contributor tests were started.", "\n")
-#          for(j in 1:numHdTest){
-#            randOne <- randGts[c(2 * j - 1, 2 * j), ]
-#            randOne <- t(apply(randOne, 2, sort))
-#            randOne <- cbind(cspLoci, randOne)
-#            colnames(randOne) <- c("Marker", paste0(rep("Rand", 2), j))
-#            dataHdTrue_1 <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
-#                                       anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 0, FALSE)
-#            dataHdTrue_2 <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
-#                                       anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 0, FALSE)
+          cat("Non-contributor tests were started.", "\n")
+          for(j in 1:(ncol(randValid) / 2)){
+            randOne <- randValid[, c(2 * j - 1, 2 * j)]
+            randOne <- t(apply(randOne, 2, sort))
+            randOne <- cbind(cspLoci, randOne)
+            colnames(randOne) <- c("Marker", paste0(rep("Rand", 2), j))
+            dataHdTrue_1 <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
+                                       anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+            dataHdTrue_2 <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
+                                       anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
-#            hncAll <- as.numeric(gsub("hnc_", "", names(dataHdTrue_1)))
-#            for(k in 1:length(dataHdTrue_1)){
-#              hnc <- hncAll[k]
-#              dataHdTrue_1_oneHnc <- dataHdTrue_1[[k]]
-#              dataHdTrue_2_oneHnc <- dataHdTrue_2[[k]]
-#              if(countHd > 4 * nS){
-#                hdTrueData_1st <- rbind(hdTrueData_1st, matrix("", 4 * nS, length(colHdTrueData)))
-#                hdTrueData_2nd <- rbind(hdTrueData_2nd, matrix("", 4 * nS, length(colHdTrueData)))
-#              }
-#              hdTrueData_1st[countHd, "sample_name"] <- sn
-#              hdTrueData_1st[countHd, "hnc"] <- hnc
-#              hdTrueData_1st[countHd, grep("LR_", colHdTrueData)] <- dataHdTrue_1_oneHnc[[1]][[2]] - dataHdTrue_1_oneHnc[[2]][[2]]
-#              hdTrueData_2nd[countHd, "sample_name"] <- sn
-#              hdTrueData_2nd[countHd, "hnc"] <- hnc
-#              hdTrueData_2nd[countHd, grep("LR_", colHdTrueData)] <- dataHdTrue_2_oneHnc[[1]][[2]] - dataHdTrue_2_oneHnc[[2]][[2]]
-#              countHd <- countHd + 1
-#            }
-#          }
-          save(dataLR_1, dataLR_2, file = paste0("D:/kongoh_valid/valiData_", sn, ".RData"))
+            hncAll <- as.numeric(gsub("hnc_", "", names(dataHdTrue_1)))
+            for(k in 1:length(dataHdTrue_1)){
+              hnc <- hncAll[k]
+              dataHdTrue_1_oneHnc <- dataHdTrue_1[[k]]
+              dataHdTrue_2_oneHnc <- dataHdTrue_2[[k]]
+              if(countHd > 4 * nS){
+                hdTrueData_1st <- rbind(hdTrueData_1st, matrix("", 4 * nS, length(colHdTrueData)))
+                hdTrueData_2nd <- rbind(hdTrueData_2nd, matrix("", 4 * nS, length(colHdTrueData)))
+              }
+              hdTrueData_1st[countHd, "sample_name"] <- sn
+              hdTrueData_1st[countHd, "hnc"] <- hnc
+              hdTrueData_1st[countHd, grep("LR_", colHdTrueData)] <- dataHdTrue_1_oneHnc[[1]][[2]] - dataHdTrue_1_oneHnc[[2]][[2]]
+              hdTrueData_2nd[countHd, "sample_name"] <- sn
+              hdTrueData_2nd[countHd, "hnc"] <- hnc
+              hdTrueData_2nd[countHd, grep("LR_", colHdTrueData)] <- dataHdTrue_2_oneHnc[[1]][[2]] - dataHdTrue_2_oneHnc[[2]][[2]]
+              countHd <- countHd + 1
+            }
+          }
+          save(dataDeconvo_1, dataLR_1, dataDeconvo_2, dataLR_2, file = paste0("D:/kongoh_valid/valiData_", sn, ".RData"))
         }
         validData_1st <- validData_1st[1:count, , drop = FALSE]
         validData_2nd <- validData_2nd[1:count, , drop = FALSE]
-#        hdTrueData_1st <- hdTrueData_1st[1:countHd, , drop = FALSE]
-#        hdTrueData_2nd <- hdTrueData_2nd[1:countHd, , drop = FALSE]
+        hdTrueData_1st <- hdTrueData_1st[1:countHd, , drop = FALSE]
+        hdTrueData_2nd <- hdTrueData_2nd[1:countHd, , drop = FALSE]
         write.csv(validData_1st, "D:/kongoh_valid/validData_1st.csv", row.names = FALSE)
         write.csv(validData_2nd, "D:/kongoh_valid/validData_2nd.csv", row.names = FALSE)
-#        write.csv(hdTrueData_1st, "D:/法医学/研究データ/Continuous model/Kongoh v3.2.0/validation_RData/hdTrueData_1st.csv", row.names = FALSE)
-#        write.csv(hdTrueData_2nd, "D:/法医学/研究データ/Continuous model/Kongoh v3.2.0/validation_RData/hdTrueData_2nd.csv", row.names = FALSE)
-#        assign("validData_1st", validData_1st, envir = envValidData)
-#        assign("validData_2nd", validData_2nd, envir = envValidData)
-#        assign("hdTrueData_1st", hdTrueData_1st, envir = envValidData)
-#        assign("hdTrueData_2nd", hdTrueData_2nd, envir = envValidData)
+        write.csv(hdTrueData_1st, "D:/kongoh_valid/hdTrueData_1st.csv", row.names = FALSE)
+        write.csv(hdTrueData_2nd, "D:/kongoh_valid/hdTrueData_2nd.csv", row.names = FALSE)
+        assign("validData_1st", validData_1st, envir = envValidData)
+        assign("validData_2nd", validData_2nd, envir = envValidData)
+        assign("hdTrueData_1st", hdTrueData_1st, envir = envValidData)
+        assign("hdTrueData_2nd", hdTrueData_2nd, envir = envValidData)
 #        makeTabVR(envValidData, envValidGUI)
       }
     }else{
