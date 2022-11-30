@@ -211,8 +211,8 @@ tablePG <- function(pg, anaType){
     }
     nameC[i] <- nameCOne
   }
-  pgNew <- cbind(tableGt, sprintf("%.2e", pg[, n1 - 2]))
-  colnames(pgNew) <- c(nameC, colnames(pg)[n1 - 2])
+  pgNew <- cbind(tableGt, sprintf("%.2e", pg[, "Weight (0-1 scale)"]))
+  colnames(pgNew) <- c(nameC, "Weight (0-1 scale)")
   return(pgNew)
 }
 
