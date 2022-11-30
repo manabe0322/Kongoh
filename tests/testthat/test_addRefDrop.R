@@ -1,4 +1,4 @@
-test_that("MP and LR whether addRefDrop is true or not", {
+test_that("gtProb and LR whether addRefDrop is true or not", {
   pg_uu_false <- matrix(0, 8, 7)
   pg_uu_false[1, ] <- c(11, 11, 11, 11, 0.466115545, 0.000906558, 0.016170004)
   pg_uu_false[2, ] <- c(11, 99, 11, 11, 0.375301766, 0.000729932, 0.058350659)
@@ -55,26 +55,26 @@ test_that("MP and LR whether addRefDrop is true or not", {
 
   knownGt <- c(99, 99, 11, 11)
   QFreq <- 1 - popFreq[4]
-  mp_hp_1 <- mp_hd_1 <- rep(0, nrow(gtComb_1))
+  gtp_hp_1 <- gtp_hd_1 <- rep(0, nrow(gtComb_1))
   for(i in 1:nrow(gtComb_1)){
     gtCombOne <- gtComb_1[i, ]
-    mp_hp_1[i] <- calcProbGtComb(gtCombOne, hp, popFreq, theta, knownGt, QFreq)
-    mp_hd_1[i] <- calcProbGtComb(gtCombOne, hd, popFreq, theta, knownGt, QFreq)
+    gtp_hp_1[i] <- calcProbGtComb(gtCombOne, hp, popFreq, theta, knownGt, QFreq)
+    gtp_hd_1[i] <- calcProbGtComb(gtCombOne, hd, popFreq, theta, knownGt, QFreq)
   }
 
   knownGt <- c(8, 8, 11, 11)
   QFreq <- 1 - popFreq[1] - popFreq[4]
-  mp_hp_2 <- mp_hd_2 <- rep(0, nrow(gtComb_2))
+  gtp_hp_2 <- gtp_hd_2 <- rep(0, nrow(gtComb_2))
   for(i in 1:nrow(gtComb_2)){
     gtCombOne <- gtComb_2[i, ]
-    mp_hp_2[i] <- calcProbGtComb(gtCombOne, hp, popFreq, theta, knownGt, QFreq)
-    mp_hd_2[i] <- calcProbGtComb(gtCombOne, hd, popFreq, theta, knownGt, QFreq)
+    gtp_hp_2[i] <- calcProbGtComb(gtCombOne, hp, popFreq, theta, knownGt, QFreq)
+    gtp_hd_2[i] <- calcProbGtComb(gtCombOne, hd, popFreq, theta, knownGt, QFreq)
   }
 
-  lr_1 <- sum(mp_hp_1 * prod_1) / sum(mp_hd_1 * prod_1)
-  lr_2 <- sum(mp_hp_2 * prod_2) / sum(mp_hd_2 * prod_2)
+  lr_1 <- sum(gtp_hp_1 * prod_1) / sum(gtp_hd_1 * prod_1)
+  lr_2 <- sum(gtp_hp_2 * prod_2) / sum(gtp_hd_2 * prod_2)
 
-  expect_equal(sum(mp_hp_1), sum(mp_hp_2))
-  expect_equal(sum(mp_hd_1), sum(mp_hd_2))
+  expect_equal(sum(gtp_hp_1), sum(gtp_hp_2))
+  expect_equal(sum(gtp_hd_1), sum(gtp_hd_2))
   expect_equal(lr_1, lr_2)
 })
