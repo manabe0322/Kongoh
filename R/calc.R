@@ -804,7 +804,7 @@ makeHypBest <- function(hypBestId, nameKnown){
 }
 
 # Add drop-out alleles of reference profiles to gtComb
-addRefDrop <- function(dropAl, pgResult){
+addRefDrop <- function(dropAl, pgResult, hypBestId, refOneL){
   namePGR <- colnames(pgResult)
   gtComb <- pgResult[, !is.element(namePGR, c("Weight (0-1 scale)", "Weight", "Genotype prob")), drop = FALSE]
   product <- pgResult[, "Weight"]
@@ -820,6 +820,7 @@ addRefDrop <- function(dropAl, pgResult){
     gtCombAdd <- gtComb[-posRow99, , drop = FALSE]
     productAdd <- product[-posRow99]
     gtProbAdd <- gtProb[-posRow99]
+    overlapProbAdd <- rep(FALSE, length(gtProbAdd))
     for(i in 1:length(posRow99)){
       gts <- gtComb[posRow99[i], ]
       gtNewList <- list()
@@ -847,8 +848,8 @@ addRefDrop <- function(dropAl, pgResult){
       n <- nrow(posGtNew)
       gtCombNew <- matrix(0, n, 2 * hnc)
       productNew <- rep(0, n)
-      gtProbNew <- rep(NA, n)
-      gtProbNew[1] <- gtProbOne
+      gtProbNew <- rep(gtProbOne, n)
+      overlapProbNew <- rep(FALSE, n)
       for(j in 1:n){
         pos <- posGtNew[j, ]
         for(k in 1:hnc){
@@ -856,23 +857,44 @@ addRefDrop <- function(dropAl, pgResult){
         }
         productNew[j] <- prodOne
       }
+      
+      posKgt <- 1:nrow(gtCombNew)
+      for(j in 1:hnc){
+        hbi <- hypBestId[j]
+        if(hbi != 0){
+          kgt1 <- refOneL[c(2 * hbi - 1, 2 * hbi)]
+          posKgt1 <- intersect(which(gtCombNew[, 2 * j - 1] == kgt1[1]), which(gtCombNew[, 2 * j] == kgt1[2]))
+          posKgt <- intersect(posKgt, posKgt1)
+        }
+      }
+      gtCombNew <- gtCombNew[posKgt, , drop = FALSE]
+      productNew <- productNew[posKgt]
+      gtProbNew <- gtProbNew[posKgt]
+      if(length(posKgt) >= 2){
+        overlapProbNew <- rep(TRUE, length(posKgt))
+      }else{
+        overlapProbNew <- FALSE
+      }
+      
       gtCombAdd <- rbind(gtCombAdd, gtCombNew)
       productAdd <- c(productAdd, productNew)
       gtProbAdd <- c(gtProbAdd, gtProbNew)
+      overlapProbAdd <- c(overlapProbAdd, overlapProbNew)
     }
   }else{
     gtCombAdd <- gtComb
     productAdd <- product
     gtProbAdd <- gtProb
+    overlapProbAdd <- rep(FALSE, length(gtProbAdd))
   }
   weightAdd <- productAdd / sum(productAdd)
-  pgResultAdd <- cbind(gtCombAdd, weightAdd, productAdd, gtProbAdd)
-  colnames(pgResultAdd) <- namePGR
+  pgResultAdd <- cbind(gtCombAdd, weightAdd, productAdd, gtProbAdd, overlapProbAdd)
+  colnames(pgResultAdd) <- c(namePGR, "Overlap prob")
   return(pgResultAdd)
 }
 
 # Make a list of results
-makeResult <- function(hypIdAll, nameKnown, mrDegAll, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, addRefDropFunc){
+makeResult <- function(hypIdAll, nameKnown, mrDegAll, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, refAllL, addRefDropFunc){
   resultList <- list()
   nL <- length(lociName)
   countHyp <- 0
@@ -900,8 +922,13 @@ makeResult <- function(hypIdAll, nameKnown, mrDegAll, gammaList, gtCombList, pro
       colnames(pgResult) <- c(as.vector(sapply(hypBest, rep, 2)), "Weight (0-1 scale)", "Weight", "Genotype prob")
 
       dropAl <- dropAlList[[j]]
+      refOneL <- refAllL[j, ]
       if(addRefDropFunc && (length(dropAl) > 0)){
-        pgResult <- addRefDrop(dropAl, pgResult)
+        pgResult <- addRefDrop(dropAl, pgResult, hypBestId, refOneL)
+      }else{
+        namePGR <- colnames(pgResult)
+        pgResult <- cbind(pgResult, rep(FALSE, nrow(pgResult)))
+        colnames(pgResult) <- c(namePGR, "Overlap prob")
       }
 
       pgResultList[[j]] <- pgResult[order(pgResult[, ncol(pgResult) - 2], decreasing = TRUE), , drop = FALSE]
@@ -1256,7 +1283,7 @@ analyzeCSP <- function(csp, ref, af,
             resultAllHnc[[countHnc]] <- makeResultNA(hypIdAll, nameKnown, lociName, calcTime, cspPeak, cspHeight, lenRU)
             rect(0, posBar, 100, posBar + 1, col = "greenyellow")
           }else{
-            resultAllHnc[[countHnc]] <- makeResult(hypIdAll, nameKnown, mrDegAll, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, addRefDropFunc)
+            resultAllHnc[[countHnc]] <- makeResult(hypIdAll, nameKnown, mrDegAll, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, refAllL, addRefDropFunc)
           }
           cat(paste0("Time of Deconvolution (", hnc, "-person contribution) : ", round(calcTime, 3), " sec."), "\n")
         }
@@ -1336,7 +1363,7 @@ analyzeCSP <- function(csp, ref, af,
             mrDeg <- matrix(c(dataDeconvoOne[[4]], dataDeconvoOne[[5]]), nrow = 1)
             gammaList <- dataDeconvoOne[[6]]
             calcTime <- dataDeconvoOne[[7]]
-            resultOneHnc <- makeResult(hypIdAll, nameKnown, mrDeg, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, addRefDropFunc)
+            resultOneHnc <- makeResult(hypIdAll, nameKnown, mrDeg, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, refAllL, addRefDropFunc)
           }
           resultAllHnc[[i]] <- resultOneHnc
         }
