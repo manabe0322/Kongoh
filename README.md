@@ -12,8 +12,8 @@ based on a quantitative continuous model. The software is a graphical user inter
 install.packages(c("tcltk2", "gtools", "truncnorm", "GenSA"))
 ```
 * 4.  Go to https://github.com/manabe0322/Kongoh/releases.
-* 5.  Download ”Kongoh_3.2.2.zip”.
-* 6.  Install ”Kongoh_3.2.2.zip” from ”Install package(s) from local files...” in the R session.
+* 5.  Download ”Kongoh_3.2.3.zip”.
+* 6.  Install ”Kongoh_3.2.3.zip” from ”Install package(s) from local files...” in the R session.
 * 7.  Execute the following commands in R to start GUI.
 
 ```r
