@@ -26,6 +26,9 @@ windowValid <- function(envGUI){
 
 setEnvValidData <- function(envValidData, setfiles){
   if(setfiles){
+    assign("infoValidInput", NULL, envir = envValidData)
+    assign("infoValidFp", character(0), envir = envValidData)
+    assign("infoValidFn", character(0), envir = envValidData)
     assign("cspValidInput", NULL, envir = envValidData)
     assign("cspValidFp", character(0), envir = envValidData)
     assign("cspValidFn", character(0), envir = envValidData)
@@ -58,7 +61,10 @@ makeTabVF <- function(envValidData, envValidGUI){
     if(inputOk == "ok"){
       setEnvValidData(envValidData, FALSE)
 
-      if(type == "csp"){
+      if(type == "info"){
+        fpVar <- infoValidFpVar
+        fnVar <- infoValidFnVar
+      }else if(type == "csp"){
         fpVar <- cspValidFpVar
         fnVar <- cspValidFnVar
       }else if(type == "ref"){
@@ -81,7 +87,13 @@ makeTabVF <- function(envValidData, envValidGUI){
         tclvalue(fpVar) <- tmp2
         foo3 <- strsplit(tmp2, "/")[[1]]
         tclvalue(fnVar) <- strsplit(foo3[length(foo3)], "\\.csv")[[1]][1]
-        if(type == "csp"){
+        if(type == "info"){
+          infoValidInput <- read.csv(tclvalue(fpVar), header = TRUE)
+          infoValidInput <- as.matrix(infoValidInput)
+          assign("infoValidInput", infoValidInput, envir = envValidData)
+          assign("infoValidFp", tclvalue(fpVar), envir = envValidData)
+          assign("infoValidFn", tclvalue(fnVar), envir = envValidData)
+        }else if(type == "csp"){
           cspValidInput <- read.csv(tclvalue(fpVar), header = TRUE)
           cspValidInput <- as.matrix(cspValidInput)
           cspValidInput <- gsub(" ", "", cspValidInput, fixed = TRUE)
@@ -112,6 +124,10 @@ makeTabVF <- function(envValidData, envValidGUI){
     }
   }
 
+  infoValidFp <- get("infoValidFp", pos = envValidData)
+  infoValidFpVar <- tclVar(infoValidFp)
+  infoValidFn <- get("infoValidFn", pos = envValidData)
+  infoValidFnVar <- tclVar(infoValidFn)
   cspValidFp <- get("cspValidFp", pos = envValidData)
   cspValidFpVar <- tclVar(cspValidFp)
   cspValidFn <- get("cspValidFn", pos = envValidData)
@@ -136,7 +152,12 @@ makeTabVF <- function(envValidData, envValidGUI){
 
   frameVF_1 <- tkframe(frameVF)
   tkgrid(tklabel(frameVF_1, text = "Input File", font = "Helvetica 10 bold"), padx = 10, pady = 5, sticky = "w")
-
+  
+  labelInfo <- tklabel(frameVF_1, text = "Information on Crime Stain Profiles")
+  labelInfoName <- tklabel(frameVF_1, textvariable = infoValidFnVar, width = 35, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
+  buttLoadInfo <- tkbutton(frameVF_1, text = "    Load    ", cursor = "hand2", command = function() openFileValid("info"))
+  tkgrid(labelInfo, labelInfoName, buttLoadInfo, padx = 10, pady = 5, sticky = "w")
+  
   labelCsp <- tklabel(frameVF_1, text = "Crime Stain Profiles")
   labelCspName <- tklabel(frameVF_1, textvariable = cspValidFnVar, width = 35, highlightthickness = 1, relief = "groove", justify = "center", background = "white")
   buttLoadCsp <- tkbutton(frameVF_1, text = "    Load    ", cursor = "hand2", command = function() openFileValid("csp"))
@@ -197,6 +218,7 @@ checkRefLoci <- function(refValidInput){
 }
 
 checkValidFile <- function(envValidData, envValidGUI){
+  infoValidInput <- get("infoValidInput", pos = envValidData)
   cspValidInput <- get("cspValidInput", pos = envValidData)
   refValidInput <- get("refValidInput", pos = envValidData)
   afValidInput <- get("afValidInput", pos = envValidData)
@@ -204,95 +226,103 @@ checkValidFile <- function(envValidData, envValidGUI){
   if(any(c(length(cspValidInput) == 0, length(refValidInput) == 0, length(afValidInput) == 0))){
     tkmessageBox(message = "Load required file(s)!", icon = "error", type = "ok")
   }else{
-    outSn <- checkInputLoci(cspValidInput)
-    if(length(outSn) == 0){
-      colCsp <- colnames(cspValidInput)
-      cspLoci <- unique(cspValidInput[, grep("Marker", colCsp)])
-      pathPack <- get("pathPack", pos = envValidGUI)
-      cspKit <- searchKit(cspLoci, pathPack)
-      if(length(cspKit) > 0){
-        kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", cspKit[1], ".csv"), header = TRUE)
-        kitInfo <- as.matrix(kitInfo)
-        posSexMar <- which(kitInfo[, "Sex_chromosomal_marker"] == "yes")
-        if(length(posSexMar) > 0){
-          sexMar <- unique(kitInfo[posSexMar, "Marker"])
-          cspLoci <- setdiff(cspLoci, sexMar)
-        }else{
-          sexMar <- character(0)
-        }
-        outSnRn <- checkRefLoci(refValidInput)
-        if(length(outSnRn) == 0){
-          colRef <- colnames(refValidInput)
-          refLoci <- unique(refValidInput[, "Marker"])
-          refLoci <- setdiff(refLoci, sexMar)
-
-          posAf <- !is.element(colnames(afValidInput), sexMar)
-          afValid <- afValidInput[, posAf, drop = FALSE]
-          afLoci <- colnames(afValid)[posAf]
-          afLoci <- afLoci[- grep("Allele", colnames(afValid))]
-          
-          posRandMar <- which(colnames(randValidInput) == "Marker")
-          randValid <- randValidInput[, -posRandMar]
-          randLoci <- randValidInput[, posRandMar]
-          randLoci <- setdiff(randLoci, sexMar)
-
-          if(all(c(setequal(cspLoci, refLoci), setequal(cspLoci, afLoci), setequal(cspLoci, randLoci)))){
-            posCspSn <- intersect(grep("Sample", colCsp), grep("Name", colCsp))
-            cspSn <- unique(cspValidInput[, posCspSn])
-            posRefSn <- intersect(grep("Sample", colRef), grep("Name", colRef))
-            refSn <- unique(refValidInput[, posRefSn])
-            if(setequal(cspSn, refSn)){
-              nL <- length(cspLoci)
-              nS <- length(cspSn)
-              cspValid <- matrix("", nL * nS, ncol(cspValidInput))
-              colnames(cspValid) <- colCsp
-              refValid <- NULL
-              posRn <- intersect(grep("Reference", colnames(refValidInput)), grep("Name", colnames(refValidInput)))
-              for(i in 1:nS){
-                cspOneS <- cspValidInput[cspValidInput[, posCspSn] == cspSn[i], , drop = FALSE]
-                cspValid[((i - 1) * nL + 1):(i * nL), ] <- cspOneS[match(cspLoci, cspOneS[, "Marker"]), , drop = FALSE]
-                refOneS <- refValidInput[refValidInput[, posRefSn] == cspSn[i], , drop = FALSE]
-                rnOneS <- unique(refOneS[, posRn])
-                for(j in 1:length(rnOneS)){
-                  refOneR <- refOneS[refOneS[, posRn] == rnOneS[j], , drop = FALSE]
-                  refValid <- rbind(refValid, refOneR[match(cspLoci, refOneR[, "Marker"]), , drop = FALSE])
+    posSnInfo <- intersect(grep("Sample", colnames(infoValidInput)), grep("Name", colnames(infoValidInput)))
+    posSnCsp <- intersect(grep("Sample", colnames(cspValidInput)), grep("Name", colnames(cspValidInput)))
+    if(setequal(infoValidInput[, posSnInfo], cspValidInput[, posSnCsp])){
+      outSn <- checkInputLoci(cspValidInput)
+      if(length(outSn) == 0){
+        colCsp <- colnames(cspValidInput)
+        cspLoci <- unique(cspValidInput[, grep("Marker", colCsp)])
+        pathPack <- get("pathPack", pos = envValidGUI)
+        cspKit <- searchKit(cspLoci, pathPack)
+        if(length(cspKit) > 0){
+          kitInfo <- read.csv(paste0(pathPack, "/extdata/kit/", cspKit[1], ".csv"), header = TRUE)
+          kitInfo <- as.matrix(kitInfo)
+          posSexMar <- which(kitInfo[, "Sex_chromosomal_marker"] == "yes")
+          if(length(posSexMar) > 0){
+            sexMar <- unique(kitInfo[posSexMar, "Marker"])
+            cspLoci <- setdiff(cspLoci, sexMar)
+          }else{
+            sexMar <- character(0)
+          }
+          outSnRn <- checkRefLoci(refValidInput)
+          if(length(outSnRn) == 0){
+            colRef <- colnames(refValidInput)
+            refLoci <- unique(refValidInput[, "Marker"])
+            refLoci <- setdiff(refLoci, sexMar)
+            
+            posAf <- !is.element(colnames(afValidInput), sexMar)
+            afValid <- afValidInput[, posAf, drop = FALSE]
+            afLoci <- colnames(afValid)[posAf]
+            afLoci <- afLoci[- grep("Allele", colnames(afValid))]
+            
+            posRandMar <- which(colnames(randValidInput) == "Marker")
+            randLoci <- randValidInput[, posRandMar]
+            posRand <- !is.element(randLoci, sexMar)
+            randValid <- randValidInput[posRand, -posRandMar, drop = FALSE]
+            randLoci <- setdiff(randLoci, sexMar)
+            
+            if(all(c(setequal(cspLoci, refLoci), setequal(cspLoci, afLoci), setequal(cspLoci, randLoci)))){
+              posCspSn <- intersect(grep("Sample", colCsp), grep("Name", colCsp))
+              cspSn <- unique(cspValidInput[, posCspSn])
+              posRefSn <- intersect(grep("Sample", colRef), grep("Name", colRef))
+              refSn <- unique(refValidInput[, posRefSn])
+              if(setequal(cspSn, refSn)){
+                nL <- length(cspLoci)
+                nS <- length(cspSn)
+                cspValid <- matrix("", nL * nS, ncol(cspValidInput))
+                colnames(cspValid) <- colCsp
+                refValid <- NULL
+                posRn <- intersect(grep("Reference", colnames(refValidInput)), grep("Name", colnames(refValidInput)))
+                for(i in 1:nS){
+                  cspOneS <- cspValidInput[cspValidInput[, posCspSn] == cspSn[i], , drop = FALSE]
+                  cspValid[((i - 1) * nL + 1):(i * nL), ] <- cspOneS[match(cspLoci, cspOneS[, "Marker"]), , drop = FALSE]
+                  refOneS <- refValidInput[refValidInput[, posRefSn] == cspSn[i], , drop = FALSE]
+                  rnOneS <- unique(refOneS[, posRn])
+                  for(j in 1:length(rnOneS)){
+                    refOneR <- refOneS[refOneS[, posRn] == rnOneS[j], , drop = FALSE]
+                    refValid <- rbind(refValid, refOneR[match(cspLoci, refOneR[, "Marker"]), , drop = FALSE])
+                  }
                 }
+                colnames(refValid) <- colRef
+                posAf <- match(cspLoci, afLoci)
+                afValid <- afValid[, c(1, posAf + 1), drop = FALSE]
+                posRand <- match(cspLoci, randLoci)
+                randValid <- randValid[posRand, , drop = FALSE]
+                
+                assign("cspValid", cspValid, envir = envValidData)
+                assign("refValid", refValid, envir = envValidData)
+                assign("afValid", afValid, envir = envValidData)
+                assign("randValid", randValid, envir = envValidData)
+                makeTabVS(envValidData, envValidGUI)
+                tabsValid <- get("tabsValid", pos = envValidGUI)
+                tk2notetab.select(tabsValid, "Setting")
+              }else{
+                tkmessageBox(message = "Sample names of crime stain profiles are not equal to those of reference profiles!", icon = "error", type = "ok")
               }
-              colnames(refValid) <- colRef
-              posAf <- match(cspLoci, afLoci)
-              afValid <- afValid[, c(1, posAf + 1), drop = FALSE]
-              posRand <- match(cspLoci, randLoci)
-              randValid <- randValid[posRand, drop = FALSE]
-
-              assign("cspValid", cspValid, envir = envValidData)
-              assign("refValid", refValid, envir = envValidData)
-              assign("afValid", afValid, envir = envValidData)
-              assign("randValid", randValid, envir = envValidData)
-              makeTabVS(envValidData, envValidGUI)
-              tabsValid <- get("tabsValid", pos = envValidGUI)
-              tk2notetab.select(tabsValid, "Setting")
             }else{
-              tkmessageBox(message = "Sample names of crime stain profiles are not equal to those of reference profiles!", icon = "error", type = "ok")
+              tkmessageBox(message = "Autosomal loci of each file was not the same!", icon = "error", type = "ok")
             }
           }else{
-            tkmessageBox(message = "Autosomal loci of each file was not the same!", icon = "error", type = "ok")
+            tkmessageBox(message = paste0("Locus set of each reference profile is not the same. Please check the following sample.", "\n",
+                                          "Sample Name : ", outSnRn[1], "\n",
+                                          "Reference Name : ", outSnRn[2]), icon = "error", type = "ok")
           }
         }else{
-          tkmessageBox(message = paste0("Locus set of each reference profile is not the same. Please check the following sample.", "\n",
-                                        "Sample Name : ", outSnRn[1], "\n",
-                                        "Reference Name : ", outSnRn[2]), icon = "error", type = "ok")
+          tkmessageBox(message = "Locus set of the crime stain profiles has not been registered. Please register locus set at Tools -> Typing kit.", icon = "error", type = "ok")
         }
       }else{
-        tkmessageBox(message = "Locus set of the crime stain profiles has not been registered. Please register locus set at Tools -> Typing kit.", icon = "error", type = "ok")
+        tkmessageBox(message = paste0("Locus set of each crime stain profile is not the same. Please check the sample '", outSn, "'."), icon = "error", type = "ok")
       }
     }else{
-      tkmessageBox(message = paste0("Locus set of each crime stain profile is not the same. Please check the sample '", outSn, "'."), icon = "error", type = "ok")
+      tkmessageBox(message = "Sample names of 'Information on Crime Stain Profiles' is not the same as those of 'Crime Stain Profiles'.", icon = "error", type = "ok")
     }
   }
 }
 
 makeTabVS <- function(envValidData, envValidGUI){
   pathPack <- get("pathPack", pos = envValidGUI)
+  infoValidFn <- get("infoValidFn", pos = envValidData)
   cspValidFn <- get("cspValidFn", pos = envValidData)
   refValidFn <- get("refValidFn", pos = envValidData)
   afValidFn <- get("afValidFn", pos = envValidData)
@@ -340,6 +370,7 @@ makeTabVS <- function(envValidData, envValidGUI){
 
   frameVS_files <- tkframe(frameVS_2, relief = "groove", borderwidth = 2)
   tkgrid(tklabel(frameVS_files, text = "Files", font = "Helvetica 10 bold"), sticky = "w")
+  tkgrid(tklabel(frameVS_files, text = "Information on Crime Stain Profiles"), tklabel(frameVS_files, text = infoValidFn), padx = 10, sticky = "w")
   tkgrid(tklabel(frameVS_files, text = "Crime Stain Profile"), tklabel(frameVS_files, text = cspValidFn), padx = 10, sticky = "w")
   tkgrid(tklabel(frameVS_files, text = "Reference Profile"), tklabel(frameVS_files, text = refValidFn), padx = 10, sticky = "w")
   tkgrid(tklabel(frameVS_files, text = "Allele Frequencies"), tklabel(frameVS_files, text = afValidFn), padx = 10, sticky = "w")
@@ -357,6 +388,7 @@ makeTabVS <- function(envValidData, envValidGUI){
 }
 
 guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
+  infoValid <- get("infoValidInput", pos = envValidData)
   cspValid <- get("cspValid", pos = envValidData)
   refValid <- get("refValid", pos = envValidData)
   af <- get("afValid", pos = envValidData)
@@ -453,18 +485,20 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
             ref[, c(2 * j, 2 * j + 1)] <- refOneS[refOneS[, posRn] == refNames[j], grep("Allele", colRef)]
           }
           cat("1st deconvolution", "\n")
-          dataDeconvo_1 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataDeconvo_1 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                      anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("1st LR", "\n")
-          dataLR_1 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo,
-                                 anaType = "LR", baseDeconvo = 0, dataDeconvo = NULL, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataLR_1 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                 anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("2nd deconvolution", "\n")
-          dataDeconvo_2 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataDeconvo_2 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                      anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("2nd LR", "\n")
-          dataLR_2 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo,
-                                 anaType = "LR", baseDeconvo = 0, dataDeconvo = NULL, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataLR_2 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                 anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           hncAll <- as.numeric(gsub("hnc_", "", names(dataLR_1)))
           for(j in 1:length(dataLR_1)){
@@ -501,7 +535,7 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
           cat("Non-contributor tests were started.", "\n")
           for(j in 1:(ncol(randValid) / 2)){
             randOne <- randValid[, c(2 * j - 1, 2 * j)]
-            randOne <- t(apply(randOne, 2, sort))
+            randOne <- t(apply(randOne, 1, sort))
             randOne <- cbind(cspLoci, randOne)
             colnames(randOne) <- c("Marker", paste0(rep("Rand", 2), j))
             dataHdTrue_1 <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
