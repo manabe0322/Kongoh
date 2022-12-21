@@ -289,6 +289,7 @@ checkValidFile <- function(envValidData, envValidGUI){
                 afValid <- afValid[, c(1, posAf + 1), drop = FALSE]
                 posRand <- match(cspLoci, randLoci)
                 randValid <- randValid[posRand, , drop = FALSE]
+                rownames(randValid) <- cspLoci
                 
                 assign("cspValid", cspValid, envir = envValidData)
                 assign("refValid", refValid, envir = envValidData)
@@ -455,13 +456,14 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
         sampleNames <- unique(cspValid[, posCspSn])
         nS <- length(sampleNames)
         nL <- length(cspLoci)
-        colValidData <- c("sample_name", paste0("contrib_", 1:4), paste0("mp_", 1:4), paste0("deg_", 1:4), paste0("like_", c(cspLoci, "Total")))
-        validData_1st <- validData_2nd <- matrix("", 30 * nS, length(colValidData))
-        colnames(validData_1st) <- colnames(validData_2nd) <- colValidData
-        colHdTrueData <- c("sample_name", "hnc", paste0("LR_", c(cspLoci, "Total")))
-        hdTrueData_1st <- hdTrueData_2nd <- matrix("", 4 * nS, length(colHdTrueData))
-        colnames(hdTrueData_1st) <- colnames(hdTrueData_2nd) <- colHdTrueData
 
+        colInfo <- colnames(infoValid)
+        nocInfo <- as.numeric(infoValid[, intersect(grep("Number", colInfo), grep("contributors", colInfo))])
+        sensitivity_1st <- sensitivity_2nd <- matrix("", sum(nocInfo), 11)
+        nRand <- ncol(randValid) / 2
+        specificity_1st <- specificity_2nd <- matrix("", nS * nRand, 11)
+        colnames(sensitivity_1st) <- colnames(sensitivity_2nd) <- colnames(specificity_1st) <- colnames(specificity_2nd) <- c("Sample_name", "Number_of_contributors", "Hp", "Hd", "Likelihood_Hp", "Likelihood_Hd", "LR", "MP_Hp", "MP_Hd", "d_Hp", "d_Hd")
+        
         afList <- list()
         afAl <- af[, grep("Allele", colnames(af))]
         for(i in 1:nL){
@@ -470,8 +472,8 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
           afList[[i]] <- makePopFreq(afOneL[posAfAl], afAl[posAfAl], afMeth)
         }
 
-        count <- 1
-        countHd <- 1
+        count_sensitivity_1st <- count_sensitivity_2nd <- 1
+        count_specificity_1st <- count_specificity_2nd <- 1
         for(i in 1:nS){
           sn <- sampleNames[i]
           cat(paste0("Current sample : ", sn), "\n")
@@ -500,40 +502,76 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
           dataLR_2 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
                                  anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
-          hncAll <- as.numeric(gsub("hnc_", "", names(dataLR_1)))
-          for(j in 1:length(dataLR_1)){
-            hnc <- hncAll[j]
-            dataLR_1_oneHnc <- dataLR_1[[j]]
-            dataLR_2_oneHnc <- dataLR_2[[j]]
-            for(k in 1:length(dataLR_1_oneHnc)){
-              if(count > 30 * nS){
-                validData_1st <- rbind(validData_1st, matrix("", 30 * nS, length(colValidData)))
-                validData_2nd <- rbind(validData_2nd, matrix("", 30 * nS, length(colValidData)))
-              }
-              dataLR_1_oneHyp <- dataLR_1_oneHnc[[k]]
-              validData_1st[count, "sample_name"] <- sn
-              validData_1st[count, grep("contrib_", colValidData)[1:hnc]] <- dataLR_1_oneHyp[[1]]
-              likelihoods <- dataLR_1_oneHyp[[2]]
-              if(!is.na(likelihoods[length(likelihoods)])){
-                validData_1st[count, grep("like_", colValidData)] <- likelihoods
-                validData_1st[count, grep("mp_", colValidData)[1:hnc]] <- dataLR_1_oneHyp[[4]]
-                validData_1st[count, grep("deg_", colValidData)[1:hnc]] <- dataLR_1_oneHyp[[5]]
-              }
-              dataLR_2_oneHyp <- dataLR_2_oneHnc[[k]]
-              validData_2nd[count, "sample_name"] <- sn
-              validData_2nd[count, grep("contrib_", colValidData)[1:hnc]] <- dataLR_2_oneHyp[[1]]
-              likelihoods <- dataLR_2_oneHyp[[2]]
-              if(!is.na(likelihoods[length(likelihoods)])){
-                validData_2nd[count, grep("like_", colValidData)] <- likelihoods
-                validData_2nd[count, grep("mp_", colValidData)[1:hnc]] <- dataLR_2_oneHyp[[4]]
-                validData_2nd[count, grep("deg_", colValidData)[1:hnc]] <- dataLR_2_oneHyp[[5]]
-              }
-              count <- count + 1
+          ## Sensitivity
+          noc <- nocInfo[i]
+          posNoc <- which(hncFrom:hncTo == noc)
+          dataLR_1_oneHnc <- dataLR_1[[posNoc]]
+          dataLR_2_oneHnc <- dataLR_2[[posNoc]]
+          
+          #### Select Hd 1st
+          for(j in 1:length(dataLR_1_oneHnc)){
+            hypOne <- dataLR_1_oneHnc[[j]][[1]]
+            if(setequal(hypOne, "U")){
+              dataLR_1_Hd <- dataLR_1_oneHnc[[j]]
+              break
             }
           }
-
+          
+          #### Select Hd 2nd
+          for(j in 1:length(dataLR_2_oneHnc)){
+            hypOne <- dataLR_2_oneHnc[[j]][[1]]
+            if(setequal(hypOne, "U")){
+              dataLR_2_Hd <- dataLR_2_oneHnc[[j]]
+              break
+            }
+          }
+          
+          #### Select Hp 1st and make sensitivity_1st
+          for(j in 1:length(refNames)){
+            for(k in 1:length(dataLR_1_oneHnc)){
+              hypOne <- dataLR_1_oneHnc[[k]][[1]]
+              if(setequal(hypOne, c(refNames[j], "U"))){
+                dataLR_1_Hp <- dataLR_1_oneHnc[[k]]
+                break
+              }
+            }
+            sensitivity_1st[count_sensitivity_1st, "Number_of_contributors"] <- noc
+            sensitivity_1st[count_sensitivity_1st, "Hp"] <- paste(dataLR_1_Hp[[1]], collapse = "-")
+            sensitivity_1st[count_sensitivity_1st, "Hd"] <- paste(dataLR_1_Hd[[1]], collapse = "-")
+            sensitivity_1st[count_sensitivity_1st, "Likelihood_Hp"] <- likeHp <- dataLR_1_Hp[[2]][nL + 1]
+            sensitivity_1st[count_sensitivity_1st, "Likelihood_Hd"] <- likeHd <- dataLR_1_Hd[[2]][nL + 1]
+            sensitivity_1st[count_sensitivity_1st, "LR"] <- 10^(likeHp - likeHd)
+            sensitivity_1st[count_sensitivity_1st, "MP_Hp"] <- paste(dataLR_1_Hp[[4]], collapse = ":")
+            sensitivity_1st[count_sensitivity_1st, "MP_Hd"] <- paste(dataLR_1_Hd[[4]], collapse = ":")
+            sensitivity_1st[count_sensitivity_1st, "d_Hp"] <- paste(dataLR_1_Hp[[5]], collapse = "-")
+            sensitivity_1st[count_sensitivity_1st, "d_Hd"] <- paste(dataLR_1_Hd[[5]], collapse = "-")
+            count_sensitivity_1st <- count_sensitivity_1st + 1
+          }
+          
+          #### Select Hp 2nd and make sensitivity_2nd
+          for(j in 1:length(refNames)){
+            for(k in 1:length(dataLR_2_oneHnc)){
+              hypOne <- dataLR_2_oneHnc[[k]][[1]]
+              if(setequal(hypOne, c(refNames[j], "U"))){
+                dataLR_2_Hp <- dataLR_2_oneHnc[[k]]
+                break
+              }
+            }
+            sensitivity_2nd[count_sensitivity_2nd, "Number_of_contributors"] <- noc
+            sensitivity_2nd[count_sensitivity_2nd, "Hp"] <- paste(dataLR_2_Hp[[1]], collapse = "-")
+            sensitivity_2nd[count_sensitivity_2nd, "Hd"] <- paste(dataLR_2_Hd[[1]], collapse = "-")
+            sensitivity_2nd[count_sensitivity_2nd, "Likelihood_Hp"] <- likeHp <- dataLR_2_Hp[[2]][nL + 1]
+            sensitivity_2nd[count_sensitivity_2nd, "Likelihood_Hd"] <- likeHd <- dataLR_2_Hd[[2]][nL + 1]
+            sensitivity_2nd[count_sensitivity_2nd, "LR"] <- 10^(likeHp - likeHd)
+            sensitivity_2nd[count_sensitivity_2nd, "MP_Hp"] <- paste(dataLR_2_Hp[[4]], collapse = ":")
+            sensitivity_2nd[count_sensitivity_2nd, "MP_Hd"] <- paste(dataLR_2_Hd[[4]], collapse = ":")
+            sensitivity_2nd[count_sensitivity_2nd, "d_Hp"] <- paste(dataLR_2_Hp[[5]], collapse = "-")
+            sensitivity_2nd[count_sensitivity_2nd, "d_Hd"] <- paste(dataLR_2_Hd[[5]], collapse = "-")
+            count_sensitivity_2nd <- count_sensitivity_2nd + 1
+          }
+          
           cat("Non-contributor tests were started.", "\n")
-          for(j in 1:(ncol(randValid) / 2)){
+          for(j in 1:nRand){
             randOne <- randValid[, c(2 * j - 1, 2 * j)]
             randOne <- t(apply(randOne, 1, sort))
             randOne <- cbind(cspLoci, randOne)
@@ -542,39 +580,48 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
                                        anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
             dataHdTrue_2 <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
                                        anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
-
-            hncAll <- as.numeric(gsub("hnc_", "", names(dataHdTrue_1)))
-            for(k in 1:length(dataHdTrue_1)){
-              hnc <- hncAll[k]
-              dataHdTrue_1_oneHnc <- dataHdTrue_1[[k]]
-              dataHdTrue_2_oneHnc <- dataHdTrue_2[[k]]
-              if(countHd > 4 * nS){
-                hdTrueData_1st <- rbind(hdTrueData_1st, matrix("", 4 * nS, length(colHdTrueData)))
-                hdTrueData_2nd <- rbind(hdTrueData_2nd, matrix("", 4 * nS, length(colHdTrueData)))
-              }
-              hdTrueData_1st[countHd, "sample_name"] <- sn
-              hdTrueData_1st[countHd, "hnc"] <- hnc
-              hdTrueData_1st[countHd, grep("LR_", colHdTrueData)] <- dataHdTrue_1_oneHnc[[1]][[2]] - dataHdTrue_1_oneHnc[[2]][[2]]
-              hdTrueData_2nd[countHd, "sample_name"] <- sn
-              hdTrueData_2nd[countHd, "hnc"] <- hnc
-              hdTrueData_2nd[countHd, grep("LR_", colHdTrueData)] <- dataHdTrue_2_oneHnc[[1]][[2]] - dataHdTrue_2_oneHnc[[2]][[2]]
-              countHd <- countHd + 1
-            }
+            
+            dataHdTrue_1_oneHnc <- dataHdTrue_1[[posNoc]]
+            dataHdTrue_2_oneHnc <- dataHdTrue_2[[posNoc]]
+            
+            dataHdTrue_1_Hp <- dataHdTrue_1_oneHnc[[2]]
+            dataHdTrue_1_Hd <- dataHdTrue_1_oneHnc[[1]]
+            specificity_1st[count_specificity_1st, "Number_of_contributors"] <- noc
+            specificity_1st[count_specificity_1st, "Hp"] <- paste(dataHdTrue_1_Hp[[1]], collapse = "-")
+            specificity_1st[count_specificity_1st, "Hd"] <- paste(dataHdTrue_1_Hd[[1]], collapse = "-")
+            specificity_1st[count_specificity_1st, "Likelihood_Hp"] <- likeHp <- dataHdTrue_1_Hp[[2]][nL + 1]
+            specificity_1st[count_specificity_1st, "Likelihood_Hd"] <- likeHd <- dataHdTrue_1_Hd[[2]][nL + 1]
+            specificity_1st[count_specificity_1st, "LR"] <- 10^(likeHp - likeHd)
+            specificity_1st[count_specificity_1st, "MP_Hp"] <- paste(dataHdTrue_1_Hp[[4]], collapse = ":")
+            specificity_1st[count_specificity_1st, "MP_Hd"] <- paste(dataHdTrue_1_Hd[[4]], collapse = ":")
+            specificity_1st[count_specificity_1st, "d_Hp"] <- paste(dataHdTrue_1_Hp[[5]], collapse = "-")
+            specificity_1st[count_specificity_1st, "d_Hd"] <- paste(dataHdTrue_1_Hd[[5]], collapse = "-")
+            count_specificity_1st <- count_specificity_1st + 1
+            
+            dataHdTrue_2_Hp <- dataHdTrue_2_oneHnc[[2]]
+            dataHdTrue_2_Hd <- dataHdTrue_2_oneHnc[[1]]
+            specificity_2nd[count_specificity_2nd, "Number_of_contributors"] <- noc
+            specificity_2nd[count_specificity_2nd, "Hp"] <- paste(dataHdTrue_2_Hp[[1]], collapse = "-")
+            specificity_2nd[count_specificity_2nd, "Hd"] <- paste(dataHdTrue_2_Hd[[1]], collapse = "-")
+            specificity_2nd[count_specificity_2nd, "Likelihood_Hp"] <- likeHp <- dataHdTrue_2_Hp[[2]][nL + 1]
+            specificity_2nd[count_specificity_2nd, "Likelihood_Hd"] <- likeHd <- dataHdTrue_2_Hd[[2]][nL + 1]
+            specificity_2nd[count_specificity_2nd, "LR"] <- 10^(likeHp - likeHd)
+            specificity_2nd[count_specificity_2nd, "MP_Hp"] <- paste(dataHdTrue_2_Hp[[4]], collapse = ":")
+            specificity_2nd[count_specificity_2nd, "MP_Hd"] <- paste(dataHdTrue_2_Hd[[4]], collapse = ":")
+            specificity_2nd[count_specificity_2nd, "d_Hp"] <- paste(dataHdTrue_2_Hp[[5]], collapse = "-")
+            specificity_2nd[count_specificity_2nd, "d_Hd"] <- paste(dataHdTrue_2_Hd[[5]], collapse = "-")
+            count_specificity_2nd <- count_specificity_2nd + 1
           }
           save(dataDeconvo_1, dataLR_1, dataDeconvo_2, dataLR_2, file = paste0("D:/kongoh_valid/valiData_", sn, ".RData"))
         }
-        validData_1st <- validData_1st[1:count, , drop = FALSE]
-        validData_2nd <- validData_2nd[1:count, , drop = FALSE]
-        hdTrueData_1st <- hdTrueData_1st[1:countHd, , drop = FALSE]
-        hdTrueData_2nd <- hdTrueData_2nd[1:countHd, , drop = FALSE]
-        write.csv(validData_1st, "D:/kongoh_valid/validData_1st.csv", row.names = FALSE)
-        write.csv(validData_2nd, "D:/kongoh_valid/validData_2nd.csv", row.names = FALSE)
-        write.csv(hdTrueData_1st, "D:/kongoh_valid/hdTrueData_1st.csv", row.names = FALSE)
-        write.csv(hdTrueData_2nd, "D:/kongoh_valid/hdTrueData_2nd.csv", row.names = FALSE)
-        assign("validData_1st", validData_1st, envir = envValidData)
-        assign("validData_2nd", validData_2nd, envir = envValidData)
-        assign("hdTrueData_1st", hdTrueData_1st, envir = envValidData)
-        assign("hdTrueData_2nd", hdTrueData_2nd, envir = envValidData)
+        write.csv(sensitivity_1st, "D:/kongoh_valid/sensitivity_1st.csv", row.names = FALSE)
+        write.csv(sensitivity_2nd, "D:/kongoh_valid/sensitivity_2nd.csv", row.names = FALSE)
+        write.csv(specificity_1st, "D:/kongoh_valid/specificity_1st.csv", row.names = FALSE)
+        write.csv(specificity_2nd, "D:/kongoh_valid/specificity_2nd.csv", row.names = FALSE)
+        assign("sensitivity_1st", sensitivity_1st, envir = envValidData)
+        assign("sensitivity_2nd", sensitivity_2nd, envir = envValidData)
+        assign("specificity_1st", specificity_1st, envir = envValidData)
+        assign("specificity_2nd", specificity_2nd, envir = envValidData)
 #        makeTabVR(envValidData, envValidGUI)
       }
     }else{
