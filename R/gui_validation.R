@@ -489,20 +489,20 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
             ref[, c(2 * j, 2 * j + 1)] <- refOneS[refOneS[, posRn] == refNames[j], grep("Allele", colRef)]
           }
           cat("1st deconvolution", "\n")
-          dataDeconvo_1 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
-                                      anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataDeconvo_1st <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                        anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("1st LR", "\n")
-          dataLR_1 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
-                                 anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataLR_1st <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                   anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("2nd deconvolution", "\n")
-          dataDeconvo_2 <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
-                                      anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataDeconvo_2nd <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                        anaType = "Deconvo", addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("2nd LR", "\n")
-          dataLR_2 <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
-                                 anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+          dataLR_2nd <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
+                                   anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           ## Sensitivity
           noc <- nocInfo[i]
@@ -841,7 +841,7 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
               count_specificity_2nd_nocM1 <- count_specificity_2nd_nocM1 + 1
             }
           }
-          save(dataDeconvo_1, dataLR_1, dataDeconvo_2, dataLR_2, file = paste0("D:/kongoh_valid/valiData_", sn, ".RData"))
+          save(dataDeconvo_1st, dataLR_1st, dataDeconvo_2nd, dataLR_2nd, file = paste0("D:/kongoh_valid/valiData_", sn, ".RData"))
         }
         write.csv(sensitivity_1st, "D:/kongoh_valid/sensitivity_1st.csv", row.names = FALSE)
         write.csv(sensitivity_2nd, "D:/kongoh_valid/sensitivity_2nd.csv", row.names = FALSE)
