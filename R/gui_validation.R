@@ -494,7 +494,7 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
 
           cat("1st LR", "\n")
           dataLR_1st <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
-                                   anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+                                   anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1st, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           cat("2nd deconvolution", "\n")
           dataDeconvo_2nd <- analyzeCSP(csp, NULL, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
@@ -502,7 +502,7 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
 
           cat("2nd LR", "\n")
           dataLR_2nd <- analyzeCSP(csp, ref, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = numeric(0), knownHd = numeric(0),
-                                   anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+                                   anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2nd, calcAllHyp = 1, addRefDropFunc = FALSE, mrDegCut = 0.0001)
 
           ## Sensitivity
           noc <- nocInfo[i]
@@ -730,9 +730,9 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
             randOne <- cbind(cspLoci, randOne)
             colnames(randOne) <- c("Marker", paste0(rep("Rand", 2), j))
             dataHdTrue_1st <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
-                                         anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+                                         anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_1st, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
             dataHdTrue_2nd <- analyzeCSP(csp, randOne, af, selectMethData, mcPar, alCor, kitInfo, hncFrom, hncTo, knownHp = 1, knownHd = numeric(0),
-                                         anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
+                                         anaType = "LR", baseDeconvo = 1, dataDeconvo = dataDeconvo_2nd, calcAllHyp = 0, addRefDropFunc = FALSE, mrDegCut = 0.0001)
             
             dataHdTrue_1st_Noc <- dataHdTrue_1st[[posNoc]]
             dataHdTrue_2nd_Noc <- dataHdTrue_2nd[[posNoc]]
