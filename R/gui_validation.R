@@ -674,9 +674,14 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
             
             #### Select Hp 1st and make sensitivity_1st
             for(j in 1:length(refNames)){
+              if(noc - 1 == 1){
+                hp_nocM1 <- refNames[j]
+              }else{
+                hp_nocM1 <- c(refNames[j], "U")
+              }
               for(k in 1:length(dataLR_1st_nocM1)){
                 hypOne <- dataLR_1st_nocM1[[k]][[1]]
-                if(setequal(hypOne, c(refNames[j], "U"))){
+                if(setequal(hypOne, hp_nocM1)){
                   dataLR_1st_nocM1_Hp <- dataLR_1st_nocM1[[k]]
                   break
                 }
@@ -697,9 +702,14 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
             
             #### Select Hp 2nd and make sensitivity_2nd
             for(j in 1:length(refNames)){
+              if(noc - 1 == 1){
+                hp_nocM1 <- refNames[j]
+              }else{
+                hp_nocM1 <- c(refNames[j], "U")
+              }
               for(k in 1:length(dataLR_2nd_nocM1)){
                 hypOne <- dataLR_2nd_nocM1[[k]][[1]]
-                if(setequal(hypOne, c(refNames[j], "U"))){
+                if(setequal(hypOne, hp_nocM1)){
                   dataLR_2nd_nocM1_Hp <- dataLR_2nd_nocM1[[k]]
                   break
                 }
