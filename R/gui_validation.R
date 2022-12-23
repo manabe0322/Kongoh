@@ -577,8 +577,8 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
           ## Sensitivity N + 1 contributors
           posNocP1 <- which(hncFrom:hncTo == noc + 1)
           if(length(posNocP1) == 1){
-            dataLR_1st_NocP1 <- dataLR_1[[posNocP1]]
-            dataLR_2nd_NocP1 <- dataLR_2[[posNocP1]]
+            dataLR_1st_NocP1 <- dataLR_1st[[posNocP1]]
+            dataLR_2nd_NocP1 <- dataLR_2nd[[posNocP1]]
             
             #### Select Hd 1st
             for(j in 1:length(dataLR_1st_NocP1)){
@@ -651,8 +651,8 @@ guiValid <- function(envValidData, envValidGUI, hncFrom, hncTo, anaMeth){
           ## Sensitivity N - 1 contributors
           posNocM1 <- which(hncFrom:hncTo == noc - 1)
           if(length(posNocM1) == 1){
-            dataLR_1st_NocM1 <- dataLR_1[[posNocM1]]
-            dataLR_2nd_NocM1 <- dataLR_2[[posNocM1]]
+            dataLR_1st_NocM1 <- dataLR_1st[[posNocM1]]
+            dataLR_2nd_NocM1 <- dataLR_2nd[[posNocM1]]
             
             #### Select Hd 1st
             for(j in 1:length(dataLR_1st_NocM1)){
