@@ -509,7 +509,6 @@ Kongoh <- function(){
   tkadd(tools_menu, "command", label = "Estimate parameters", command = function() windowParEst(envGUI))
   tkadd(tools_menu, "command", label = "Set information on typing kits", command = function() windowKit(envGUI))
   tkadd(tools_menu, "command", label = "Edit repeat correction", command = function() windowRepCor(envGUI))
-  tkadd(tools_menu, "command", label = "Validation mode", command = function() windowValid(envGUI))
 
   help_menu <- tkmenu(topMenu, tearoff = FALSE, activebackground = "lightskyblue1")
   tkadd(topMenu, "cascade", label = "Help", menu = help_menu)
