@@ -388,7 +388,7 @@ judgeGtCombMr <- function(gtCombOne, peakOneL, heightOneL, mrFltr, st){
     stPass <- stPass[posUniq]
     for(i in 1:(nUniq - 1)){
       if(stPass[i]){
-        uniqHeights <- uniqHeightAll[i:length(uniqHeight)]
+        uniqHeights <- uniqHeightAll[i:length(uniqHeightAll)]
         mrFalsePos <- which(uniqHeights[1] / uniqHeights[-1] >= mrFltr)
         if(length(mrFalsePos) > 0){
           mrJudge <- FALSE
