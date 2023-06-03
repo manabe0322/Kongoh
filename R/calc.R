@@ -917,8 +917,11 @@ makeResult <- function(hypIdAll, nameKnown, mrDegAll, gammaList, gtCombList, pro
       productsBest <- productsList[[j]][, mrDegBestId]
       gtProbBest <- gtProbList[[j]][countHyp + posHypBestId, ]
       likeEachComb <- productsBest * gtProbBest
-      posCand <- likeEachComb != 0
-      pgResult <- cbind(gtComb[posCand, , drop = FALSE], productsBest[posCand] / sum(productsBest[posCand]), productsBest[posCand], gtProbBest[posCand])
+#      posCand <- likeEachComb != 0
+#      pgResult <- cbind(gtComb[posCand, , drop = FALSE], productsBest[posCand] / sum(productsBest[posCand]), productsBest[posCand], gtProbBest[posCand])
+      
+      pgResult <- cbind(gtComb, productsBest / sum(productsBest), productsBest, gtProbBest)
+      
       colnames(pgResult) <- c(as.vector(sapply(hypBest, rep, 2)), "Weight (0-1 scale)", "Weight", "Genotype prob")
 
       dropAl <- dropAlList[[j]]
