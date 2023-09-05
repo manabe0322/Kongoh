@@ -1366,7 +1366,7 @@ analyzeCSP <- function(csp, ref, af,
             calcTime <- dataDeconvoOne[[7]]
             resultOneHnc <- makeResult(hypIdAll, nameKnown, mrDeg, gammaList, gtCombList, productsList, gtProbList, log10LikeList, overallLike, lociName, calcTime, cspPeak, cspHeight, lenRU, dropAlList, refAllL, addRefDropFunc)
           }
-          resultAllHnc[[i]] <- resultOneHnc
+          resultAllHnc[[countHnc]] <- resultOneHnc
         }
       }
       ct2 <- proc.time() - t2
