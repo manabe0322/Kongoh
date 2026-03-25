@@ -6,20 +6,19 @@ based on a quantitative continuous model. The software is a graphical user inter
 ## Getting started
 
 * 1.  Ensure that R software is installed. It is available from the R Development Core Team website (http://www.R-project.org).
-* 2.  Begin an R session.
-* 3.  Execute the following command in R to install required packages.
-```r
-install.packages(c("tcltk2", "gtools", "truncnorm", "GenSA"))
-```
-* 4.  Go to https://github.com/manabe0322/Kongoh/releases.
-* 5.  Download ”Kongoh_3.3.1.zip”.
-* 6.  Install ”Kongoh_3.3.1.zip” from ”Install package(s) from local files...” in the R session.
-* 7.  Execute the following commands in R to start GUI.
+* 2.  Download the source code of Kongoh, which is freely available at GitHub (https://github.com/manabe0322/Kongoh/releases).
+* 3.  Decompress the downloaded file.
+* 4.  Begin an R session.
+* 5.  Load the “Kongoh v3.1.0.RData” file from “Load Workspace” in the “File” tab.
+* 6.  Execute the following command in R:
 
 ```r
-library(Kongoh)
 Kongoh()
 ```
+
+* 7.  If all required packages used in Kongoh (tcltk, tcltk2, gtools, parallel, truncnorm, and GenSA) have not been installed, then these packages will be automatically installed.
+* 8.  After all packages are loaded, the “Files” tab opens automatically.
+
 ## References
 
 Manabe S, Morimoto C, Hamano Y, Fujimoto S, Tamaki K. Development and validation of open-source software for DNA mixture interpretation based on a quantitative continuous model. PLOS ONE 2017;12(11):e0188183.
